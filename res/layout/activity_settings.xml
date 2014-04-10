@@ -1,0 +1,84 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
+    tools:context=".SettingsActivity" >
+
+    <!--  Credentials -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_text_credentials" 
+        android:textSize="17sp"
+        android:layout_marginBottom="10dp"
+        />
+    	<!-- servername -->
+    <TextView
+        android:id="@+id/textview_server_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_text_server_address"
+        />
+    <EditText 
+        android:id="@+id/edittext_server_address"
+        android:inputType="textUri"
+        android:text="@string/settings_text_https"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:lines="1"
+        />
+    	<!-- username -->
+    <TextView
+        android:id="@+id/textview_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_text_username"
+        />
+     <EditText 
+        android:id="@+id/edittext_username"
+        android:inputType="text"
+        android:hint="@string/settings_text_username_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:lines="1"
+        />
+     	<!-- password -->
+	<TextView
+        android:id="@+id/textview_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_text_password"
+        />
+     <EditText 
+        android:id="@+id/edittext_password"
+        android:inputType="textPassword"
+        android:hint="@string/settings_text_password_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:lines="1"
+        />
+     
+     <!-- Synchronization -->
+     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_text_synchronization" 
+        android:textSize="17sp"
+        android:layout_marginTop="20dp"
+        />
+     <CheckBox 
+         android:id="@+id/checkbox_sync_automatically"
+         android:checked="true"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="@string/settings_text_sync_automatically"
+         />
+     
+    
+
+</LinearLayout>
