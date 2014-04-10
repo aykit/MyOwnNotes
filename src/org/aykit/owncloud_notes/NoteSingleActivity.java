@@ -183,7 +183,10 @@ public class NoteSingleActivity extends Activity {
 		sqlDatabase.close();
 	}
 	
-	
+	public void button_test(View view)
+	{
+		new DownloadNoteTask().execute(theUrl2 );
+	}
 	
 	private class DownloadNoteTask extends AsyncTask<String, Void, String> {
 	    /** The system calls this to perform work in a worker thread and

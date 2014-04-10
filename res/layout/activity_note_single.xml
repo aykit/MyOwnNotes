@@ -52,6 +52,13 @@
 		        android:layout_gravity="right"
 		        android:text="@string/text_save"
 		        />
+	    	<Button 
+		        android:onClick="button_test"
+		        android:layout_width="130dp"
+		        android:layout_height="40dp"
+		        android:layout_gravity="right"
+		        android:text="@string/text_save"
+		        />
 	    </LinearLayout>
 	
 	</LinearLayout>

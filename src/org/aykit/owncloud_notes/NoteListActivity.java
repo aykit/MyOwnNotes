@@ -122,6 +122,8 @@ public class NoteListActivity
 		Log.d(TAG, "starting note synchonization");
 		Toast toast = Toast.makeText(this, "synchronization started...", Toast.LENGTH_SHORT);
 		toast.show();
+		
+		
 	}
 
 	
