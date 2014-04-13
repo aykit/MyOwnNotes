@@ -14,6 +14,7 @@
     <string name="text_save">save</string>
     <string name="text_delete">delete</string>
     <string name="note_has_been_saved">note has been saved</string>
+    <string name="text_test">test</string>
     
     <!--  NoteList strings -->
     <string name="action_new">create new note</string>

@@ -6,6 +6,7 @@ import org.javalite.http.Get;
 import org.javalite.http.Http;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +25,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.support.v4.app.NavUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,9 +40,10 @@ public class NoteSingleActivity extends Activity {
 	private final String password ="kenny";
 	private final String query = "?id=1";
 	//https://user:password@yourowncloud.com/index.php/apps/notes/api/v0.2/
-	private final String theUrl = "https://" + user + ":" + password + "@cloud.gerade.org/index.php/apps/notes/api/v0.2/" + query;
-	private final String theUrl2 = "https://" + user + ":" + password + "@cloud.gerade.org/index.php/apps/notes/api/v0.2/notes";
-	private final String theUrl3 ="https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=steppenhahn";
+	private String theUrl = "https://cloud.gerade.org/index.php/apps/notes/api/v0.2/notes/14582";
+	private String theUrl2 = "https://steppe_testuser:kenny@cloud.gerade.org/index.php/apps/notes/api/v0.2/notes";
+	private String twitterURL = "https://www.twitter.com";
+	
 	public static String note ="nothing";
 	private EditText editTextContent;
 	private EditText editTextTitle;
@@ -53,11 +56,14 @@ public class NoteSingleActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_note_single);
+		
 		editTextContent = (EditText) findViewById(R.id.edittext_note_content);
 		editTextTitle = (EditText) findViewById(R.id.edittext_note_title);
 		id = -1;
+		
 		Intent intent = getIntent();
 		isNewNote = intent.getBooleanExtra("isNewNote", false);
+		
 		if(!isNewNote)
 		{
 			//open saved note: load note-data from intent
@@ -73,22 +79,18 @@ public class NoteSingleActivity extends Activity {
 				//something is wrong with this entry
 			}
 		}
+		
+		
 	}
-
+	
+	public void testGetNoteFromWeb(String anUrl)
+	{
+		new DownloadNoteTask().execute(anUrl );
+	}
 	
 	public void setView(String textString)
 	{
-		try
-		{
-			//JSONObject json = new JSONObject(textString);
-			//this.editText.setText(json.getString("message") );
-			this.editTextContent.setText(textString);
-		}
-		catch(Exception e)
-		{
-			Log.e(TAG, "message:" + e.getMessage() + ", stack:" + e.getStackTrace());
-		}
-		
+		this.editTextContent.setText(textString);
 	}
 	
 	@Override
@@ -100,15 +102,16 @@ public class NoteSingleActivity extends Activity {
 	
 	public void button_save(View view)
 	{
-		//save button clicked
+		//save button clicked. save note and close note
 		saveNote();
+		finish();
 	}
 	
 	public void button_delete(View view)
 	{
 		if(id == -1)
 		{
-			//nothing to delete
+			//unsaved note - nothing to delete
 			finish();
 		}
 		else
@@ -120,6 +123,7 @@ public class NoteSingleActivity extends Activity {
 			String[] whereArgs = { Long.toString(id) };
 			sqlDatabase.delete(NotesTable.NOTES_TABLE_NAME, whereClause, whereArgs);
 			Toast.makeText(this, "note deleted, id=" + id, Toast.LENGTH_SHORT).show();
+			sqlDatabase.close();
 			
 			finish();
 		}
@@ -185,68 +189,63 @@ public class NoteSingleActivity extends Activity {
 	
 	public void button_test(View view)
 	{
-		new DownloadNoteTask().execute(theUrl2 );
+		testGetNoteFromWeb(theUrl2);
 	}
 	
 	private class DownloadNoteTask extends AsyncTask<String, Void, String> {
 	    /** The system calls this to perform work in a worker thread and
 	      * delivers it the parameters given to AsyncTask.execute() */
-	    protected String doInBackground(String... url) {
-	        
-	    	/*
-	    	StringBuilder result = new StringBuilder();
-	    	HttpsURLConnection urlConnection = null;
+	    protected String doInBackground(String... anUrl) {
 	    	
-	    	try
-	    	{
-	    		urlConnection = (HttpsURLConnection) urls[0].openConnection();
-	    	}
-	    	catch(IOException ioException)
-	    	{
-	    		Log.e(TAG, "IO exception caugh: " + ioException.getMessage() );
-	    	}
+	    	StringBuilder stringBuilder = new StringBuilder();
+	    	URL url;
 	    	
-	    	if(urlConnection != null)
-	    	{
-	    		Log.d(TAG, "urlConnection not null");
-	    		try
-	    		{
-	    			BufferedReader reader = new BufferedReader(new InputStreamReader( urlConnection.getInputStream() ) ); 
-	    			String line;
-	    			
-	    			while ( (line = reader.readLine()) != null )
-	    			{
-	    				result.append(line);
-	    				 Log.d(TAG, "line:" + line);
-	    			}
-	    		}
-	    		catch(IOException ioException)
-	    		{
-	    			Log.e(TAG, "io exception: " + ioException.getMessage() + "stack:" + ioException.fillInStackTrace());
-	    		}
-	    		
-	    		return result.toString();
-	    	}
-	    	else
-	    	{
-	    		return null;
-	    	}
-	    	*/ 
+			try {
+				url = new URL(anUrl[0]);
+				HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
+				
+				/*
+				urlConnection.setDoInput(true);
+				urlConnection.setDoOutput(true);
+				urlConnection.setRequestMethod("GET");
+				String auth = user + ":" + password; 
+				urlConnection.setRequestProperty("Authorization", auth);
+				*/
+				Log.d(TAG, "before");
+				BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));  // HIER HAUT IRGENDWAS NICHT GANZ HIN :(((
+				
+				Log.d(TAG, "after");
+				String line;
+				while( (line = reader.readLine() ) != null)
+				{
+					stringBuilder.append(line);
+					Log.d(TAG, "line:" + line);
+				}
+			} 
+			catch (MalformedURLException e) 
+			{
+				e.printStackTrace();
+				Log.e(TAG, e.toString());
+				
+			}
+	    	catch (IOException e) {
+				e.printStackTrace();
+				Log.e(TAG, e.toString());
+			}
 	    	
 	    	
-	    	Get get = Http.get(url[0]);
-	    	return get.text();
+	    	return stringBuilder.toString();
 	    	
 	    }
 	    
 	    /** The system calls this to perform work in the UI thread and delivers
 	      * the result from doInBackground() */
 	    protected void onPostExecute(String result) {
-	       setView(result);
+	    	setView(result);
 	    }
 	    
 	    protected void onProgressUpdate() {
-	         Log.d(TAG, "doing....");
+	    	Log.d(TAG, "doing....");
 	         
 	    }
 	}
