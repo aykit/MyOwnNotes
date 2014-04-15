@@ -69,7 +69,8 @@ public class NoteListActivity
 	{
 		super.onResume();
 		updateSettings();
-		if(settings.getBoolean(SettingsActivity.PREF_AUTOSYNC, true))
+		if(settings.getBoolean(SettingsActivity.PREF_AUTOSYNC, true) &&
+				settings.getBoolean(SettingsActivity.PREF_INITIALIZED, false) )
 		{
 			synchronizeNotes();
 		}
@@ -717,10 +718,12 @@ public class NoteListActivity
 	    	if(result.equals("ERROR MalformedURLException"))
 	    	{
 	    		Toast.makeText(getApplicationContext(), "the url you request data from is not correctly formed", Toast.LENGTH_LONG).show();
+	    		hideProgressBar();
 	    	}
 	    	else if(result.equals("ERROR IOException"))
 			{
 	    		Toast.makeText(getApplicationContext(), "the url you request data from doesn't seem to exist. check spelling or your internet-connection", Toast.LENGTH_LONG).show();
+	    		hideProgressBar();
 			}
 	    	else
 	    	{

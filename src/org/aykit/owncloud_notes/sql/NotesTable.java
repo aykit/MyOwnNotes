@@ -15,9 +15,9 @@ public class NotesTable {
 	public static final String COLUMN_STATUS = "noteStatus";
 	
 	//values for COLUMN_STATUS
-	public static final String TO_DELETE = "toDelete";
-	public static final String NEW_NOTE = "newNote";
-	public static final String TO_UPDATE = "toUpdate";
+	public static final String TO_DELETE = "to Delete";
+	public static final String NEW_NOTE = "new Note";
+	public static final String TO_UPDATE = "to Update";
 	
 	public static final String[] COLUMNNAMES = {
 		COLUMN_ID,

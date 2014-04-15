@@ -21,6 +21,7 @@ public class SettingsActivity extends Activity {
 	public static final String PREF_ADDRESS = "address";
 	public static final String PREF_AUTOSYNC = "sync";
 	public static final String PREF_DEFAULT_TITLE = "defaultTitle";
+	public static final String PREF_INITIALIZED = "initialized";
 	
 	private final int minimumPasswordLength = 1;
 	private final char[] forbiddenSymbols = { '"', '\'' };
@@ -143,6 +144,7 @@ public class SettingsActivity extends Activity {
 		//save sync and defaultTitle checkbox-states
 		editor.putBoolean(PREF_AUTOSYNC, autoSync.isChecked());
 		editor.putBoolean(PREF_DEFAULT_TITLE, defaultTitle.isChecked() );
+		editor.putBoolean(PREF_INITIALIZED, true);
 		
 		editor.commit();
 		
