@@ -7,16 +7,14 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import javax.net.ssl.HttpsURLConnection;
-
+import org.aykit.MyOwnNotes.R;
 import org.aykit.owncloud_notes.classes.MySimpleCursorLoader;
 import org.aykit.owncloud_notes.sql.NotesOpenHelper;
 import org.aykit.owncloud_notes.sql.NotesTable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;

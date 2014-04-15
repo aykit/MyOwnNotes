@@ -11,6 +11,7 @@ import android.webkit.URLUtil;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
+import org.aykit.MyOwnNotes.R;
 
 
 public class SettingsActivity extends Activity {

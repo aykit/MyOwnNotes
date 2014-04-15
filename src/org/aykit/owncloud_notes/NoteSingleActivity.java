@@ -1,12 +1,11 @@
 package org.aykit.owncloud_notes;
 
+import org.aykit.MyOwnNotes.R;
 import org.aykit.owncloud_notes.sql.NotesOpenHelper;
 import org.aykit.owncloud_notes.sql.NotesTable;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.annotation.SuppressLint;
