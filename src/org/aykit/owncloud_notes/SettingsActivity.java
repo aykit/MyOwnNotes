@@ -19,16 +19,17 @@ public class SettingsActivity extends Activity {
 	public static final String PREF_USERNAME = "username";
 	public static final String PREF_PASSWOORD = "password";
 	public static final String PREF_ADDRESS = "address";
-	public static final String PREF_SYNC = "sync";
-	public static final String PREF_FILE = "preferences";
+	public static final String PREF_AUTOSYNC = "sync";
+	public static final String PREF_DEFAULT_TITLE = "defaultTitle";
 	
-	private final int minimumPasswordLength = 6;
+	private final int minimumPasswordLength = 1;
 	private final char[] forbiddenSymbols = { '"', '\'' };
 	
 	private EditText username;
 	private EditText password;
 	private EditText address;
-	private CheckBox sync;
+	private CheckBox autoSync;
+	private CheckBox defaultTitle;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,14 +41,17 @@ public class SettingsActivity extends Activity {
 		username = (EditText) findViewById(R.id.edittext_username);
 		password = (EditText) findViewById(R.id.edittext_password);
 		address = (EditText) findViewById(R.id.edittext_server_address);
-		sync = (CheckBox) findViewById(R.id.checkbox_sync_automatically);
+		autoSync = (CheckBox) findViewById(R.id.checkbox_sync_automatically);
+		defaultTitle = (CheckBox) findViewById(R.id.checkbox_defaultnotetitle);
+		
 		
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		
 		username.setText( settings.getString(PREF_USERNAME, ""));
 		password.setText(settings.getString(PREF_PASSWOORD, ""));
 		address.setText(settings.getString(PREF_ADDRESS, "https://"));
-		sync.setChecked(settings.getBoolean(PREF_SYNC, true));
+		autoSync.setChecked(settings.getBoolean(PREF_AUTOSYNC, true));
+		defaultTitle.setChecked( settings.getBoolean(PREF_DEFAULT_TITLE, true));
 		
 		
 	}
@@ -86,9 +90,17 @@ public class SettingsActivity extends Activity {
 	}
 	
 	/**
-	 * updates the in <code>SharedPreferences</code> saved username, password, server-url with given information in <code>EditText</code>-fields - iff they are valid
-	 * produces <code>Toasts</code> to let user know, what has gone wrong.
-	 * @return	<code>true</code> iff username, password, server-url are valid and credentials have been saved
+	 * updates the in <code>DefaultSharedPreferences</code> saved username, password, server-url and checkbox-states
+	 * with the given information in <code>EditText</code>-fields.
+	 * But only iff <code>EditText</code>s contain valid values.
+	 * produces <code>Toasts</code> to let user know if something - and what - has gone wrong. 
+	 * <p>calls the following methods to check validity of username, password and url:
+	 * <li><code>{@link #isValidUsername(EditText)}</code></li>
+	 * <li><code>{@link #isValidPassword(EditText, int)}</code></li>
+	 * <li><code>{@link #isValidURL(EditText)}</code></li>
+	 * 
+	 * @return	<code>true</code> iff username, password, server-url are valid and the new credentials have been saved.
+	 * @see	@see  {@link #isValidURL(EditText)}
 	 */
 	public boolean updateSettings()
 	{
@@ -109,7 +121,7 @@ public class SettingsActivity extends Activity {
 		}
 		
 		//check password
-		if(isValidPassword(password, minimumPasswordLength))
+		if(isValidPassword(password, minimumPasswordLength) )
 		{
 			editor.putString(PREF_PASSWOORD, password.getText().toString());
 		}
@@ -119,7 +131,7 @@ public class SettingsActivity extends Activity {
 		}
 		
 		//check URL
-		if(isValidURL(address))
+		if(isValidURL(address) )
 		{
 			editor.putString(PREF_ADDRESS, address.getText().toString());
 		}
@@ -128,10 +140,12 @@ public class SettingsActivity extends Activity {
 			return false;
 		}
 		
-		//save sync checkbox-state
-		editor.putBoolean(PREF_SYNC, sync.isChecked());
+		//save sync and defaultTitle checkbox-states
+		editor.putBoolean(PREF_AUTOSYNC, autoSync.isChecked());
+		editor.putBoolean(PREF_DEFAULT_TITLE, defaultTitle.isChecked() );
 		
 		editor.commit();
+		
 		return true;
 	}
 	
@@ -202,6 +216,12 @@ public class SettingsActivity extends Activity {
 	
 	/**
 	 * checks whether the <code>String</code> passed in the <code>EditText</code> object is a valid https-url
+	 * is valid if:
+	 * <li>string is not empty</li>
+	 * <li>string is a valid URL (according to <code>URLUtil.isValidUrl()</code></li>
+	 * <li>string is a https-URL (according to <code>URLUtil.isHttpsUrl()</code>)</li>
+	 * <li>string is at least 13 characters long (example for minimum url: https://ab.at)</li>
+	 * 
 	 * @param toCheck	<code>EditText</code> containing the String to be checked
 	 * @return	<code>true</code> iff the <code>String</code> contains a valid https-url
 	 */
@@ -209,7 +229,7 @@ public class SettingsActivity extends Activity {
 	{
 		String stringToCheck = toCheck.getText().toString();
 		
-		if(stringToCheck.isEmpty() || !URLUtil.isValidUrl(stringToCheck) || !URLUtil.isHttpsUrl(stringToCheck))
+		if(stringToCheck.isEmpty() || !URLUtil.isValidUrl(stringToCheck) || !URLUtil.isHttpsUrl(stringToCheck) || stringToCheck.length() < 13 )
 		{
 			return false;
 		}

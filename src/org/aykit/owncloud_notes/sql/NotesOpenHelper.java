@@ -5,14 +5,14 @@ import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+//import android.util.Log;
 
 public class NotesOpenHelper
 		extends SQLiteOpenHelper
 {
-	private static final String TAG = NotesOpenHelper.class.getSimpleName();
+	//private static final String TAG = NotesOpenHelper.class.getSimpleName();
 	
-	private static int DATABASE_VERSION = 1;
+	private static int DATABASE_VERSION = 3;
 	private static String DATABASE_NAME ="notes.db";
 	
 	
@@ -35,27 +35,31 @@ public class NotesOpenHelper
 	//END:CONSTRUCTORS
 	
 	
-	
-	
 	@Override
 	public void onCreate(SQLiteDatabase db) 
 	{
-		Log.d(TAG, "creating talbe: " + DATABASE_NAME);
+		//Log.d(TAG, "creating table: " + DATABASE_NAME);
 		NotesTable.onCreate(db);
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
 	{
-		Log.d(TAG, "upgrading database: " + DATABASE_NAME);
+		//Log.d(TAG, "upgrading database: " + DATABASE_NAME);
 		NotesTable.onUpgrade(db, oldVersion, newVersion);
 	}
 	
 	@Override
 	public void onOpen(SQLiteDatabase db)
 	{
-		Log.d(TAG, "opening database: " + DATABASE_NAME + ", version: " + db.getVersion() );
+		//Log.d(TAG, "opening database: " + DATABASE_NAME + ", version: " + db.getVersion() );
 		super.onOpen(db);
+	}
+	
+	public void emptyTheDatabase(SQLiteDatabase db)
+	{
+		//Log.d(TAG, "emptying database");
+		NotesTable.emptyTheDatabase(db);
 	}
 	
 }

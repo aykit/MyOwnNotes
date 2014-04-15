@@ -10,7 +10,7 @@
 	    android:id="@+id/action_sync"
 	    android:icon="@drawable/ic_action_refresh"
 	    android:title="@string/action_sync"
-	    android:showAsAction="ifRoom"
+	    android:showAsAction="always"
 	    />
     <item
         android:id="@+id/action_settings"

@@ -9,8 +9,8 @@
     <string name="title_activity_note_single">a Note</string>
     
     <!-- NoteSingle strings -->
-    <string name="note_title">the Note title</string>
-    <string name="note_content">here will stand the text, that is the note. the note will contain of less or more than this here</string>
+    <string name="note_title">Note title</string>
+    <string name="note_content">Note content</string>
     <string name="text_save">save</string>
     <string name="text_delete">delete</string>
     <string name="note_has_been_saved">note has been saved</string>
@@ -32,4 +32,6 @@
     <string name="settings_text_password_hint">password</string>
     <string name="settings_text_synchronization">Synchronization</string>
     <string name="settings_text_sync_automatically">Sync automatically</string>
+    <string name="settings_text_defaultnotetitle">Default Note Title</string>
+    <string name="settings_text_defaultnotetitle_datetime">Date and time</string>
 </resources>

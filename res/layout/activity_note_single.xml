@@ -19,7 +19,8 @@
 	        android:id="@+id/edittext_note_title"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
-	        android:inputType="textMultiLine"
+	        android:inputType="text"
+	        android:maxLines="1"
 	        android:hint="@string/note_title"
 	            />
 	
@@ -27,7 +28,7 @@
 		     android:id="@+id/edittext_note_content"
 		     android:layout_width="match_parent"
 		     android:layout_height="wrap_content"
-		     android:text="@string/note_content"
+		     android:hint="@string/note_content"
 		     android:inputType="textMultiLine"
 		     />
 	    
@@ -50,12 +51,6 @@
 		        android:layout_height="40dp"
 		        android:layout_marginRight="20dp"
 		        android:text="@string/text_save"
-		        />
-	    	<Button 
-		        android:onClick="button_test"
-		        android:layout_width="wrap_content"
-		        android:layout_height="40dp"
-		        android:text="@string/text_test"
 		        />
 	    </LinearLayout>
 	

@@ -79,6 +79,22 @@
          android:text="@string/settings_text_sync_automatically"
          />
      
+     <!-- Note Title -->
+     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_text_defaultnotetitle" 
+        android:textSize="17sp"
+        android:layout_marginTop="20dp"
+        />
+     <CheckBox 
+         android:id="@+id/checkbox_defaultnotetitle"
+         android:checked="true"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="@string/settings_text_defaultnotetitle_datetime"
+         />
+     
     
 
 </LinearLayout>

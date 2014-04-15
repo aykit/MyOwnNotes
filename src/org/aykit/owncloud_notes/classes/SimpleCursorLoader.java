@@ -3,7 +3,6 @@ package org.aykit.owncloud_notes.classes;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.database.Cursor;
-import android.support.v4.content.AsyncTaskLoader;
 
 /**
  * Used to write apps that run on platforms prior to Android 3.0. When running

@@ -1,6 +1,5 @@
 package org.aykit.owncloud_notes.classes;
 
-import org.aykit.owncloud_notes.sql.NotesOpenHelper;
 import org.aykit.owncloud_notes.sql.NotesTable;
 
 import android.content.Context;
