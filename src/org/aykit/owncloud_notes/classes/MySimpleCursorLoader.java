@@ -26,7 +26,7 @@ public class MySimpleCursorLoader extends SimpleCursorLoader {
 				null, 
 				null, 
 				null, 
-				NotesTable.COLUMN_ID + " ASC");
+				NotesTable.COLUMN_ID + " DESC");
 		
 		
 		return cursor;
