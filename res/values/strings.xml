@@ -19,7 +19,7 @@
     <!--  NoteList strings -->
     <string name="action_new">create new note</string>
     <string name="action_sync">synchronize</string>
-    <string name="notelist_empty_list">There are no saved notes. You either did not create any or have not yet synched with your owncloud.</string>
+    <string name="notelist_empty_list">There are no saved notes. You either did not create any or have not yet synched with your ownCloud.</string>
     
     <!--  Settings strings -->
     <string name="settings_text_credentials">Credentials:</string>
