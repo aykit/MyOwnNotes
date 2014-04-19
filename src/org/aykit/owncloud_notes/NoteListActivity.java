@@ -191,15 +191,12 @@ public class NoteListActivity
 		}
 		
 		//upload new notes
-		Log.d(TAG, "writing new notes to server");
 		writeNewNotesToServer(urlToConnect);
 		
 		//update modified notes
-		Log.d(TAG, "writing modified notes to server");
 		writeModifiedNotesToServer(urlToConnect);
 		
 		//delete marked notes
-		Log.d(TAG, "deleting notes from server");
 		deleteMarkedNotesFromServer(urlToConnect);
 		
 		
@@ -296,6 +293,7 @@ public class NoteListActivity
 	
 	public void writeNewNotesToServer(String urlToServer)
 	{
+		Log.d(TAG, "writing new notes to server");
 		//upload all notes with COLUMN_STATUS = NEW_NOTE
 		Cursor cursor = getCursor(NotesTable.NEW_NOTE);
 		
@@ -317,6 +315,7 @@ public class NoteListActivity
 	
 	private void writeModifiedNotesToServer(String urlToServer)
 	{
+		Log.d(TAG, "writing modified notes to server");
 		//upload changes to existing notes marked COLUMN_STATUS = TO_UPDATE
 		Cursor cursor = getCursor(NotesTable.TO_UPDATE);
 		//int rows = cursor.getCount();
@@ -338,6 +337,7 @@ public class NoteListActivity
 	
 	private void deleteMarkedNotesFromServer(String urlToServer)
 	{
+		Log.d(TAG, "deleting notes from server");
 		//delete all notes with COLUM_STATUS = TO_DELETE
 		Cursor cursor = getCursor(NotesTable.TO_DELETE);
 		//int rows = cursor.getCount();
