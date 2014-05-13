@@ -26,6 +26,9 @@
     <string name="action_new">Neue Notiz erstellen</string>
     <string name="action_sync">synchronisieren</string>
     <string name="notelist_empty_list">Keine gespeicherten Notizen vorhanden. Sie haben entweder noch keine erstellt oder Ihre Notizen noch nicht mit ownCloud synchronisiert.</string>
+    <string name="alert_ssl_cert_not_trusted">Anscheinend wollen Sie auf einen Server zugreifen, der ein selbst signiertes Zertifikat verwendet. Um diese Verbindung aufbauen zu können, müssen Sie das Zertifikat des Servers manuell zu Androids Key-Chain hinzufügen. \n\nMöchten Sie eine Anleitung sehen, die erklärt, wie Sie das machen können?</string>
+    <string name="alert_answer_yes">Ja</string>
+    <string name="alert_answer_no_thanks">Nein, danke</string>
     <!-- Toasts -->
     <string name="toast_not_correct_json">Kein gültiges JSON Format vom Server bekommen. Server OK?</string>
     <string name="toast_url_not_correctly_formed">Die URL, von der Datan abgefragt werden, ist nicht formgerecht</string>

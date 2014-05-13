@@ -26,6 +26,9 @@
     <string name="action_new">Create new note</string>
     <string name="action_sync">synchronize</string>
     <string name="notelist_empty_list">There are no saved notes. You either did not create any or have not yet synched with your ownCloud.</string>
+    <string name="alert_ssl_cert_not_trusted">It seems you are trying to connect to a server that uses a self-signed certificate. To be able to open this connection, you have to manually add the server\'s certificate to Androids key-chain. \n\nDo you want to see a tutorial on how to do that?</string>
+    <string name="alert_answer_yes">Yes</string>
+    <string name="alert_answer_no_thanks">No, thanks</string>
     <!-- Toasts -->
     <string name="toast_not_correct_json">Not getting correct JSON from server. Sserver OK?</string>
     <string name="toast_url_not_correctly_formed">The URL you request data from is not correctly formed</string>

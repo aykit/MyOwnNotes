@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLHandshakeException;
 
 import org.aykit.MyOwnNotes.R;
 import org.aykit.owncloud_notes.classes.MySimpleCursorLoader;
@@ -19,13 +20,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.LoaderManager;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
@@ -245,6 +249,34 @@ public class NoteListActivity
 	{
 		MenuItem item = theMenu.findItem(R.id.action_sync);
 		item.setActionView(null);
+	}
+	
+	private void showSSLAlert()
+	{
+		AlertDialog.Builder builder = new AlertDialog.Builder(this ); 
+		
+		builder.setMessage(R.string.alert_ssl_cert_not_trusted);
+		
+		builder.setPositiveButton(R.string.alert_answer_yes, new DialogInterface.OnClickListener() {
+	           public void onClick(DialogInterface dialog, int id) {
+	               // User clicked Yes button
+	        	   // open link to tutorial
+	        	   Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://aykit.org/sites/myownnotes.html") );
+	        	   
+	        	   startActivity(intent);
+	           }
+	       }
+		);
+		builder.setNegativeButton(R.string.alert_answer_no_thanks, new DialogInterface.OnClickListener() {
+	           public void onClick(DialogInterface dialog, int id) {
+	               // User cancelled the dialog
+	           }
+	       }
+		);
+		
+		AlertDialog dialog = builder.create();
+		dialog.show();
+
 	}
 	
 	public void updateDatabase(String result)
@@ -726,8 +758,8 @@ public class NoteListActivity
 			} 
 			catch (MalformedURLException e) 
 			{
-				e.printStackTrace();
-				Log.e(TAG, e.toString());
+				//e.printStackTrace();
+				//Log.e(TAG, e.toString());
 				
 				return "ERROR MalformedURLException";
 			}
@@ -738,9 +770,16 @@ public class NoteListActivity
 				
 				return "ERROR FileNotFoundException";
 			}
+			catch(SSLHandshakeException e)
+			{
+				//e.printStackTrace();
+				//Log.e(TAG, e.toString());
+				
+				return "ERROR SSLHandshakeException";
+			}
 	    	catch (IOException e) {
-				e.printStackTrace();
-				Log.e(TAG, e.toString() );
+				//e.printStackTrace();
+				//Log.e(TAG, e.toString() );
 				return "ERROR IOException";
 			}
 			
@@ -751,20 +790,25 @@ public class NoteListActivity
 	    /** The system calls this to perform work in the UI thread and delivers
 	      * the result from doInBackground() */
 	    protected void onPostExecute(String result) {
-	    	if(result.equals("ERROR MalformedURLException"))
+	    	if(result.equals("ERROR MalformedURLException") )
 	    	{
 	    		Toast.makeText(getApplicationContext(), R.string.toast_url_not_correctly_formed, Toast.LENGTH_LONG).show();
 	    		hideProgressBar();
 	    	}
-	    	else if(result.equals("ERROR IOException"))
+	    	else if(result.equals("ERROR IOException") )
 			{
 	    		Toast.makeText(getApplicationContext(), R.string.toast_url_doesnt_exist, Toast.LENGTH_LONG).show();
 	    		hideProgressBar();
 			}
-	    	else if(result.equals("ERROR FileNotFoundException" ))
+	    	else if(result.equals("ERROR FileNotFoundException" ) )
 	    	{
 	    		Toast.makeText(getApplicationContext(), R.string.toast_connection_error, Toast.LENGTH_LONG).show();
 	    		hideProgressBar();
+	    	}
+	    	else if(result.equals("ERROR SSLHandshakeException") )
+	    	{
+	    		hideProgressBar();
+	    		showSSLAlert();
 	    	}
 	    	else
 	    	{
