@@ -128,11 +128,12 @@ public class NoteSingleActivity extends Activity {
 			values.put(NotesTable.COLUMN_STATUS, NotesTable.NEW_NOTE); //mark note as new note
 			sqlDatabase.insert(NotesTable.NOTES_TABLE_NAME, null, values);
 			//Log.d(TAG, "new note saved successfully: " + inserted);
-			Toast.makeText(this, "New note saved", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.toast_new_note_saved, Toast.LENGTH_SHORT).show();
 			
 		}
 		else if(status.equals(NotesTable.NEW_NOTE))
 		{
+			//note is new but was changed before first upload
 			//must update existing NoteTable
 			String selection = NotesTable.COLUMN_ID + " = ?";
 			String[] selectionArgs = { Long.toString(id) };
@@ -140,10 +141,10 @@ public class NoteSingleActivity extends Activity {
 			ContentValues values = new ContentValues();
 			values.put(NotesTable.COLUMN_TITLE, newTitle );
 			values.put(NotesTable.CLOUMN_CONTENT, newContent);
-			values.put(NotesTable.COLUMN_STATUS, NotesTable.NEW_NOTE); //mark note for update
+			values.put(NotesTable.COLUMN_STATUS, NotesTable.NEW_NOTE); //mark note as new note
 			
 			sqlDatabase.update(NotesTable.NOTES_TABLE_NAME, values, selection, selectionArgs);
-			Toast.makeText(this, "Changes saved", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.toast_changes_saved, Toast.LENGTH_SHORT).show();
 		}
 		else
 		{
@@ -157,7 +158,7 @@ public class NoteSingleActivity extends Activity {
 			values.put(NotesTable.COLUMN_STATUS, NotesTable.TO_UPDATE); //mark note for update
 			
 			sqlDatabase.update(NotesTable.NOTES_TABLE_NAME, values, selection, selectionArgs);
-			Toast.makeText(this, "Changes saved", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.toast_changes_saved, Toast.LENGTH_SHORT).show();
 			
 		}
 		//Log.d(TAG, "note saved successfully");
@@ -178,7 +179,7 @@ public class NoteSingleActivity extends Activity {
 		if(id == -1)
 		{
 			//unsaved note - nothing to delete
-			Toast.makeText(this, "Note deleted", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.toast_note_deleted, Toast.LENGTH_SHORT).show();
 			finish();
 		}
 		else
@@ -194,7 +195,7 @@ public class NoteSingleActivity extends Activity {
 			values.put(NotesTable.COLUMN_STATUS, NotesTable.TO_DELETE); //mark note for update
 			
 			sqlDatabase.update(NotesTable.NOTES_TABLE_NAME, values, selection, selectionArgs);
-			Toast.makeText(this, "Note marked for deletion", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.toast_note_marked_to_delete, Toast.LENGTH_SHORT).show();
 			sqlDatabase.close();
 			notesOpenHelper.close();
 			

@@ -2,12 +2,15 @@ package org.aykit.owncloud_notes;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import javax.net.ssl.HttpsURLConnection;
+
 import org.aykit.MyOwnNotes.R;
 import org.aykit.owncloud_notes.classes.MySimpleCursorLoader;
 import org.aykit.owncloud_notes.sql.NotesOpenHelper;
@@ -15,6 +18,7 @@ import org.aykit.owncloud_notes.sql.NotesTable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -276,7 +280,7 @@ public class NoteListActivity
 		catch(JSONException jsonE)
 		{
 			//something went wrong with json
-			Toast.makeText(this, "not getting correct JSON from server. server ok?", Toast.LENGTH_LONG).show();
+			Toast.makeText(this, R.string.toast_not_correct_json, Toast.LENGTH_LONG).show();
 			jsonE.printStackTrace();
 			Log.e(TAG, "no correct JSON data returned from server. first 30 chars from server:" + result.substring(0, 29));
 		}
@@ -701,11 +705,19 @@ public class NoteListActivity
 				
 				return "ERROR MalformedURLException";
 			}
+			catch(FileNotFoundException e)
+			{
+				//e.printStackTrace();
+				//Log.e(TAG, e.toString());
+				
+				return "ERROR FileNotFoundException";
+			}
 	    	catch (IOException e) {
 				e.printStackTrace();
 				Log.e(TAG, e.toString() );
 				return "ERROR IOException";
 			}
+			
 	    	
 	    	return stringBuilder.toString();
 	    }
@@ -715,14 +727,19 @@ public class NoteListActivity
 	    protected void onPostExecute(String result) {
 	    	if(result.equals("ERROR MalformedURLException"))
 	    	{
-	    		Toast.makeText(getApplicationContext(), "the url you request data from is not correctly formed", Toast.LENGTH_LONG).show();
+	    		Toast.makeText(getApplicationContext(), R.string.toast_url_not_correctly_formed, Toast.LENGTH_LONG).show();
 	    		hideProgressBar();
 	    	}
 	    	else if(result.equals("ERROR IOException"))
 			{
-	    		Toast.makeText(getApplicationContext(), "the url you request data from doesn't seem to exist. check spelling or your internet-connection", Toast.LENGTH_LONG).show();
+	    		Toast.makeText(getApplicationContext(), R.string.toast_url_doesnt_exist, Toast.LENGTH_LONG).show();
 	    		hideProgressBar();
 			}
+	    	else if(result.equals("ERROR FileNotFoundException" ))
+	    	{
+	    		Toast.makeText(getApplicationContext(), R.string.toast_connection_error, Toast.LENGTH_LONG).show();
+	    		hideProgressBar();
+	    	}
 	    	else
 	    	{
 	    		//"result" contains a JSON with _all_ notes from owncloud server.

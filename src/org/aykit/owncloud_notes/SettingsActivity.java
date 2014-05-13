@@ -118,7 +118,7 @@ public class SettingsActivity extends Activity {
 			editor.putString(PREF_USERNAME, username.getText().toString());
 		}
 		else {
-			Toast.makeText(this, "please enter a valid username", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.toast_enter_valid_username, Toast.LENGTH_SHORT).show();
 			return false;
 		}
 		
@@ -128,7 +128,7 @@ public class SettingsActivity extends Activity {
 			editor.putString(PREF_PASSWOORD, password.getText().toString());
 		}
 		else {
-			Toast.makeText(this, "please enter a valid password. minimum length = " + minimumPasswordLength, Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.toast_enter_password, Toast.LENGTH_SHORT).show();
 			return false;
 		}
 		
@@ -138,7 +138,7 @@ public class SettingsActivity extends Activity {
 			editor.putString(PREF_ADDRESS, address.getText().toString());
 		}
 		else {
-			Toast.makeText(this, "please enter a valid url. must be https://", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.toast_enter_valid_https, Toast.LENGTH_SHORT).show();
 			return false;
 		}
 		
