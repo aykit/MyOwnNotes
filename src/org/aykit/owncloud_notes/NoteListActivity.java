@@ -37,7 +37,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,6 +53,7 @@ public class NoteListActivity
 	private SimpleCursorAdapter simpleCursorAdapter;
 	private LoaderManager loaderManager;
 	private SharedPreferences settings;
+	private Menu theMenu;
 	
 	
 	@Override
@@ -62,6 +62,10 @@ public class NoteListActivity
 		setContentView(R.layout.activity_note_list);
 		
 		updateSettings();
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putBoolean(SettingsActivity.PREF_MENU_INFLATED, false); //this is done to save the fact that menus are not inflated yet.
+		editor.commit();
+		
 		loaderManager = getLoaderManager();
 		notesOpenHelper = new NotesOpenHelper(this);
 	}
@@ -71,12 +75,24 @@ public class NoteListActivity
 	{
 		super.onResume();
 		updateSettings();
-		if(settings.getBoolean(SettingsActivity.PREF_AUTOSYNC, true) &&
-				settings.getBoolean(SettingsActivity.PREF_INITIALIZED, false) )
-		{
+		if(settings.getBoolean(SettingsActivity.PREF_AUTOSYNC, true) &&				//autosync must be on
+				settings.getBoolean(SettingsActivity.PREF_INITIALIZED, false) &&	//the settings (serveraddress, username, password) must be entered
+				settings.getBoolean(SettingsActivity.PREF_MENU_INFLATED, false) ) 	//because we need to check whether the menu has been inflated or not
+		{																		  	//synchronizeNotes() accesses the menu. if menu is not inflated and access is tried -> NullPointerException
 			synchronizeNotes();
 		}
 		showAndFillListView();
+	}
+	
+	@Override
+	protected void onDestroy()
+	{
+		super.onDestroy();
+		
+		updateSettings();
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putBoolean(SettingsActivity.PREF_MENU_INFLATED, false); // just to make sure, it is set to false next time activity is started
+		editor.commit();
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -102,6 +118,16 @@ public class NoteListActivity
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.note_list, menu);
+		this.theMenu = menu;
+		
+		//save, that Menu has been inflated
+		updateSettings();
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putBoolean(SettingsActivity.PREF_MENU_INFLATED, true);
+		editor.commit();
+		//then synchronize the notes at startup
+		synchronizeNotes();
+		
 		return true;
 	}
 	
@@ -211,14 +237,14 @@ public class NoteListActivity
 	
 	private void showProgressBar()
 	{
-		ProgressBar pBar = (ProgressBar) findViewById(R.id.pbar);
-		pBar.setVisibility(ProgressBar.VISIBLE);
+		MenuItem item = theMenu.findItem(R.id.action_sync);
+		item.setActionView(R.layout.progressbar);
 	}
 	
 	private void hideProgressBar()
 	{
-		ProgressBar pBar = (ProgressBar) findViewById(R.id.pbar);
-		pBar.setVisibility(ProgressBar.GONE);
+		MenuItem item = theMenu.findItem(R.id.action_sync);
+		item.setActionView(null);
 	}
 	
 	public void updateDatabase(String result)

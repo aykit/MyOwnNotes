@@ -23,6 +23,7 @@ public class SettingsActivity extends Activity {
 	public static final String PREF_AUTOSYNC = "sync";
 	public static final String PREF_DEFAULT_TITLE = "defaultTitle";
 	public static final String PREF_INITIALIZED = "initialized";
+	public static final String PREF_MENU_INFLATED = "menuInflated";
 	
 	private final int minimumPasswordLength = 1;
 	private final char[] forbiddenSymbols = { '"', '\'' };
