@@ -8,7 +8,9 @@
     <string name="title_activity_settings">Einstellungen</string>
     <string name="title_activity_note_list">MyOwnNotes</string>
     <string name="title_activity_note_single">Notiz</string>
-
+	<string name="title_activity_about_activity">Info</string>
+    <string name="title_activity_help_activity">Hilfe</string>
+    
     <!-- NoteSingle strings -->
     <string name="note_title">Notiztitel</string>
     <string name="note_content">Notizinhalt</string>
@@ -25,6 +27,8 @@
     <!--  NoteList strings -->
     <string name="action_new">Neue Notiz erstellen</string>
     <string name="action_sync">synchronisieren</string>
+        <string name="action_about">Info</string>
+    <string name="action_help">Hilfe</string>
     <string name="notelist_empty_list">Keine gespeicherten Notizen vorhanden. Sie haben entweder noch keine erstellt oder Ihre Notizen noch nicht mit ownCloud synchronisiert.</string>
     <string name="alert_ssl_cert_not_trusted">Anscheinend wollen Sie auf einen Server zugreifen, der ein selbst signiertes Zertifikat verwendet. Um diese Verbindung aufbauen zu können, müssen Sie das Zertifikat des Servers manuell dem Android Schlüsselbund hinzufügen. \n\nMöchten Sie jetzt die Anleitung dazu lesen?</string>
     <string name="alert_answer_yes">Ja</string>
@@ -54,6 +58,22 @@
     <string name="toast_enter_password">Bitte geben Sie Ihr Passwort ein</string>
     <string name="toast_enter_valid_https">Bitte geben Sie eine gültige URL an. Diese muss mit \"https://\" beginnen.</string>
     
+    <!-- About strings -->
+    <string name="text_aykit_logo">Das aykit Logo</string>
+    <string name="text_about_text">Diese App wurde von Aykit - Verein zur Förderung von Kunst, Kultur und Wissenschaft – erstellt. \nMehr Informationen auf unserer Website: \n\nhttp://aykit.org</string>
+    
+    <!-- Help strings -->
+    <string name="text_help_text">
+        Welche URL soll ich eingeben?\n
+		Bitte geben Sie die URL zum Quellverzeichnis der ownCloud-Installation an. Das ist dieselbe URL, mit der Sie auf Ihre ownCloud per Browser zugreifen. \n(z.B.: https://meineowncloud.com)
+        \n\n
+        Kann ich über diese App auf meine ownCloud auch via http und nicht per https zugreifen?\n
+		Nein, das ist nicht möglich. Die Notes-API verlangt, dass Benutzername und Password für jede Verbindung mitgeschickt werden muss. Würde man http verwenden, würden diese essenziellen Daten in Plain-Text übertragen werden. Keine gute Idee! \n(Warum? Lesen Sie das: "Man-in-the-middle"-Attacke http://de.wikipedia.org/wiki/Man-in-the-middle-Angriff)
+        \n\n
+        Ich habe einen ownCloud-Server, der ein selbst signiertes Zertifikat verwendet. Kann ich diese App für meinen Server verwenden?\n
+		Ja, können Sie – aber nicht einfach so. Sie müssen Android vorher zuerst explizit sagen, dass es Ihr selbst signiertes Zertifikat akzeptieren soll. Das geschieht, in dem man das Zertifikat manuell zu Androids Schlüsselbund hinzufügt.
+		\nFolgen Sie dieser Anleitung, wie man das macht: http://aykit.org/sites/myownnotes.html
+    </string>
     
     <!--  NoteTable -->
     <string name="to_delete">zu löschen</string>

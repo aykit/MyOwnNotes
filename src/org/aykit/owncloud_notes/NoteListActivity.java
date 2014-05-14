@@ -178,6 +178,17 @@ public class NoteListActivity
 	        	startActivity(intent);
 	            return true;
 	            
+	        case R.id.action_help:
+	        	//show help
+	        	intent = new Intent(this, HelpActivity.class);
+	        	startActivity(intent);
+	        	return true;
+	        	
+	        case R.id.action_about:
+	        	//show about
+	        	intent = new Intent(this, AboutActivity.class);
+	        	startActivity(intent);
+	       
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }

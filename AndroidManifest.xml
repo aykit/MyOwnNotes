@@ -29,8 +29,6 @@
 	            android:name="android.support.PARENT_ACTIVITY"
 	            android:value="org.aykit.owncloud_notes.NoteListActivity" 
 	            />
-             
-            
         </activity>
         <activity
             android:name="org.aykit.owncloud_notes.NoteListActivity"
@@ -38,7 +36,6 @@
             >
 	        <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -52,7 +49,28 @@
 	            android:name="android.support.PARENT_ACTIVITY"
 	            android:value="org.aykit.owncloud_notes.NoteListActivity" 
 	            />
-            
+        </activity>
+        <activity
+            android:name="org.aykit.owncloud_notes.AboutActivity"
+            android:label="@string/title_activity_about_activity" 
+            android:parentActivityName="org.aykit.owncloud_notes.NoteListActivity" 
+            >
+	        <!-- Parent activity meta-data to support 4.0 and lower -->
+	        <meta-data
+	            android:name="android.support.PARENT_ACTIVITY"
+	            android:value="org.aykit.owncloud_notes.NoteListActivity" 
+	            />
+        </activity>
+        <activity
+            android:name="org.aykit.owncloud_notes.HelpActivity"
+            android:label="@string/title_activity_help_activity" 
+            android:parentActivityName="org.aykit.owncloud_notes.NoteListActivity" 
+            >
+	        <!-- Parent activity meta-data to support 4.0 and lower -->
+	        <meta-data
+	            android:name="android.support.PARENT_ACTIVITY"
+	            android:value="org.aykit.owncloud_notes.NoteListActivity" 
+	            />
         </activity>
     </application>
 
