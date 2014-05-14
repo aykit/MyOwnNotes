@@ -104,7 +104,7 @@ public class NoteListActivity
 	protected void onPause()
 	{
 		super.onPause();
-		if(sqlDatabase.isOpen() )
+		if(sqlDatabase != null && sqlDatabase.isOpen() )
 		{
 			sqlDatabase.close();
 		}
@@ -300,10 +300,8 @@ public class NoteListActivity
 		//update the database with "result" (= a json with _all_ notes)
 		//Toast.makeText(this, result, Toast.LENGTH_LONG).show();
 		
-		if(!sqlDatabase.isOpen() )
-		{
-			sqlDatabase = notesOpenHelper.getWritableDatabase();
-		}
+		sqlDatabase = notesOpenHelper.getWritableDatabase();
+		
 		
 		notesOpenHelper.emptyTheDatabase(sqlDatabase);
 		
@@ -432,10 +430,8 @@ public class NoteListActivity
 	
 	private Cursor getCursor(String status)
 	{
-		if(!sqlDatabase.isOpen() )
-		{
-			sqlDatabase = notesOpenHelper.getWritableDatabase();
-		}
+		sqlDatabase = notesOpenHelper.getWritableDatabase();
+		
 		
 		String selection = NotesTable.COLUMN_STATUS + " = ?";
 		String[] selectionArgs = new String[1];
