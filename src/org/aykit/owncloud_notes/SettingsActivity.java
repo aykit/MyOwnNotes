@@ -33,6 +33,7 @@ public class SettingsActivity extends Activity {
 	private EditText address;
 	private CheckBox autoSync;
 	private CheckBox defaultTitle;
+	private SharedPreferences settings;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +49,7 @@ public class SettingsActivity extends Activity {
 		defaultTitle = (CheckBox) findViewById(R.id.checkbox_defaultnotetitle);
 		
 		
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		settings = PreferenceManager.getDefaultSharedPreferences(this);
 		
 		username.setText( settings.getString(PREF_USERNAME, ""));
 		password.setText(settings.getString(PREF_PASSWOORD, ""));
@@ -92,6 +93,13 @@ public class SettingsActivity extends Activity {
 	    return super.onOptionsItemSelected(item);
 	}
 	
+	@Override
+	protected void onPause()
+	{
+		super.onPause();
+		updateSettings();
+	}
+	
 	/**
 	 * updates the in <code>DefaultSharedPreferences</code> saved username, password, server-url and checkbox-states
 	 * with the given information in <code>EditText</code>-fields.
@@ -110,7 +118,7 @@ public class SettingsActivity extends Activity {
 		//save changed settings
 		Log.d(TAG, "saving settings-changes");
 		
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		settings = PreferenceManager.getDefaultSharedPreferences(this);
 		SharedPreferences.Editor editor = settings.edit();
 		
 		//check username
@@ -149,6 +157,8 @@ public class SettingsActivity extends Activity {
 		editor.putBoolean(PREF_INITIALIZED, true);
 		
 		editor.commit();
+		
+		Toast.makeText(this, R.string.settings_text_saved, Toast.LENGTH_SHORT).show();
 		
 		return true;
 	}

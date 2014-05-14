@@ -22,6 +22,7 @@ import org.json.JSONObject;
 
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.app.AlertDialog;
@@ -130,7 +131,11 @@ public class NoteListActivity
 		editor.putBoolean(SettingsActivity.PREF_MENU_INFLATED, true);
 		editor.commit();
 		//then synchronize the notes at startup
-		synchronizeNotes();
+		if(settings.getBoolean(SettingsActivity.PREF_AUTOSYNC, true) &&				//autosync must be on
+				settings.getBoolean(SettingsActivity.PREF_INITIALIZED, false)  ) 	//because we need to check whether the menu has been inflated or not
+		{
+			synchronizeNotes();
+		}
 		
 		return true;
 	}
@@ -502,6 +507,12 @@ public class NoteListActivity
 				String auth = url.getUserInfo();
 				String basicAuth = "Basic " + new String(Base64.encode(auth.getBytes(), Base64.DEFAULT));
 				urlConnection.setRequestProperty("Authorization", basicAuth);
+				
+				if (Build.VERSION.SDK_INT > 13) 
+				{
+						urlConnection.setRequestProperty("Connection", "close");
+				}
+				
 				urlConnection.connect();
 				
 				int connectionCode = urlConnection.getResponseCode();
@@ -576,6 +587,11 @@ public class NoteListActivity
 				urlConnection.setFixedLengthStreamingMode(json.toString().getBytes().length);
 				
 				urlConnection.setRequestProperty("Content-Type", "application/json");
+				
+				if (Build.VERSION.SDK_INT > 13) 
+				{
+						urlConnection.setRequestProperty("Connection", "close");
+				}
 
 				urlConnection.connect();
 				
@@ -659,6 +675,12 @@ public class NoteListActivity
 				String auth = url.getUserInfo();
 				String basicAuth = "Basic " + new String(Base64.encode(auth.getBytes(), Base64.DEFAULT));
 				urlConnection.setRequestProperty("Authorization", basicAuth);
+				
+				if (Build.VERSION.SDK_INT > 13) 
+				{
+						urlConnection.setRequestProperty("Connection", "close");
+				}
+				
 				urlConnection.setFixedLengthStreamingMode(json.toString().getBytes().length);
 				
 				urlConnection.setRequestProperty("Content-Type", "application/json");
@@ -671,6 +693,8 @@ public class NoteListActivity
 				outputStream.close();
 				
 				int connectionCode = urlConnection.getResponseCode();
+				
+				
 				
 				if(connectionCode == 200)
 				{
@@ -687,6 +711,8 @@ public class NoteListActivity
 					Log.e(TAG, "failure @ upload new Note");
 					return false;
 				}
+				
+				
 				
 			}
 			catch(MalformedURLException e)
@@ -746,6 +772,11 @@ public class NoteListActivity
 				String auth = url.getUserInfo(); 
 				String basicAuth = "Basic " + new String(Base64.encode(auth.getBytes(), Base64.DEFAULT));
 				urlConnection.setRequestProperty("Authorization", basicAuth);
+				
+				if (Build.VERSION.SDK_INT > 13) 
+				{
+						urlConnection.setRequestProperty("Connection", "close");
+				}
 				
 				BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
 				
