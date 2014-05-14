@@ -100,10 +100,24 @@ public class NoteListActivity
 		editor.commit();
 	}
 	
+	@Override
+	protected void onPause()
+	{
+		super.onPause();
+		if(sqlDatabase.isOpen() )
+		{
+			sqlDatabase.close();
+		}
+	}
+	
 	@SuppressWarnings("deprecation")
 	private void showAndFillListView()
 	{
-		sqlDatabase = notesOpenHelper.getWritableDatabase();
+		if(!sqlDatabase.isOpen() )
+		{
+			sqlDatabase = notesOpenHelper.getWritableDatabase();
+		}
+		
 		
 		String[] from = { NotesTable.COLUMN_TITLE, NotesTable.CLOUMN_CONTENT, NotesTable.COLUMN_STATUS };
 		int[] to = {R.id.textview_note_row_title, R.id.textview_note_row_content, R.id.textview_note_row_marked };
@@ -349,9 +363,7 @@ public class NoteListActivity
 		}
 		
 		
-		//update complete
-		sqlDatabase.close();
-		notesOpenHelper.close();
+		
 		
 		showAndFillListView(); //refresh listview
 		hideProgressBar();
@@ -423,7 +435,10 @@ public class NoteListActivity
 	
 	private Cursor getCursor(String status)
 	{
-		sqlDatabase = notesOpenHelper.getWritableDatabase();
+		if(!sqlDatabase.isOpen() )
+		{
+			sqlDatabase = notesOpenHelper.getWritableDatabase();
+		}
 		
 		String selection = NotesTable.COLUMN_STATUS + " = ?";
 		String[] selectionArgs = new String[1];
@@ -451,7 +466,6 @@ public class NoteListActivity
 		
 		cursor.moveToFirst();
 		
-		sqlDatabase.close();
 		return cursor;
 	}
 	
@@ -473,11 +487,7 @@ public class NoteListActivity
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		simpleCursorAdapter.swapCursor(data);
-		if(sqlDatabase.isOpen())
-		{
-			sqlDatabase.close();
-		}	
+		simpleCursorAdapter.swapCursor(data);	
 	}
 
 	@Override
