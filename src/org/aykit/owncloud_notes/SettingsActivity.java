@@ -70,26 +70,15 @@ public class SettingsActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		
-		boolean okToClose = false;
 	    switch (item.getItemId()) 
 	    {
 	    // Respond to the action bar's Up/Home button
 		    case android.R.id.home:
 		    	
-		    	okToClose = updateSettings();
-		        
-		    	if(okToClose)
-		    	{
-		    		NavUtils.navigateUpFromSameTask(this);
-		    		return true;
-		    	}
-		    	else
-		    	{
-		    		//something was missing or incorrect
-		    		return true;
-		    	}
-		        
-	    }
+		    	updateSettings();
+		        NavUtils.navigateUpFromSameTask(this);
+		    	return true;
+		}
 	    return super.onOptionsItemSelected(item);
 	}
 	
