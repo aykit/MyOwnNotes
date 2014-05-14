@@ -34,13 +34,14 @@ public class NoteSingleActivity extends Activity {
 	private String status;
 	private long id;
 	private boolean isNewNote;
+	private SharedPreferences settings;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_note_single);
 		
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		settings = PreferenceManager.getDefaultSharedPreferences(this);
 		editTextContent = (EditText) findViewById(R.id.edittext_note_content);
 		editTextTitle = (EditText) findViewById(R.id.edittext_note_title);
 		id = -1;
@@ -191,15 +192,30 @@ public class NoteSingleActivity extends Activity {
 			String selection = NotesTable.COLUMN_ID + " = ?";
 			String[] selectionArgs = { Long.toString(id) };
 			
-			ContentValues values = new ContentValues();
-			values.put(NotesTable.COLUMN_STATUS, NotesTable.TO_DELETE); //mark note for update
+			if(!status.equals(NotesTable.NEW_NOTE) ) //if not new note
+			{
+				ContentValues values = new ContentValues();
+				values.put(NotesTable.COLUMN_STATUS, NotesTable.TO_DELETE); //mark note for update
+				
+				sqlDatabase.update(NotesTable.NOTES_TABLE_NAME, values, selection, selectionArgs);
+				Toast.makeText(this, R.string.toast_note_marked_to_delete, Toast.LENGTH_SHORT).show();
+				
+				
+				finish();
+			}
+			else
+			{
+				String whereClause = NotesTable.COLUMN_ID + " = ?";
+				String[] whereArgs = { Long.toString(id) };
+				sqlDatabase.delete(NotesTable.NOTES_TABLE_NAME, whereClause, whereArgs);
+			}
 			
-			sqlDatabase.update(NotesTable.NOTES_TABLE_NAME, values, selection, selectionArgs);
-			Toast.makeText(this, R.string.toast_note_marked_to_delete, Toast.LENGTH_SHORT).show();
 			sqlDatabase.close();
 			notesOpenHelper.close();
-			
 			finish();
+			
+			
+			
 		}
 	}
 }//END:class
