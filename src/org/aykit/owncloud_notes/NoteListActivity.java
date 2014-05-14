@@ -113,10 +113,7 @@ public class NoteListActivity
 	@SuppressWarnings("deprecation")
 	private void showAndFillListView()
 	{
-		if(!sqlDatabase.isOpen() )
-		{
-			sqlDatabase = notesOpenHelper.getWritableDatabase();
-		}
+		sqlDatabase = notesOpenHelper.getWritableDatabase();
 		
 		
 		String[] from = { NotesTable.COLUMN_TITLE, NotesTable.CLOUMN_CONTENT, NotesTable.COLUMN_STATUS };
