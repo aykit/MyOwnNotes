@@ -26,19 +26,19 @@
     <string name="action_new">Neue Notiz erstellen</string>
     <string name="action_sync">synchronisieren</string>
     <string name="notelist_empty_list">Keine gespeicherten Notizen vorhanden. Sie haben entweder noch keine erstellt oder Ihre Notizen noch nicht mit ownCloud synchronisiert.</string>
-    <string name="alert_ssl_cert_not_trusted">Anscheinend wollen Sie auf einen Server zugreifen, der ein selbst signiertes Zertifikat verwendet. Um diese Verbindung aufbauen zu können, müssen Sie das Zertifikat des Servers manuell zu Androids Key-Chain hinzufügen. \n\nMöchten Sie eine Anleitung sehen, die erklärt, wie Sie das machen können?</string>
+    <string name="alert_ssl_cert_not_trusted">Anscheinend wollen Sie auf einen Server zugreifen, der ein selbst signiertes Zertifikat verwendet. Um diese Verbindung aufbauen zu können, müssen Sie das Zertifikat des Servers manuell dem Android Schlüsselbund hinzufügen. \n\nMöchten Sie jetzt die Anleitung dazu lesen?</string>
     <string name="alert_answer_yes">Ja</string>
-    <string name="alert_answer_no_thanks">Nein, danke</string>
+    <string name="alert_answer_no_thanks">Nein</string>
     <!-- Toasts -->
     <string name="toast_not_correct_json">Kein gültiges JSON Format vom Server bekommen. Server OK?</string>
-    <string name="toast_url_not_correctly_formed">Die URL, von der Datan abgefragt werden, ist nicht formgerecht</string>
-    <string name="toast_url_doesnt_exist">Die URL, von der Daten abgefragt werden, scheint nicht zu existieren. Bitte die Schreibweise oder die Internet-Verbindung überprüfen.</string>
-    <string name="toast_connection_error">Es gab einen Verbindungs-Fehler. Bitte überprüfen Sie Ihren Usernamen und Ihr Passwort.</string>
+    <string name="toast_url_not_correctly_formed">Die URL, von der Daten abgefragt werden, ist nicht formgerecht</string>
+    <string name="toast_url_doesnt_exist">Die URL, von der Daten abgefragt werden, scheint nicht zu existieren. Bitte Schreibweise und Internet-Verbindung überprüfen.</string>
+    <string name="toast_connection_error">Es gab einen Verbindungs-Fehler. Bitte überprüfen Sie Ihren Benutzernamen und Ihr Passwort.</string>
 
     <!--  Settings strings -->
     <string name="settings_text_credentials">Berechtigungsdaten:</string>
     <string name="settings_text_server_address">Server-Adresse:</string>
-    <string name="settings_text_server_address_hint">www.yourowncloudserver.com</string>
+    <string name="settings_text_server_address_hint">www.meinowncloudserver.com</string>
     <string name="settings_text_https">https://</string>
     <string name="settings_text_username">Benutzername:</string>
     <string name="settings_text_username_hint">Benutzername</string>
@@ -49,13 +49,13 @@
     <string name="settings_text_defaultnotetitle">Standard Notiztitel</string>
     <string name="settings_text_defaultnotetitle_datetime">Datum und Uhrzeit</string>
     <!-- Toasts -->
-    <string name="toast_enter_valid_username">Bitte geben Sie ihren ownCloud-Server Usernamen ein</string>
-    <string name="toast_enter_password">Bitte geben Sie ihr ownCloud-Server Passwort ein</string>
-    <string name="toast_enter_valid_https">Bitte geben Sie eine gültige URL an. Muss mit \"https://\" beginnen.</string>
+    <string name="toast_enter_valid_username">Bitte geben Sie Ihren Benutzernamen ein</string>
+    <string name="toast_enter_password">Bitte geben Sie Ihr Passwort ein</string>
+    <string name="toast_enter_valid_https">Bitte geben Sie eine gültige URL an. Diese muss mit \"https://\" beginnen.</string>
     
     
     <!--  NoteTable -->
     <string name="to_delete">zu löschen</string>
     <string name="new_note">neue Notiz</string>
-    <string name="to_update">zu updaten</string>
+    <string name="to_update">zu aktualisieren</string>
 </resources>
