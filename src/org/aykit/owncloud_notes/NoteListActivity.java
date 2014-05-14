@@ -215,7 +215,7 @@ public class NoteListActivity
 		{
 			URL tempUrl = new URL(serverUrl);
 			//must be like: https://user:password@yourowncloud.com/index.php/apps/notes/api/v0.2/notes
-			String basePath = tempUrl.getHost() + "/index.php/apps/notes/api/v0.2/notes";
+			String basePath = tempUrl.getHost() + tempUrl.getPath() + "/index.php/apps/notes/api/v0.2/notes";
 			urlToConnect = "https://" + username + ":" + password + "@" + basePath;
 		}
 		catch(MalformedURLException e)
