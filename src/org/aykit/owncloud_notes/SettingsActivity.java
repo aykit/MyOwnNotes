@@ -23,6 +23,7 @@ public class SettingsActivity extends Activity {
 	public static final String PREF_AUTOSYNC = "sync";
 	public static final String PREF_DEFAULT_TITLE = "defaultTitle";
 	public static final String PREF_INITIALIZED = "initialized";
+	public static final String PREF_MENU_INFLATED = "menuInflated";
 	
 	private final int minimumPasswordLength = 1;
 	private final char[] forbiddenSymbols = { '"', '\'' };
@@ -118,7 +119,7 @@ public class SettingsActivity extends Activity {
 			editor.putString(PREF_USERNAME, username.getText().toString());
 		}
 		else {
-			Toast.makeText(this, "please enter a valid username", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.toast_enter_valid_username, Toast.LENGTH_SHORT).show();
 			return false;
 		}
 		
@@ -128,7 +129,7 @@ public class SettingsActivity extends Activity {
 			editor.putString(PREF_PASSWOORD, password.getText().toString());
 		}
 		else {
-			Toast.makeText(this, "please enter a valid password. minimum length = " + minimumPasswordLength, Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.toast_enter_password, Toast.LENGTH_SHORT).show();
 			return false;
 		}
 		
@@ -138,7 +139,7 @@ public class SettingsActivity extends Activity {
 			editor.putString(PREF_ADDRESS, address.getText().toString());
 		}
 		else {
-			Toast.makeText(this, "please enter a valid url. must be https://", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.toast_enter_valid_https, Toast.LENGTH_SHORT).show();
 			return false;
 		}
 		

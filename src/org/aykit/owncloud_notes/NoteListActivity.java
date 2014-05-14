@@ -2,12 +2,16 @@ package org.aykit.owncloud_notes;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLHandshakeException;
+
 import org.aykit.MyOwnNotes.R;
 import org.aykit.owncloud_notes.classes.MySimpleCursorLoader;
 import org.aykit.owncloud_notes.sql.NotesOpenHelper;
@@ -15,13 +19,17 @@ import org.aykit.owncloud_notes.sql.NotesTable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.LoaderManager;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
@@ -33,7 +41,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,6 +57,7 @@ public class NoteListActivity
 	private SimpleCursorAdapter simpleCursorAdapter;
 	private LoaderManager loaderManager;
 	private SharedPreferences settings;
+	private Menu theMenu;
 	
 	
 	@Override
@@ -58,6 +66,10 @@ public class NoteListActivity
 		setContentView(R.layout.activity_note_list);
 		
 		updateSettings();
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putBoolean(SettingsActivity.PREF_MENU_INFLATED, false); //this is done to save the fact that menus are not inflated yet.
+		editor.commit();
+		
 		loaderManager = getLoaderManager();
 		notesOpenHelper = new NotesOpenHelper(this);
 	}
@@ -67,12 +79,24 @@ public class NoteListActivity
 	{
 		super.onResume();
 		updateSettings();
-		if(settings.getBoolean(SettingsActivity.PREF_AUTOSYNC, true) &&
-				settings.getBoolean(SettingsActivity.PREF_INITIALIZED, false) )
-		{
+		if(settings.getBoolean(SettingsActivity.PREF_AUTOSYNC, true) &&				//autosync must be on
+				settings.getBoolean(SettingsActivity.PREF_INITIALIZED, false) &&	//the settings (serveraddress, username, password) must be entered
+				settings.getBoolean(SettingsActivity.PREF_MENU_INFLATED, false) ) 	//because we need to check whether the menu has been inflated or not
+		{																		  	//synchronizeNotes() accesses the menu. if menu is not inflated and access is tried -> NullPointerException
 			synchronizeNotes();
 		}
 		showAndFillListView();
+	}
+	
+	@Override
+	protected void onDestroy()
+	{
+		super.onDestroy();
+		
+		updateSettings();
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putBoolean(SettingsActivity.PREF_MENU_INFLATED, false); // just to make sure, it is set to false next time activity is started
+		editor.commit();
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -98,6 +122,16 @@ public class NoteListActivity
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.note_list, menu);
+		this.theMenu = menu;
+		
+		//save, that Menu has been inflated
+		updateSettings();
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putBoolean(SettingsActivity.PREF_MENU_INFLATED, true);
+		editor.commit();
+		//then synchronize the notes at startup
+		synchronizeNotes();
+		
 		return true;
 	}
 	
@@ -181,7 +215,7 @@ public class NoteListActivity
 		{
 			URL tempUrl = new URL(serverUrl);
 			//must be like: https://user:password@yourowncloud.com/index.php/apps/notes/api/v0.2/notes
-			String basePath = tempUrl.getHost() + "/index.php/apps/notes/api/v0.2/notes";
+			String basePath = tempUrl.getHost() + tempUrl.getPath() + "/index.php/apps/notes/api/v0.2/notes";
 			urlToConnect = "https://" + username + ":" + password + "@" + basePath;
 		}
 		catch(MalformedURLException e)
@@ -207,14 +241,42 @@ public class NoteListActivity
 	
 	private void showProgressBar()
 	{
-		ProgressBar pBar = (ProgressBar) findViewById(R.id.pbar);
-		pBar.setVisibility(ProgressBar.VISIBLE);
+		MenuItem item = theMenu.findItem(R.id.action_sync);
+		item.setActionView(R.layout.progressbar);
 	}
 	
 	private void hideProgressBar()
 	{
-		ProgressBar pBar = (ProgressBar) findViewById(R.id.pbar);
-		pBar.setVisibility(ProgressBar.GONE);
+		MenuItem item = theMenu.findItem(R.id.action_sync);
+		item.setActionView(null);
+	}
+	
+	private void showSSLAlert()
+	{
+		AlertDialog.Builder builder = new AlertDialog.Builder(this ); 
+		
+		builder.setMessage(R.string.alert_ssl_cert_not_trusted);
+		
+		builder.setPositiveButton(R.string.alert_answer_yes, new DialogInterface.OnClickListener() {
+	           public void onClick(DialogInterface dialog, int id) {
+	               // User clicked Yes button
+	        	   // open link to tutorial
+	        	   Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://aykit.org/sites/myownnotes.html") );
+	        	   
+	        	   startActivity(intent);
+	           }
+	       }
+		);
+		builder.setNegativeButton(R.string.alert_answer_no_thanks, new DialogInterface.OnClickListener() {
+	           public void onClick(DialogInterface dialog, int id) {
+	               // User cancelled the dialog
+	           }
+	       }
+		);
+		
+		AlertDialog dialog = builder.create();
+		dialog.show();
+
 	}
 	
 	public void updateDatabase(String result)
@@ -276,7 +338,7 @@ public class NoteListActivity
 		catch(JSONException jsonE)
 		{
 			//something went wrong with json
-			Toast.makeText(this, "not getting correct JSON from server. server ok?", Toast.LENGTH_LONG).show();
+			Toast.makeText(this, R.string.toast_not_correct_json, Toast.LENGTH_LONG).show();
 			jsonE.printStackTrace();
 			Log.e(TAG, "no correct JSON data returned from server. first 30 chars from server:" + result.substring(0, 29));
 		}
@@ -696,16 +758,31 @@ public class NoteListActivity
 			} 
 			catch (MalformedURLException e) 
 			{
-				e.printStackTrace();
-				Log.e(TAG, e.toString());
+				//e.printStackTrace();
+				//Log.e(TAG, e.toString());
 				
 				return "ERROR MalformedURLException";
 			}
+			catch(FileNotFoundException e)
+			{
+				//e.printStackTrace();
+				//Log.e(TAG, e.toString());
+				
+				return "ERROR FileNotFoundException";
+			}
+			catch(SSLHandshakeException e)
+			{
+				//e.printStackTrace();
+				//Log.e(TAG, e.toString());
+				
+				return "ERROR SSLHandshakeException";
+			}
 	    	catch (IOException e) {
-				e.printStackTrace();
-				Log.e(TAG, e.toString() );
+				//e.printStackTrace();
+				//Log.e(TAG, e.toString() );
 				return "ERROR IOException";
 			}
+			
 	    	
 	    	return stringBuilder.toString();
 	    }
@@ -713,16 +790,26 @@ public class NoteListActivity
 	    /** The system calls this to perform work in the UI thread and delivers
 	      * the result from doInBackground() */
 	    protected void onPostExecute(String result) {
-	    	if(result.equals("ERROR MalformedURLException"))
+	    	if(result.equals("ERROR MalformedURLException") )
 	    	{
-	    		Toast.makeText(getApplicationContext(), "the url you request data from is not correctly formed", Toast.LENGTH_LONG).show();
+	    		Toast.makeText(getApplicationContext(), R.string.toast_url_not_correctly_formed, Toast.LENGTH_LONG).show();
 	    		hideProgressBar();
 	    	}
-	    	else if(result.equals("ERROR IOException"))
+	    	else if(result.equals("ERROR IOException") )
 			{
-	    		Toast.makeText(getApplicationContext(), "the url you request data from doesn't seem to exist. check spelling or your internet-connection", Toast.LENGTH_LONG).show();
+	    		Toast.makeText(getApplicationContext(), R.string.toast_url_doesnt_exist, Toast.LENGTH_LONG).show();
 	    		hideProgressBar();
 			}
+	    	else if(result.equals("ERROR FileNotFoundException" ) )
+	    	{
+	    		Toast.makeText(getApplicationContext(), R.string.toast_connection_error, Toast.LENGTH_LONG).show();
+	    		hideProgressBar();
+	    	}
+	    	else if(result.equals("ERROR SSLHandshakeException") )
+	    	{
+	    		hideProgressBar();
+	    		showSSLAlert();
+	    	}
 	    	else
 	    	{
 	    		//"result" contains a JSON with _all_ notes from owncloud server.
