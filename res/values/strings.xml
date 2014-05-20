@@ -18,6 +18,8 @@
     <string name="text_delete">delete</string>
     <string name="note_has_been_saved">Note has been saved</string>
     <string name="text_test">test</string>
+    <string name="action_title_save">Save note</string>
+    <string name="action_title_delete">Delete note</string>
     <!-- Toasts -->
     <string name="toast_new_note_saved">New note saved</string>
     <string name="toast_changes_saved">Changes saved</string>

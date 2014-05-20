@@ -37,7 +37,8 @@ public class NoteSingleActivity extends Activity {
 	private SharedPreferences settings;
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) 
+	{
 		super.onCreate(savedInstanceState);
 		
 		getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -107,13 +108,26 @@ public class NoteSingleActivity extends Activity {
 				saveNote();
 				NavUtils.navigateUpFromSameTask(this);
 		        return true;
+		        
+			case R.id.action_save:
+				//save note and go back to NoteListActivity
+				saveNote();
+				finish();
+				return true;
+				
+			case R.id.action_delete:
+				//delete this note
+				deleteNote();
+				finish();
+				return true;
+				
 				
 			default :
 				return super.onOptionsItemSelected(item);
 		}
 	}
 	
-	public void saveNote()
+	private void saveNote()
 	{
 		//save or update currently opened note
 		//Log.d(TAG, "saving note");
@@ -171,20 +185,12 @@ public class NoteSingleActivity extends Activity {
 		notesOpenHelper.close();
 	}
 	
-	public void button_save(View view)
-	{
-		//save button clicked. save note and close note
-		saveNote();
-		finish();
-	}
-	
-	public void button_delete(View view)
+	private void deleteNote()
 	{
 		if(id == -1)
 		{
 			//unsaved note - nothing to delete
 			Toast.makeText(this, R.string.toast_note_deleted, Toast.LENGTH_SHORT).show();
-			finish();
 		}
 		else
 		{
@@ -202,11 +208,8 @@ public class NoteSingleActivity extends Activity {
 				
 				sqlDatabase.update(NotesTable.NOTES_TABLE_NAME, values, selection, selectionArgs);
 				Toast.makeText(this, R.string.toast_note_marked_to_delete, Toast.LENGTH_SHORT).show();
-				
-				
-				finish();
 			}
-			else
+			else //delete note from sql database
 			{
 				String whereClause = NotesTable.COLUMN_ID + " = ?";
 				String[] whereArgs = { Long.toString(id) };
@@ -215,10 +218,6 @@ public class NoteSingleActivity extends Activity {
 			
 			sqlDatabase.close();
 			notesOpenHelper.close();
-			finish();
-			
-			
-			
 		}
 	}
 }//END:class

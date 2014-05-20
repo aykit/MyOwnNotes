@@ -18,6 +18,8 @@
     <string name="text_delete">löschen</string>
     <string name="note_has_been_saved">Notiz erfolgreich gespeichert</string>
     <string name="text_test">Test</string>
+    <string name="action_title_save">Notiz speichern</string>
+    <string name="action_title_delete">Notiz löschen</string>
     <!-- Toasts -->
     <string name="toast_new_note_saved">Neue Notiz gespeichert</string>
     <string name="toast_changes_saved">Änderungen gespeichert</string>
