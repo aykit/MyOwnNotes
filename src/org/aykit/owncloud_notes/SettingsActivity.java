@@ -224,6 +224,7 @@ public class SettingsActivity extends Activity {
 	 * <li>string is a valid URL (according to <code>URLUtil.isValidUrl()</code></li>
 	 * <li>string is a https-URL (according to <code>URLUtil.isHttpsUrl()</code>)</li>
 	 * <li>string is at least 13 characters long (example for minimum url: https://ab.at)</li>
+	 * <p>If String ends with a slash ("/"), it is removed.</p>
 	 * 
 	 * @param toCheck	<code>EditText</code> containing the String to be checked
 	 * @return	<code>true</code> iff the <code>String</code> contains a valid https-url
@@ -232,9 +233,20 @@ public class SettingsActivity extends Activity {
 	{
 		String stringToCheck = toCheck.getText().toString();
 		
-		if(stringToCheck.isEmpty() || !URLUtil.isValidUrl(stringToCheck) || !URLUtil.isHttpsUrl(stringToCheck) || stringToCheck.length() < 13 )
+		if(stringToCheck.isEmpty()					|| 
+				!URLUtil.isValidUrl(stringToCheck)	|| 
+				!URLUtil.isHttpsUrl(stringToCheck) 	|| 
+				stringToCheck.length() < 13 )
 		{
 			return false;
+		}
+		else if(stringToCheck.charAt(stringToCheck.length() - 1 ) == '/') //input url ends with "/" (e.g.: https://example.org/  )
+		{
+			//remove slash at end
+			String newAddressWithoutSlashAtEnd = stringToCheck.substring(0, stringToCheck.length() - 1 );
+			toCheck.setText(newAddressWithoutSlashAtEnd);
+			
+			return isValidURL(toCheck);
 		}
 		else
 		{
