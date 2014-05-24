@@ -7,7 +7,6 @@ Android implementation of ownCloud Notes Application. Uses the (RESTful) API of 
 to use this app you will need:
 
 + ownCloud server version 6 (http://doc.owncloud.org/)
-+ the [ownCloud-"App Framework"](http://doc.owncloud.org/server/6.0/admin_manual/configuration/configuration_apps.html) activated.
 + the serverside [ownCloud notes app](http://apps.owncloud.com/content/show.php/Notes?content=160567) installed and activated.
 + Android 4.0 or newer installed
 + this app
