@@ -8,6 +8,8 @@
     <string name="title_activity_settings">Réglages</string>
     <string name="title_activity_note_list">MyOwnNotes</string>
     <string name="title_activity_note_single">la note</string>
+    <string name="title_activity_about_activity">Info</string>
+    <string name="title_activity_help_activity">Aide</string>
 
     <!-- NoteSingle strings -->
     <string name="note_title">Titre de la note</string>
@@ -25,6 +27,8 @@
     <!--  NoteList strings -->
     <string name="action_new">Créer une note</string>
     <string name="action_sync">Synchroniser</string>
+    <string name="action_about">Info</string>
+    <string name="action_help">Aide</string>
     <string name="notelist_empty_list">Les notes n\'existent pas. Vous n\'avez pas créé de notes ou elles ne sont pas encore synchronisées.</string>
     <string name="alert_ssl_cert_not_trusted">Vous voulez vous connecter à un serveur qui utilise un certificat auto-signé. Ajouter le certificat du porte-clés. \n\n Voulez-vous lire l\'instruction ?</string>
     <string name="alert_answer_yes">Oui</string>
@@ -54,6 +58,27 @@
     <string name="toast_enter_password">Saisir votre mot de passe, s\'il vous plaît.</string>
     <string name="toast_enter_valid_https">Saisir l\'adresse du serveur. Cela commence par \"https://\".</string>
     
+    <!-- About strings -->
+    <string name="text_aykit_logo">logo de aykit</string>
+    <string name="text_about_text">Cette application vous est présenté par aykit - une association de soutien art, la culture et la science. \nPlus informations sur notre site: \n\nhttp://aykit.org</string>
+    
+    <!-- Help strings -->
+    <string name="text_help_text">
+       	Quels URL dois-je entrer? \n 
+       	Entrez l\'URL à la racine de l\'installation owncloud - c\'est la même URL que vous utilisez pour vous connecter à votre ownCloud via le navigateur \n (par exemple: https://myowncloud.com) 
+       	\n\n 
+       	Puis-je utiliser cette application pour se connecter à mon ownCloud via http et https pas?
+       	\n
+       	Non, ce n\'est pas possible. Le Notes-API demandes le nom d\'utilisateur et mot de passe pour être envoyés pour chaque connexion. Si vous avez utilisé http, vous envoyer ces informations vitales en clair. Pas une bonne idée!
+       	\n
+       	(Pourquoi lire ceci: "Man-in-the-middle"-Attaque http://fr.wikipedia.org/wiki/Attaque_de_l%27homme_du_milieu) 
+       	\n\n
+       	J\'ai un serveur ownCloud avec un certificat auto-signé. Puis-je utiliser cette application pour mon serveur?
+       	\n
+       	Oui, vous le pouvez - mais pas out-of-the-box. Vous devez indiquer spécifiquement Android à accepter votre certificat auto-signé. Ceci est fait en ajoutant manuellement le certificat de serveurs à Androids gestionnaire de clé.
+       	\n
+       	Pour ce tutoriel sur la façon de le faire: http://aykit.org/sites/myownnotes.html
+    </string>
     
     <!--  NoteTable -->
     <string name="to_delete">supprimer</string>
