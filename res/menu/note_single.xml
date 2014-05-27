@@ -1,10 +1,15 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
-	<!--  
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_settings"
-        />
-	-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android" 
+    >
+	<item
+	    android:id="@+id/action_save"
+	    android:icon="@drawable/ic_action_save"
+	    android:title="@string/action_title_save"
+	    android:showAsAction="always"
+	    />
+	<item
+	    android:id="@+id/action_delete"
+	    android:icon="@drawable/ic_action_discard"
+	    android:title="@string/action_title_delete"
+	    android:showAsAction="always"
+	    />
 </menu>

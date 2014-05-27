@@ -16,6 +16,8 @@
     <string name="text_delete">supprimer</string>
     <string name="note_has_been_saved">La note est enregistrée</string>
     <string name="text_test">le test</string>
+     <string name="action_title_save">enregistrer la note</string>
+    <string name="action_title_delete">supprimer la note</string>
     <!-- Toasts -->
     <string name="toast_new_note_saved">Nouvelle note est enregistrée</string>
     <string name="toast_changes_saved">Modifications sont enregistrées</string>
