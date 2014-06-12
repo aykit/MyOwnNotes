@@ -165,18 +165,25 @@ public class NoteSingleActivity extends Activity {
 		}
 		else
 		{
-			//must update existing NoteTable
-			String selection = NotesTable.COLUMN_ID + " = ?";
-			String[] selectionArgs = { Long.toString(id) };
-			
-			ContentValues values = new ContentValues();
-			values.put(NotesTable.COLUMN_TITLE, newTitle );
-			values.put(NotesTable.CLOUMN_CONTENT, newContent);
-			values.put(NotesTable.COLUMN_STATUS, NotesTable.TO_UPDATE); //mark note for update
-			
-			sqlDatabase.update(NotesTable.NOTES_TABLE_NAME, values, selection, selectionArgs);
-			Toast.makeText(this, R.string.toast_changes_saved, Toast.LENGTH_SHORT).show();
-			
+			//check whether existing note has been changed
+			if (! newContent.equals(content)  || ! newTitle.equals(title) ) 
+			{
+				//must update existing NoteTable
+				String selection = NotesTable.COLUMN_ID + " = ?";
+				String[] selectionArgs = { Long.toString(id) };
+				
+				ContentValues values = new ContentValues();
+				values.put(NotesTable.COLUMN_TITLE, newTitle );
+				values.put(NotesTable.CLOUMN_CONTENT, newContent);
+				values.put(NotesTable.COLUMN_STATUS, NotesTable.TO_UPDATE); //mark note for update
+				
+				sqlDatabase.update(NotesTable.NOTES_TABLE_NAME, values, selection, selectionArgs);
+				Toast.makeText(this, R.string.toast_changes_saved, Toast.LENGTH_SHORT).show();
+			}
+			else
+			{
+				//nothing to do here. note has not been changed.
+			}
 		}
 		//Log.d(TAG, "note saved successfully");
 		
