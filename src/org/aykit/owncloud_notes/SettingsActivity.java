@@ -7,10 +7,12 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.webkit.URLUtil;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import org.aykit.MyOwnNotes.R;
 
 
@@ -42,6 +44,10 @@ public class SettingsActivity extends Activity {
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		setContentView(R.layout.activity_settings);
+		
+		//make sure that keyboard is not shown right up
+		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+		
 		username = (EditText) findViewById(R.id.edittext_username);
 		password = (EditText) findViewById(R.id.edittext_password);
 		address = (EditText) findViewById(R.id.edittext_server_address);
