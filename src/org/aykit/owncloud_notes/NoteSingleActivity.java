@@ -38,6 +38,7 @@ public class NoteSingleActivity extends Activity {
 	private boolean isNewNote;
 	private boolean noButtonWasPressed;
 	private boolean wasPaused;
+	private boolean wasCreatedBefore;
 	private SharedPreferences settings;
 	
 	@Override
@@ -55,49 +56,65 @@ public class NoteSingleActivity extends Activity {
 		editTextContent = (EditText) findViewById(R.id.edittext_note_content);
 		editTextTitle = (EditText) findViewById(R.id.edittext_note_title);
 		id = -1;
-		wasPaused = false;
 		
-		Intent intent = getIntent();
-		isNewNote = intent.getBooleanExtra("isNewNote", false);
+		wasCreatedBefore = settings.getBoolean("wasCreatedBefore", false);
 		
-		if(!isNewNote)
+		
+		if(!wasCreatedBefore)
 		{
-			//open saved note: load note-data from intent
-
-			content = intent.getStringExtra("content");
-			title = intent.getStringExtra("title");
-			id = intent.getLongExtra("id", -1);
-			//Log.d(TAG, "id from intent: " + id);
-			status = intent.getStringExtra("status");
-
+			//this note's onCreate()-method is genuinely called for the first time.
+			wasCreatedBefore = true; //now remember that is was called once.
+			Intent intent = getIntent();
+			isNewNote = intent.getBooleanExtra("isNewNote", false);
 			
-			editTextContent.setText(content);
-			editTextTitle.setText(title);
-			
-			if(id == -1)
+			if(!isNewNote)
 			{
-				//something is wrong with this entry
-				Log.e(TAG, "there was a problem with this note:" + title);
-			}
-			
-			//make sure that keyboard is not shown right up
-			getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+				//open saved note: load note-data from intent
 
+				content = intent.getStringExtra("content");
+				title = intent.getStringExtra("title");
+				id = intent.getLongExtra("id", -1);
+				//Log.d(TAG, "id from intent: " + id);
+				status = intent.getStringExtra("status");
+
+				
+				editTextContent.setText(content);
+				editTextTitle.setText(title);
+				
+				if(id == -1)
+				{
+					//something is wrong with this entry
+					Log.e(TAG, "there was a problem with this note:" + title);
+				}
+				
+				//make sure that keyboard is not shown right up
+				getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
+			}
+			else
+			{
+				boolean useDateAndTimeAsDefaultTitle = settings.getBoolean(SettingsActivity.PREF_DEFAULT_TITLE, true); 
+				if(useDateAndTimeAsDefaultTitle)
+				{
+					//set note title to current date and time
+					Calendar calendar = Calendar.getInstance();
+					Date date = calendar.getTime();
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
+					String dateAndTime = format.format(date);
+					
+					editTextTitle.setText(dateAndTime);
+				}
+			}
 		}
 		else
+		//this note's onCreate()-method has been already called some time ago.
 		{
-			boolean useDateAndTimeAsDefaultTitle = settings.getBoolean(SettingsActivity.PREF_DEFAULT_TITLE, true); 
-			if(useDateAndTimeAsDefaultTitle)
-			{
-				//set note title to current date and time
-				Calendar calendar = Calendar.getInstance();
-				Date date = calendar.getTime();
-				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
-				String dateAndTime = format.format(date);
-				
-				editTextTitle.setText(dateAndTime);
-			}
+			//get saved content and title from preferences
+			editTextContent.setText(settings.getString("content", "") );
+			editTextTitle.setText(settings.getString("title", "") );
 		}
+		
+		wasPaused = false;
 	}
 	
 	@Override
@@ -106,6 +123,7 @@ public class NoteSingleActivity extends Activity {
 		super.onResume();
 		//Log.d(TAG, "resuming");
 		noButtonWasPressed = true;
+		wasPaused = settings.getBoolean("wasPaused", false);
 		if (wasPaused)
 		{
 			content = editTextContent.getText().toString();
@@ -121,14 +139,21 @@ public class NoteSingleActivity extends Activity {
 		super.onPause();
 		//Log.d(TAG, "pausing");
 		wasPaused = true;
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putBoolean("wasPaused", true);
+		editor.putBoolean("wasCreatedBefore", true);
+		
 		if (noButtonWasPressed)
 		{
 			saveNote();
-			SharedPreferences.Editor editor = settings.edit();
+			
 			editor.putLong("id", id);
 			editor.putString("status", status);
-			editor.commit();
+			editor.putString("content", editTextContent.getText().toString() );
+			editor.putString("title", editTextTitle.getText().toString() );
+			
 		}
+		editor.commit();
 	}
 	
 	public void onBackPressed()
