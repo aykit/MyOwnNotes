@@ -18,6 +18,7 @@ to use this app you will need:
 + SSL certificate for your server. For more information please read the `FAQ`_ below.
 + The `My Own Notes App`_ 
 
+
 .. _`FAQ`:
 
 FAQ
@@ -26,7 +27,6 @@ FAQ
 I can't connect. Do I really have to use SSL/TLS?
 -------------------------------------------------
 Short answer: yes. Please read our comment on `Entwicklerbier.org`_ for more information.
-
 
 I can't connect via SSL. How do I add (self-signed) certificates?
 -----------------------------------------------------------------
