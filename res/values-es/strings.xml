@@ -62,7 +62,7 @@
     
     <!-- About strings -->
     <string name="text_aykit_logo">Logo de aykit</string>
-    <string name="text_about_text">This app is brought to you by aykit - an association supporting art, culture and science. \nMore information on our website: \n\nhttp://aykit.org</string>
+    <string name="text_about_text">aykit es el proveedor de esta aplicación - una asociación que da soporta al arte, cultura y sciencia. \nMayor información en la pagina: \n\nhttp://aykit.org</string>
     
     <!-- Help strings -->
     <string name="text_help_text">
