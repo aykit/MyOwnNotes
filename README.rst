@@ -24,6 +24,10 @@ to use this app you will need:
 FAQ
 ===
 
+How do I get ownCloud?
+----------------------
+There are many resources on the internet, showing you how to run your own copy of ownCloud. The following article provides a quick roundup: https://blog.entwicklerbier.org/2014/06/setting-up-owncloud-on-speed/
+
 I can't connect. Do I really have to use SSL/TLS?
 -------------------------------------------------
 Short answer: yes. Please read our comment on `Entwicklerbier.org`_ for more information.
@@ -38,6 +42,9 @@ Do you know any cheap SSL certificates?
 ---------------------------------------
 If you don't want to use self-signed certificates you can get one for free (for non-profit purposes only) at `StartSSL`_. If you can spend money, we suggest you to take a look at `CheapSSLsecurity`_. Please note that we are not affiliated with those companies in any way. We just want to help you finding cheap certificates.
 
+I have my own certificate. However, it is not working.
+------------------------------------------------------
+One of the most common errors is a wrong certificate chain. Please use `SSLlabs`_ to check if your certificate chain is in order. If it isn't look up the manual of your webserver. We also wrote an article for `Setting up owncloud on Speed`_.
 
 Building the application
 ------------------------
@@ -56,4 +63,6 @@ Download the official android sdk here: http://developer.android.com/sdk/index.h
 .. _My Own Notes App: https://github.com/aykit/myownnotes-android
 .. _ownCloud Docs: http://doc.owncloud.org/
 .. _ownCloud Notes App: http://apps.owncloud.com/content/show.php/Notes?content=160567
+.. _SSLlabs: https://www.ssllabs.com/ssltest/
 .. _StartSSL: https://startssl.com
+.. _Setting up owncloud on Speed: https://blog.entwicklerbier.org/2014/06/setting-up-owncloud-on-speed/
