@@ -6,7 +6,8 @@ Android App for the ownCloud Notes Application. Uses the (RESTful) API of ownClo
 
 Contribute
 ==========
-Please take a look at CONTRIBUTE.rst for information regarding extending this application.
+Please take a look at CONTRIBUTE.rst for information regarding extending this application. This applies to translations as well.
+
 
 Install
 =======
