@@ -36,7 +36,7 @@
     <string name="alert_answer_yes">Yes</string>
     <string name="alert_answer_no_thanks">No, thanks</string>
     <!-- Toasts -->
-    <string name="toast_not_correct_json">Not getting correct JSON from server. Sserver OK?</string>
+    <string name="toast_not_correct_json">Not getting correct JSON from server. Server OK?</string>
     <string name="toast_url_not_correctly_formed">The URL you request data from is not correctly formed</string>
     <string name="toast_url_doesnt_exist">The URL you request data from doesn\'t seem to exist. Check spelling or your internet-connection</string>
     <string name="toast_connection_error">There was a connection error. Please check your username and password.</string>
@@ -67,12 +67,12 @@
     <!-- Help strings -->
     <string name="text_help_text">
        	Which URL should I enter?\n
-		Enter the URL to the root of the owncloud installation - that is: the same URL you use to connect to your ownCloud via the browser.\n(e.g.: https://myowncloud.com) 
+		Enter the URL to the root of your ownCloud installation - that is: the same URL you use to connect to your ownCloud via the browser.\n(e.g.: https://myowncloud.com) 
 		\n\n
 		Can I use this app to connect to my ownCloud via http and not https ?\n
 		No, that is not possible. The Notes-API requests username and password to be sent for each connection. If you used http, you would send these vital informations as plaintext. Not a good idea! \n(Why? Read this: "Man-in-the-middle"-Attack http://en.wikipedia.org/wiki/Man-in-the-middle_attack)
 		\n\n
-		I have an ownCloud server with a self-signed certificate. Can i use this app for my server?\n
+		I have an ownCloud server with a self-signed certificate. Can I use this app for my server?\n
 		Yes, you can - but not out-of-the-box. You have to specifically tell Android to accept your self-signed certificate. This is done by manually adding the servers certificate to Androids Key-Manager.
 		\nSee this tutorial on how to do that: http://aykit.org/sites/myownnotes.html
     </string>

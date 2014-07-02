@@ -86,6 +86,16 @@ public class NoteListActivity
 		{																		  	//synchronizeNotes() accesses the menu. if menu is not inflated and access is tried -> NullPointerException
 			synchronizeNotes();
 		}
+		
+		//tell settings, that a single note was not created yet.
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putBoolean("wasCreatedBefore", false);
+		editor.putBoolean("wasPaused", false);
+		editor.putString("content", "");
+		editor.putString("title", "");
+		editor.putLong("id", 0);
+		editor.putString("status", "");
+		editor.commit();
 		showAndFillListView();
 	}
 	

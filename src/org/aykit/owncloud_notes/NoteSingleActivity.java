@@ -3,9 +3,11 @@ package org.aykit.owncloud_notes;
 import org.aykit.MyOwnNotes.R;
 import org.aykit.owncloud_notes.sql.NotesOpenHelper;
 import org.aykit.owncloud_notes.sql.NotesTable;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.annotation.SuppressLint;
@@ -18,6 +20,7 @@ import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -30,9 +33,12 @@ public class NoteSingleActivity extends Activity {
 	private EditText editTextTitle;
 	private String title;
 	private String content;
-	private String status;
+	private String status = "";
 	private long id;
 	private boolean isNewNote;
+	private boolean noButtonWasPressed;
+	private boolean wasPaused;
+	private boolean wasCreatedBefore;
 	private SharedPreferences settings;
 	
 	@Override
@@ -40,49 +46,121 @@ public class NoteSingleActivity extends Activity {
 	{
 		super.onCreate(savedInstanceState);
 		
+		
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		setContentView(R.layout.activity_note_single);
+		//Log.d(TAG, "onCreate called");
 		
 		settings = PreferenceManager.getDefaultSharedPreferences(this);
 		editTextContent = (EditText) findViewById(R.id.edittext_note_content);
 		editTextTitle = (EditText) findViewById(R.id.edittext_note_title);
 		id = -1;
 		
-		Intent intent = getIntent();
-		isNewNote = intent.getBooleanExtra("isNewNote", false);
+		wasCreatedBefore = settings.getBoolean("wasCreatedBefore", false);
 		
-		if(!isNewNote)
+		
+		if(!wasCreatedBefore)
 		{
-			//open saved note: load note-data from intent
-			content = intent.getStringExtra("content");
-			title = intent.getStringExtra("title");
-			id = intent.getLongExtra("id", -1);
-			status = intent.getStringExtra("status");
+			//this note's onCreate()-method is genuinely called for the first time.
+			wasCreatedBefore = true; //now remember that is was called once.
+			Intent intent = getIntent();
+			isNewNote = intent.getBooleanExtra("isNewNote", false);
 			
-			editTextContent.setText(content);
-			editTextTitle.setText(title);
-			
-			if(id == -1)
+			if(!isNewNote)
 			{
-				//something is wrong with this entry
-				Log.e(TAG, "there was a problem with this note:" + title);
+				//open saved note: load note-data from intent
+
+				content = intent.getStringExtra("content");
+				title = intent.getStringExtra("title");
+				id = intent.getLongExtra("id", -1);
+				//Log.d(TAG, "id from intent: " + id);
+				status = intent.getStringExtra("status");
+
+				
+				editTextContent.setText(content);
+				editTextTitle.setText(title);
+				
+				if(id == -1)
+				{
+					//something is wrong with this entry
+					Log.e(TAG, "there was a problem with this note:" + title);
+				}
+				
+				//make sure that keyboard is not shown right up
+				getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
+			}
+			else
+			{
+				boolean useDateAndTimeAsDefaultTitle = settings.getBoolean(SettingsActivity.PREF_DEFAULT_TITLE, true); 
+				if(useDateAndTimeAsDefaultTitle)
+				{
+					//set note title to current date and time
+					Calendar calendar = Calendar.getInstance();
+					Date date = calendar.getTime();
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
+					String dateAndTime = format.format(date);
+					
+					editTextTitle.setText(dateAndTime);
+				}
 			}
 		}
 		else
+		//this note's onCreate()-method has been already called some time ago.
 		{
-			boolean useDateAndTimeAsDefaultTitle = settings.getBoolean(SettingsActivity.PREF_DEFAULT_TITLE, true); 
-			if(useDateAndTimeAsDefaultTitle)
-			{
-				//set note title to current date and time
-				Calendar calendar = Calendar.getInstance();
-				Date date = calendar.getTime();
-				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
-				String dateAndTime = format.format(date);
-				
-				editTextTitle.setText(dateAndTime);
-			}
+			//get saved content and title from preferences
+			editTextContent.setText(settings.getString("content", "") );
+			editTextTitle.setText(settings.getString("title", "") );
 		}
+		
+		wasPaused = false;
+	}
+	
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		//Log.d(TAG, "resuming");
+		noButtonWasPressed = true;
+		wasPaused = settings.getBoolean("wasPaused", false);
+		if (wasPaused)
+		{
+			content = editTextContent.getText().toString();
+			title = editTextTitle.getText().toString();
+			id = settings.getLong("id", -1);
+			status = settings.getString("status", "");
+		}
+	}
+	
+	@Override
+	protected void onPause()
+	{
+		super.onPause();
+		//Log.d(TAG, "pausing");
+		wasPaused = true;
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putBoolean("wasPaused", true);
+		editor.putBoolean("wasCreatedBefore", true);
+		
+		if (noButtonWasPressed)
+		{
+			saveNote();
+			
+			editor.putLong("id", id);
+			editor.putString("status", status);
+			editor.putString("content", editTextContent.getText().toString() );
+			editor.putString("title", editTextTitle.getText().toString() );
+			
+		}
+		editor.commit();
+	}
+	
+	public void onBackPressed()
+	{
+		noButtonWasPressed = false;
+		saveNote();
+		super.onBackPressed();
 	}
 	
 	public void setNoteContentView(String textString)
@@ -104,18 +182,21 @@ public class NoteSingleActivity extends Activity {
 		{
 			case android.R.id.home:
 				//save and go back to NoteListActivity
+				noButtonWasPressed = false;
 				saveNote();
 				NavUtils.navigateUpFromSameTask(this);
 		        return true;
 		        
 			case R.id.action_save:
 				//save note and go back to NoteListActivity
+				noButtonWasPressed = false;
 				saveNote();
 				finish();
 				return true;
 				
 			case R.id.action_delete:
 				//delete this note
+				noButtonWasPressed = false;
 				deleteNote();
 				finish();
 				return true;
@@ -129,56 +210,90 @@ public class NoteSingleActivity extends Activity {
 	private void saveNote()
 	{
 		//save or update currently opened note
-		//Log.d(TAG, "saving note");
+		Log.d(TAG, "saving note");
 		NotesOpenHelper notesOpenHelper = new NotesOpenHelper(this);
 		SQLiteDatabase sqlDatabase = notesOpenHelper.getWritableDatabase();
 		
 		String newTitle = editTextTitle.getText().toString();
 		String newContent = editTextContent.getText().toString();
 		
+		
 		if(isNewNote)
 		{
 			//no row in table NoteTable to update exists. create new.
-			ContentValues values = new ContentValues();
-			values.put(NotesTable.COLUMN_TITLE, newTitle);
-			values.put(NotesTable.CLOUMN_CONTENT, newContent );
-			values.put(NotesTable.COLUMN_STATUS, NotesTable.NEW_NOTE); //mark note as new note
-			sqlDatabase.insert(NotesTable.NOTES_TABLE_NAME, null, values);
-			//Log.d(TAG, "new note saved successfully: " + inserted);
-			Toast.makeText(this, R.string.toast_new_note_saved, Toast.LENGTH_SHORT).show();
-			
+			//Log.d(TAG, "isNewNote");
+			if( newContent.equals("") && newTitle.equals("") )
+			{
+				//empty note will not be saved
+			}
+			else
+			{
+				ContentValues values = new ContentValues();
+				values.put(NotesTable.COLUMN_TITLE, newTitle);
+				values.put(NotesTable.CLOUMN_CONTENT, newContent );
+				values.put(NotesTable.COLUMN_STATUS, NotesTable.NEW_NOTE); //mark note as new note
+				id = sqlDatabase.insert(NotesTable.NOTES_TABLE_NAME, null, values);
+				status = NotesTable.NEW_NOTE;
+				isNewNote = false;
+				Toast.makeText(this, R.string.toast_new_note_saved, Toast.LENGTH_SHORT).show();
+			}
 		}
 		else if(status.equals(NotesTable.NEW_NOTE))
 		{
-			//note is new but was changed before first upload
-			//must update existing NoteTable
-			String selection = NotesTable.COLUMN_ID + " = ?";
-			String[] selectionArgs = { Long.toString(id) };
-			
-			ContentValues values = new ContentValues();
-			values.put(NotesTable.COLUMN_TITLE, newTitle );
-			values.put(NotesTable.CLOUMN_CONTENT, newContent);
-			values.put(NotesTable.COLUMN_STATUS, NotesTable.NEW_NOTE); //mark note as new note
-			
-			sqlDatabase.update(NotesTable.NOTES_TABLE_NAME, values, selection, selectionArgs);
-			Toast.makeText(this, R.string.toast_changes_saved, Toast.LENGTH_SHORT).show();
+			//check whether this new note has been changed before first upload
+			//Log.d(TAG, "status = new note");
+			if (! newContent.equals(content)  || ! newTitle.equals(title) )
+			{
+				//note is new but was changed before first upload
+				//must update existing note in NoteTable
+				String selection = NotesTable.COLUMN_ID + " = ?";
+				String[] selectionArgs = { Long.toString(id) };
+				
+				ContentValues values = new ContentValues();
+				values.put(NotesTable.COLUMN_TITLE, newTitle );
+				values.put(NotesTable.CLOUMN_CONTENT, newContent);
+				values.put(NotesTable.COLUMN_STATUS, NotesTable.NEW_NOTE); //mark note as new note
+				
+				sqlDatabase.update(NotesTable.NOTES_TABLE_NAME, values, selection, selectionArgs);
+				Toast.makeText(this, R.string.toast_changes_saved, Toast.LENGTH_SHORT).show();
+			}
+			else
+			{
+				//nothing to do here. note has not been changed.
+				//Log.d(TAG, "do nothing, new note");
+			}
 		}
 		else
 		{
-			//must update existing NoteTable
-			String selection = NotesTable.COLUMN_ID + " = ?";
-			String[] selectionArgs = { Long.toString(id) };
+			//check whether existing note has been changed
+			//Log.d(TAG, "existing note");
 			
-			ContentValues values = new ContentValues();
-			values.put(NotesTable.COLUMN_TITLE, newTitle );
-			values.put(NotesTable.CLOUMN_CONTENT, newContent);
-			values.put(NotesTable.COLUMN_STATUS, NotesTable.TO_UPDATE); //mark note for update
-			
-			sqlDatabase.update(NotesTable.NOTES_TABLE_NAME, values, selection, selectionArgs);
-			Toast.makeText(this, R.string.toast_changes_saved, Toast.LENGTH_SHORT).show();
-			
+			if (! newContent.equals(content)  || ! newTitle.equals(title) ) 
+			{
+				//must update existing NoteTable
+				//Log.d(TAG, "existing note was changed, do save");
+				//Log.d(TAG, "content: " + content + "; newContent: " + newContent);
+				//Log.d(TAG, "title: " + title + "; newtitle: " + newTitle);
+				//Log.d(TAG, "id: " + id);
+				
+				String selection = NotesTable.COLUMN_ID + " = ?";
+				String[] selectionArgs = { Long.toString(id) };
+				
+				ContentValues values = new ContentValues();
+				values.put(NotesTable.COLUMN_TITLE, newTitle );
+				values.put(NotesTable.CLOUMN_CONTENT, newContent);
+				values.put(NotesTable.COLUMN_STATUS, NotesTable.TO_UPDATE); //mark note for update
+				
+				sqlDatabase.update(NotesTable.NOTES_TABLE_NAME, values, selection, selectionArgs);
+				Toast.makeText(this, R.string.toast_changes_saved, Toast.LENGTH_SHORT).show();
+			}
+			else
+			{
+				//nothing to do here. note has not been changed.
+				//Log.d(TAG, "do nothing");
+			}
 		}
-		//Log.d(TAG, "note saved successfully");
+		Log.d(TAG, "note saved successfully");
 		
 		sqlDatabase.close();
 		notesOpenHelper.close();
@@ -186,6 +301,7 @@ public class NoteSingleActivity extends Activity {
 	
 	private void deleteNote()
 	{
+		Log.d(TAG, "deleting note");
 		if(id == -1)
 		{
 			//unsaved note - nothing to delete
@@ -200,7 +316,7 @@ public class NoteSingleActivity extends Activity {
 			String selection = NotesTable.COLUMN_ID + " = ?";
 			String[] selectionArgs = { Long.toString(id) };
 			
-			if(!status.equals(NotesTable.NEW_NOTE) ) //if not new note
+			if(!status.equals(NotesTable.NEW_NOTE) ) //note is not new - mark it for deletion
 			{
 				ContentValues values = new ContentValues();
 				values.put(NotesTable.COLUMN_STATUS, NotesTable.TO_DELETE); //mark note for update
@@ -208,11 +324,12 @@ public class NoteSingleActivity extends Activity {
 				sqlDatabase.update(NotesTable.NOTES_TABLE_NAME, values, selection, selectionArgs);
 				Toast.makeText(this, R.string.toast_note_marked_to_delete, Toast.LENGTH_SHORT).show();
 			}
-			else //delete note from sql database
+			else //note only saved in local database - delete it only from local database
 			{
 				String whereClause = NotesTable.COLUMN_ID + " = ?";
 				String[] whereArgs = { Long.toString(id) };
 				sqlDatabase.delete(NotesTable.NOTES_TABLE_NAME, whereClause, whereArgs);
+				Toast.makeText(this, R.string.toast_note_deleted, Toast.LENGTH_SHORT).show();
 			}
 			
 			sqlDatabase.close();
