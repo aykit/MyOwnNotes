@@ -4,6 +4,11 @@ MyOwnNotes-android
 Android App for the ownCloud Notes Application. Uses the (RESTful) API of ownCloud notes extension/app found here: https://github.com/owncloud/notes/wiki/API-0.2
 
 
+This README
+===========
+Make sure you read the README of the appropriate branch. The one you are seeing might not be the one you are looking for.
+
+
 Contribute
 ==========
 Please take a look at CONTRIBUTE.rst for information regarding extending this application. This applies to translations as well.
