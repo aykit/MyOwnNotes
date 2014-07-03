@@ -60,6 +60,13 @@ public class NoteListActivity
 	private SharedPreferences settings;
 	private Menu theMenu;
 	
+	/**
+	 * use this variable to turn extensive logcat messages on or off. 
+	 * debugOn == true -> show more log messages
+	 * debugOn == false -> show only essential messages
+	 */
+	private final boolean debugOn = false;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -182,7 +189,10 @@ public class NoteListActivity
 	    {
 	        case R.id.action_new:
 	            //make new note
-	        	//Log.d(TAG, "menu: create new noten");
+	        	if (debugOn)
+	        	{
+	        		Log.d(TAG, "menu: create new noten");
+	        	}
 	        	intent = new Intent(this, NoteSingleActivity.class);
 	        	intent.putExtra("isNewNote", true);
 	        	startActivity(intent);
@@ -190,13 +200,19 @@ public class NoteListActivity
 	            
 	        case R.id.action_sync:
 	        	//start synchronizing
-	        	//Log.d(TAG, "menu: start sync");
+	        	if(debugOn) 
+	        	{
+	        		Log.d(TAG, "menu: start sync");
+	        	}	
 	        	synchronizeNotes();
 	        	return true;
 	        	
 	        case R.id.action_settings:
 	            //go to settings
-	        	//Log.d(TAG, "menu: open settings");
+	        	if(debugOn)
+	        	{
+	        		Log.d(TAG, "menu: open settings");
+	        	}
 	        	intent = new Intent(this, SettingsActivity.class);
 	        	startActivity(intent);
 	            return true;
@@ -271,7 +287,10 @@ public class NoteListActivity
 		catch(MalformedURLException e)
 		{
 			e.printStackTrace();
-			Log.e(TAG, "tempUrl malforemd: String=" + serverUrl);
+			if(debugOn)
+        	{
+				Log.e(TAG, "tempUrl malforemd: String=" + serverUrl);
+        	}
 		}
 		
 		//upload new notes
@@ -285,6 +304,7 @@ public class NoteListActivity
 		
 		
 		//get all notes
+		Log.d(TAG, "getting notes from server");
 		new DownloadNotesTask().execute(urlToConnect);
 		//rest done in updateDatabase(), which is called when download is finished.
 	}
@@ -414,8 +434,12 @@ public class NoteListActivity
 		//upload all notes with COLUMN_STATUS = NEW_NOTE
 		Cursor cursor = getCursor(NotesTable.NEW_NOTE);
 		
-		//int rows = cursor.getCount();
-		//Log.d(TAG, "cursor rows new notes:" + rows);
+		if(debugOn)
+    	{
+			int rows = cursor.getCount();
+			Log.d(TAG, "cursor rows new notes:" + rows);
+    	}
+		
 		while(!cursor.isAfterLast() )
 		{
 			String content = cursor.getString(cursor.getColumnIndex(NotesTable.CLOUMN_CONTENT));
@@ -435,8 +459,12 @@ public class NoteListActivity
 		Log.d(TAG, "writing modified notes to server");
 		//upload changes to existing notes marked COLUMN_STATUS = TO_UPDATE
 		Cursor cursor = getCursor(NotesTable.TO_UPDATE);
-		//int rows = cursor.getCount();
-		//Log.d(TAG, "cursor rows modified notes:" + rows);
+		
+		if(debugOn)
+    	{
+			int rows = cursor.getCount();
+			Log.d(TAG, "cursor rows modified notes:" + rows);
+    	}
 		
 		while ( !cursor.isAfterLast() )
 		{
@@ -457,8 +485,12 @@ public class NoteListActivity
 		Log.d(TAG, "deleting notes from server");
 		//delete all notes with COLUM_STATUS = TO_DELETE
 		Cursor cursor = getCursor(NotesTable.TO_DELETE);
-		//int rows = cursor.getCount();
-		//Log.d(TAG, "cursor rows to delete:" + rows);
+		
+		if(debugOn)
+    	{
+			int rows = cursor.getCount();
+			Log.d(TAG, "cursor rows to delete:" + rows);
+    	}
 		
 		while( !cursor.isAfterLast() )
 		{
@@ -594,9 +626,14 @@ public class NoteListActivity
 					Log.e(TAG, "failure @ delete note. note " + urlString.substring(urlString.lastIndexOf('/')) + " does not exist");
 					return false;
 				}
+				else if(connectionCode == 403)
+				{
+					Log.e(TAG, "failure @ delete note. permission problem (error code 403)");
+					return false;
+				}
 				else
 				{
-					Log.e(TAG, "failure @ delete new Note");
+					Log.e(TAG, "failure @ delete new Note. response code:" + connectionCode);
 					return false;
 				}
 				
@@ -682,9 +719,14 @@ public class NoteListActivity
 					Log.e(TAG, "failure @ update note. note " + urlString.substring(urlString.lastIndexOf('/')) + " does not exist");
 					return false;
 				}
+				else if(connectionCode == 403)
+				{
+					Log.e(TAG, "failure @ update note. permission problem (error code 403)");
+					return false;
+				}				
 				else
 				{
-					Log.e(TAG, "failure @ update new Note");
+					Log.e(TAG, "failure @ update new Note. response code:" + connectionCode);
 					return false;
 				}
 				
@@ -776,12 +818,17 @@ public class NoteListActivity
 				}
 				else if(connectionCode == 404)
 				{
-					Log.e(TAG, "failure @ update note. note " + urlString.substring(urlString.lastIndexOf('/')) + " does not exist");
+					Log.e(TAG, "failure @ upload note. note " + urlString.substring(urlString.lastIndexOf('/')) + " does not exist");
+					return false;
+				}
+				else if(connectionCode == 403)
+				{
+					Log.e(TAG, "failure @ upload note. permission problem (error code 403)");
 					return false;
 				}
 				else
 				{
-					Log.e(TAG, "failure @ upload new Note");
+					Log.e(TAG, "failure @ upload new Note. response code:" + connectionCode);
 					return false;
 				}
 				
@@ -866,29 +913,43 @@ public class NoteListActivity
 			} 
 			catch (MalformedURLException e) 
 			{
-				//e.printStackTrace();
-				//Log.e(TAG, e.toString());
+				if(debugOn)
+				{
+					e.printStackTrace();
+					Log.e(TAG, e.toString());
+				}
 				
 				return "ERROR MalformedURLException";
 			}
 			catch(FileNotFoundException e)
 			{
-				//e.printStackTrace();
-				//Log.e(TAG, e.toString());
+				if(debugOn)
+				{
+					e.printStackTrace();
+					Log.e(TAG, e.toString());
+				}
 				
 				return "ERROR FileNotFoundException";
 			}
 			catch(SSLHandshakeException e)
 			{
-				//e.printStackTrace();
-				//Log.e(TAG, e.toString());
+				if(debugOn)
+				{
+					e.printStackTrace();
+					Log.e(TAG, e.toString());
+				}
 				
 				return "ERROR SSLHandshakeException";
 			}
-	    	catch (IOException e) {
-				//e.printStackTrace();
-				//Log.e(TAG, e.toString() );
-				return "ERROR IOException";
+	    	catch (IOException e) 
+	    	{
+	    		if(debugOn)
+				{
+	    			e.printStackTrace();
+	    			Log.e(TAG, e.toString() );
+				}
+	    		
+	    		return "ERROR IOException";
 			}
 			finally
 			{
