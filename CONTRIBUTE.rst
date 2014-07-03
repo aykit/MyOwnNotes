@@ -16,28 +16,59 @@ That's it. If you have no idea where to help out:
 Together we are be able to write a really good application for all of us.
 
 
-How to submit code
-==================
-Please take a look at the github documentation: https://help.github.com/categories/63/articles
+How to submit bugs / issues
+===========================
+Bugs are nasty and we hate them at least as much as you do. Whenever you submit an issue provide the following information. This is not to annoy you! Without that information, we don't know where to look:
+
+Provide all details concerning your software environment
+--------------------------------------------------------
+* ownCloud server version: https://yourcloud/index.php/settings/admin
+* ownCloud Notes server version
+* ownCloud encryption plugin installed and enabled and if so, the version
+* Android / CM / whateverdistroyouhave Version
+
+Provide all details concerning the specific issue
+-------------------------------------------------
+* Update My Own Notes to latest version. If you are using F-Droid, that may take a day or two. Look at `our git repository`_ and browse the tags to see which version is the newest one.
+* Submit the crash report on your phone. This way we can determine the problem in the google developers console (please be aware that you are sending the crash report to google).
+* If you don't want to send data to google: send us the Output of `logcat`_
+* Or look at /data/anr/traces.txt on your device and submit the crash log
+
 
 How to submit translations
 ==========================
 
 New Translations
 ----------------
-To avoid incomplete translations, new ones need to be pushed to a seperate branch. Please submit an issue and we will add a this branch for you.
+To avoid incomplete translations, translations will be added and edited pushed to a seperate branch. Please submit an issue and we will add a this branch for you.
 
 Improvements to existing translations
 -------------------------------------
-If the translation-branch has already been merged, just make the changes in the development branch. If not, use the appropriate language branch. Look at the `network graph`_ to see which one is the case.
+Just make the changes in the specific branch of your language.
 
 Proof read translations
 -----------------------
-Starting now (July 2014), all new and old translations need to be proof read by at least one other user before being merged into the master branch.
+This is crucial. You really need to proof read your translations! Starting now (July 2014), all new and old translations should be proof read by at least one other user before being merged into the master branch. If no one complains about the translation in a week's time, the pull request is treated as being ok and will be merged.
+
+
+How to submit code
+==================
+
+1. Check
+2. Double Check
+3. Test
+4. Test with a second device
+5. Beautify
+6. Repeat Steps 1-5 as often as necessary
+7. `Submit`_
+
 
 License
 =======
-One last note: This application is licensed under `GPL 3 <http://www.gnu.org/copyleft/gpl.html>`_. All code submitted will be released under the same license. For more information, look at the LICENSE file.
+One last note: This application is licensed under `GPL 3`_. All code submitted will be released under the same license. For more information, look at the LICENSE file.
 
-
+.. _GPL 3: http://www.gnu.org/copyleft/gpl.html
+.. _logcat: http://wiki.cyanogenmod.org/w/Doc:_debugging_with_logcat
 .. _network graph: https://github.com/aykit/myownnotes-android/network
+.. _our git repository: https://github.com/aykit/myownnotes-android
+.. _Submit: https://help.github.com/categories/63/articles

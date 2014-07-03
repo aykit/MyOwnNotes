@@ -4,14 +4,16 @@ MyOwnNotes-android
 Android App for the ownCloud Notes Application. Uses the (RESTful) API of ownCloud notes extension/app found here: https://github.com/owncloud/notes/wiki/API-0.2
 
 
-This README
-===========
-Make sure you read the README of the appropriate branch. The one you are seeing might not be the one you are looking for.
+The right README
+================
+Make sure you read the README of the appropriate branch. The one you are seeing right now might not be the one you are looking for.
 
 
 Contribute
 ==========
-Please take a look at CONTRIBUTE.rst for information regarding extending this application. This applies to translations as well.
+Please take a look at CONTRIBUTE.rst for information regarding extending this application.
+
+The information there applies to **translations** and **Issue submissions** as well.
 
 
 Install
@@ -50,7 +52,7 @@ If you don't want to use self-signed certificates you can get one for free (for 
 
 I have my own certificate. However, it is not working.
 ------------------------------------------------------
-One of the most common errors is a wrong certificate chain. Please use `SSLlabs`_ to check if your certificate chain is in order. If it isn't look up the manual of your webserver. We also wrote an article for `Setting up owncloud on Speed`_.
+One of the most common errors is a wrong certificate chain. Please use `SSL Labs`_ to check if your certificate chain is in order. If it isn't look up the manual of your webserver. We also wrote an article for `Setting up owncloud on Speed`_.
 
 Building the application
 ------------------------
@@ -69,6 +71,6 @@ Download the official android sdk here: http://developer.android.com/sdk/index.h
 .. _My Own Notes App: https://github.com/aykit/myownnotes-android
 .. _ownCloud Docs: http://doc.owncloud.org/
 .. _ownCloud Notes App: http://apps.owncloud.com/content/show.php/Notes?content=160567
-.. _SSLlabs: https://www.ssllabs.com/ssltest/
+.. _SSL Labs: https://www.ssllabs.com/ssltest/
 .. _StartSSL: https://startssl.com
 .. _Setting up owncloud on Speed: https://blog.entwicklerbier.org/2014/06/setting-up-owncloud-on-speed/
