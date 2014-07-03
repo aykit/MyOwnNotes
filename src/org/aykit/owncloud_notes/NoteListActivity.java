@@ -59,6 +59,7 @@ public class NoteListActivity
 	private LoaderManager loaderManager;
 	private SharedPreferences settings;
 	private Menu theMenu;
+	private boolean connectionError;
 	
 	/**
 	 * use this variable to turn extensive logcat messages on or off. 
@@ -271,6 +272,7 @@ public class NoteListActivity
 		updateSettings(); //get newest login-data in case it has changed
 		Log.d(TAG, "starting note synchonization");
 		showProgressBar();
+		connectionError = false;
 		
 		String username = settings.getString(SettingsActivity.PREF_USERNAME, "username"); 			//defaultvalue = "username"
 		String password = settings.getString(SettingsActivity.PREF_PASSWOORD, "password"); 			//defaultvalue = "password"
@@ -618,7 +620,10 @@ public class NoteListActivity
 				
 				if(connectionCode == 200)
 				{
-					//Log.d(TAG, "success @ delete Note");
+					if(debugOn)
+					{
+						Log.d(TAG, "success @ delete Note");
+					}
 					return true;
 				}
 				else if(connectionCode == 404)
@@ -659,12 +664,21 @@ public class NoteListActivity
 			}
 			
 		}
-		/*
-		protected void onPostExecute(boolean result)
+		
+		
+		protected void onPostExecute(Boolean result)
 		{
-			Toast.makeText(getApplicationContext(), "delete finished with boolean:" + result, Toast.LENGTH_LONG).show();
+			if(result == false)
+			{
+				//there was a delete-error. no connection could be made.
+				connectionError = true; //this variable is checked before the sql-database is updated.
+				if(debugOn)
+				{
+					Log.e(TAG, "onPost: delete error");
+				}
+			}
 		}
-		*/
+		
 	}
 		
 	//----------------------------------
@@ -711,7 +725,10 @@ public class NoteListActivity
 				
 				if(connectionCode == 200)
 				{
-					//Log.d(TAG, "success @ update new Note");
+					if(debugOn)
+					{
+						Log.d(TAG, "success @ update new Note");
+					}
 					return true;
 				}
 				else if(connectionCode == 404)
@@ -758,12 +775,20 @@ public class NoteListActivity
 			}
 			
 		}
-		/*
-		protected void onPostExecute(boolean result)
+		
+		protected void onPostExecute(Boolean result)
 		{
-			Toast.makeText(getApplicationContext(), "update finished with boolean:" + result, Toast.LENGTH_LONG).show();
+			if(result == false)
+			{
+				//there was an update-error. seems that no connection could be made.
+				connectionError = true; //this variable is checked before the sql-database is updated.
+				if(debugOn)
+				{
+					Log.e(TAG, "onPost: update error");
+				}
+			}
 		}
-		*/
+		
 	}
 	
 	//----------------------------------
@@ -813,7 +838,10 @@ public class NoteListActivity
 				
 				if(connectionCode == 200)
 				{
-					//Log.d(TAG, "success @ upload new Note");
+					if(debugOn)
+					{
+						Log.d(TAG, "success @ upload new Note");
+					}
 					return true;
 				}
 				else if(connectionCode == 404)
@@ -862,12 +890,20 @@ public class NoteListActivity
 			}
 			
 		}
-		/*
-		protected void onPostExecute(boolean result)
+		
+		protected void onPostExecute(Boolean result)
 		{
-			Toast.makeText(getApplicationContext(), "upload finished with boolean:" + result, Toast.LENGTH_LONG).show();
+			if(result == false)
+			{
+				//there was an upload-error. seems that no connection could be made.
+				connectionError = true; //this variable is checked before the sql-database is updated.
+				if(debugOn)
+				{
+					Log.e(TAG, "onPost: upload error");
+				}
+			}
 		}
-		*/
+		
 	}
 	
 	//----------------------------------
@@ -989,7 +1025,20 @@ public class NoteListActivity
 	    	else
 	    	{
 	    		//"result" contains a JSON with _all_ notes from owncloud server.
-	    		updateDatabase(result);
+	    		
+	    		if(!connectionError) //only update database, if upload/update/delete cycle was successful
+	    		{
+	    			updateDatabase(result);
+	    			if(debugOn)
+	    			{
+	    				Log.d(TAG, "updateDatabase() executed" );
+	    			}
+	    		}
+	    		else
+	    		{
+	    			Log.e(TAG, "list not updated due to upload error");
+	    			hideProgressBar();
+	    		}
 	    	}
 	    	
 	    }
