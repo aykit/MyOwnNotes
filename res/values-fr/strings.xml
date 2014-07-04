@@ -33,7 +33,7 @@
     <string name="action_about">Infos</string>
     <string name="action_help">Aide</string>
     <string name="notelist_empty_list">Aucune note enregistrée. Vous n\'avez pas non plus créé de notes ou elles ne sont pas encore synchronisées.</string>
-    <string name="alert_ssl_cert_not_trusted">Vous essayez de vous connecter à un serveur qui utilise un certificat auto-signé. Vous devez ajouter manuellement ce certificat aux certificats de confiance d'Android. \n\n Voulez-vous accéder au tutoriel ?</string>
+    <string name="alert_ssl_cert_not_trusted">Vous essayez de vous connecter à un serveur qui utilise un certificat auto-signé. Vous devez ajouter manuellement ce certificat aux certificats de confiance d\'Android. \n\n Voulez-vous accéder au tutoriel ?</string>
     <string name="alert_answer_yes">Oui</string>
     <string name="alert_answer_no_thanks">Non</string>
     <!-- Toasts -->
