@@ -44,7 +44,7 @@
     <!-- Settings strings -->
     <string name="settings_text_credentials">Kimlik Bilgileri:</string>
     <string name="settings_text_server_address">Sunucu Adresi:</string>
-    <string name="settings_text_server_address_hint">www.owncloudsunucunuz.com</string>
+    <string name="settings_text_server_address_hint">https://www.server.com[:port]</string>
     <string name="settings_text_https">https://</string>
     <string name="settings_text_username">Kullanıcı Adı:</string>
     <string name="settings_text_username_hint">kullanıcı adı</string>

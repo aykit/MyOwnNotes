@@ -281,9 +281,25 @@ public class NoteListActivity
 		
 		try
 		{
+			String basePath = "";
 			URL tempUrl = new URL(serverUrl);
 			//must be like: https://user:password@yourowncloud.com/index.php/apps/notes/api/v0.2/notes
-			String basePath = tempUrl.getHost() + tempUrl.getPath() + "/index.php/apps/notes/api/v0.2/notes";
+			if(tempUrl.getPort() == -1)
+			{
+				basePath = tempUrl.getHost() + tempUrl.getPath() + "/index.php/apps/notes/api/v0.2/notes";
+				if(debugOn)
+				{
+					Log.d(TAG, "basePath no port: " + basePath);
+				}
+			}
+			else
+			{
+				basePath = tempUrl.getHost() + ":" + tempUrl.getPort() + tempUrl.getPath() + "/index.php/apps/notes/api/v0.2/notes";
+				if(debugOn)
+				{
+					Log.d(TAG, "basePath with port: " + basePath);
+				}
+			}
 			urlToConnect = "https://" + username + ":" + password + "@" + basePath;
 		}
 		catch(MalformedURLException e)

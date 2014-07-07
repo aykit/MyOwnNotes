@@ -59,7 +59,7 @@ public class SettingsActivity extends Activity {
 		
 		username.setText( settings.getString(PREF_USERNAME, ""));
 		password.setText(settings.getString(PREF_PASSWOORD, ""));
-		address.setText(settings.getString(PREF_ADDRESS, "https://"));
+		address.setText(settings.getString(PREF_ADDRESS, ""));
 		autoSync.setChecked(settings.getBoolean(PREF_AUTOSYNC, true));
 		defaultTitle.setChecked( settings.getBoolean(PREF_DEFAULT_TITLE, true));
 		

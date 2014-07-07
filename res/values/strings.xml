@@ -44,7 +44,7 @@
     <!-- Settings strings -->
     <string name="settings_text_credentials">Credentials:</string>
     <string name="settings_text_server_address">Server-Address:</string>
-    <string name="settings_text_server_address_hint">www.yourowncloudserver.com</string>
+    <string name="settings_text_server_address_hint">https://www.server.com[:port]</string>
     <string name="settings_text_https">https://</string>
     <string name="settings_text_username">Username:</string>
     <string name="settings_text_username_hint">username</string>
