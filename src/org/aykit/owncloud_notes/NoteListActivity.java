@@ -304,27 +304,32 @@ public class NoteListActivity
 		}
 		catch(MalformedURLException e)
 		{
+			connectionError = true;
 			e.printStackTrace();
 			if(debugOn)
         	{
-				Log.e(TAG, "tempUrl malforemd: String=" + serverUrl);
+				Log.e(TAG, "tempUrl malforemd: serverUrl=" + serverUrl);
         	}
 		}
 		
-		//upload new notes
-		writeNewNotesToServer(urlToConnect);
-		
-		//update modified notes
-		writeModifiedNotesToServer(urlToConnect);
-		
-		//delete marked notes
-		deleteMarkedNotesFromServer(urlToConnect);
-		
-		
-		//get all notes
-		Log.d(TAG, "getting notes from server");
-		new DownloadNotesTask().execute(urlToConnect);
-		//rest done in updateDatabase(), which is called when download is finished.
+		//only if no problems occured proceed
+		if( ! connectionError)
+		{
+			//upload new notes
+			writeNewNotesToServer(urlToConnect);
+			
+			//update modified notes
+			writeModifiedNotesToServer(urlToConnect);
+			
+			//delete marked notes
+			deleteMarkedNotesFromServer(urlToConnect);
+			
+			
+			//get all notes
+			Log.d(TAG, "getting notes from server");
+			new DownloadNotesTask().execute(urlToConnect);
+			//rest done in updateDatabase(), which is called when download is finished.
+		}
 	}
 	
 	private void showProgressBar()
@@ -644,16 +649,19 @@ public class NoteListActivity
 				}
 				else if(connectionCode == 404)
 				{
+					connectionError = true;
 					Log.e(TAG, "failure @ delete note. note " + urlString.substring(urlString.lastIndexOf('/')) + " does not exist");
 					return false;
 				}
 				else if(connectionCode == 403)
 				{
+					connectionError = true;
 					Log.e(TAG, "failure @ delete note. permission problem (error code 403)");
 					return false;
 				}
 				else
 				{
+					connectionError = true;
 					Log.e(TAG, "failure @ delete new Note. response code:" + connectionCode);
 					return false;
 				}
@@ -661,12 +669,14 @@ public class NoteListActivity
 			}
 			catch(MalformedURLException e)
 			{
+				connectionError = true;
 				e.printStackTrace();
 				Log.e(TAG, "malformed url in UpdateNotesTask:" + e.toString());
 				return false;
 			}
 			catch(IOException e)
 			{
+				connectionError = true;
 				e.printStackTrace();
 				Log.e(TAG, "ioException in UpdateNotesTask:" + e.toString());
 				return false;
@@ -749,16 +759,19 @@ public class NoteListActivity
 				}
 				else if(connectionCode == 404)
 				{
+					connectionError = true;
 					Log.e(TAG, "failure @ update note. note " + urlString.substring(urlString.lastIndexOf('/')) + " does not exist");
 					return false;
 				}
 				else if(connectionCode == 403)
 				{
+					connectionError = true;
 					Log.e(TAG, "failure @ update note. permission problem (error code 403)");
 					return false;
 				}				
 				else
 				{
+					connectionError = true;
 					Log.e(TAG, "failure @ update new Note. response code:" + connectionCode);
 					return false;
 				}
@@ -766,18 +779,21 @@ public class NoteListActivity
 			}
 			catch(MalformedURLException e)
 			{
+				connectionError = true;
 				e.printStackTrace();
 				Log.e(TAG, "malformed url in UpdateNotesTask:" + e.toString());
 				return false;
 			}
 			catch(IOException e)
 			{
+				connectionError = true;
 				e.printStackTrace();
 				Log.e(TAG, "ioException in UpdateNotesTask:" + e.toString());
 				return false;
 			}
 			catch(JSONException jsonE)
 			{
+				connectionError = true;
 				jsonE.printStackTrace();
 				Log.e(TAG, "jasonException in UpdateNotesTask:" + jsonE.toString());
 				return false;
@@ -862,16 +878,19 @@ public class NoteListActivity
 				}
 				else if(connectionCode == 404)
 				{
+					connectionError = true;
 					Log.e(TAG, "failure @ upload note. note " + urlString.substring(urlString.lastIndexOf('/')) + " does not exist");
 					return false;
 				}
 				else if(connectionCode == 403)
 				{
+					connectionError = true;
 					Log.e(TAG, "failure @ upload note. permission problem (error code 403)");
 					return false;
 				}
 				else
 				{
+					connectionError = true;
 					Log.e(TAG, "failure @ upload new Note. response code:" + connectionCode);
 					return false;
 				}
@@ -881,18 +900,21 @@ public class NoteListActivity
 			}
 			catch(MalformedURLException e)
 			{
+				connectionError = true;
 				e.printStackTrace();
 				Log.e(TAG, "malformed url in UploadNotesTask:" + e.toString());
 				return false;
 			}
 			catch(IOException e)
 			{
+				connectionError = true;
 				e.printStackTrace();
 				Log.e(TAG, "ioException in UploadNotesTask:" + e.toString());
 				return false;
 			}
 			catch(JSONException jsonE)
 			{
+				connectionError = true;
 				jsonE.printStackTrace();
 				Log.e(TAG, "jasonException in UplaodNotesTask:" + jsonE.toString());
 				return false;
@@ -965,26 +987,23 @@ public class NoteListActivity
 			} 
 			catch (MalformedURLException e) 
 			{
-				if(debugOn)
-				{
-					e.printStackTrace();
-					Log.e(TAG, e.toString());
-				}
+				connectionError = true;
+				e.printStackTrace();
+				Log.e(TAG, e.toString());
 				
 				return "ERROR MalformedURLException";
 			}
 			catch(FileNotFoundException e)
 			{
-				if(debugOn)
-				{
-					e.printStackTrace();
-					Log.e(TAG, e.toString());
-				}
+				connectionError = true;
+				e.printStackTrace();
+				Log.e(TAG, e.toString());
 				
 				return "ERROR FileNotFoundException";
 			}
 			catch(SSLHandshakeException e)
 			{
+				connectionError = true;
 				if(debugOn)
 				{
 					e.printStackTrace();
@@ -995,11 +1014,9 @@ public class NoteListActivity
 			}
 	    	catch (IOException e) 
 	    	{
-	    		if(debugOn)
-				{
-	    			e.printStackTrace();
-	    			Log.e(TAG, e.toString() );
-				}
+	    		connectionError = true;
+	    		e.printStackTrace();
+	    		Log.e(TAG, e.toString() );
 	    		
 	    		return "ERROR IOException";
 			}
@@ -1042,7 +1059,7 @@ public class NoteListActivity
 	    	{
 	    		//"result" contains a JSON with _all_ notes from owncloud server.
 	    		
-	    		if(!connectionError) //only update database, if upload/update/delete cycle was successful
+	    		if( ! connectionError) //only update database, if upload/update/delete cycle was successful
 	    		{
 	    			updateDatabase(result);
 	    			if(debugOn)
@@ -1052,7 +1069,7 @@ public class NoteListActivity
 	    		}
 	    		else
 	    		{
-	    			Log.e(TAG, "list not updated due to upload error");
+	    			Log.e(TAG, "list not updated due to connection error");
 	    			hideProgressBar();
 	    		}
 	    	}
