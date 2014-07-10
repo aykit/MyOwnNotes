@@ -440,7 +440,7 @@ public class NoteListActivity
 			//something went wrong with json
 			Toast.makeText(this, R.string.toast_not_correct_json, Toast.LENGTH_LONG).show();
 			jsonE.printStackTrace();
-			Log.e(TAG, "no correct JSON data returned from server. first 30 chars from server:" + result.substring(0, 29));
+			Log.e(TAG, "no correct JSON data returned from server. result from server:" + result);
 		}
 		
 		
@@ -699,9 +699,7 @@ public class NoteListActivity
 				//there was a delete-error. no connection could be made.
 				connectionError = true; //this variable is checked before the sql-database is updated.
 				if(debugOn)
-				{
-					Log.e(TAG, "onPost: delete error");
-				}
+				Log.e(TAG, "onPost: delete error");
 			}
 		}
 		
@@ -814,10 +812,7 @@ public class NoteListActivity
 			{
 				//there was an update-error. seems that no connection could be made.
 				connectionError = true; //this variable is checked before the sql-database is updated.
-				if(debugOn)
-				{
-					Log.e(TAG, "onPost: update error");
-				}
+				Log.e(TAG, "onPost: update error");
 			}
 		}
 		
@@ -935,10 +930,7 @@ public class NoteListActivity
 			{
 				//there was an upload-error. seems that no connection could be made.
 				connectionError = true; //this variable is checked before the sql-database is updated.
-				if(debugOn)
-				{
-					Log.e(TAG, "onPost: upload error");
-				}
+				Log.e(TAG, "onPost: upload error");
 			}
 		}
 		
