@@ -1062,6 +1062,7 @@ public class NoteListActivity
 	    		else
 	    		{
 	    			Log.e(TAG, "list not updated due to connection error");
+	    			Toast.makeText(getApplicationContext(), R.string.toast_connection_error, Toast.LENGTH_LONG).show();
 	    			hideProgressBar();
 	    		}
 	    	}
