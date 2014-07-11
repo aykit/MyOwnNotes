@@ -30,6 +30,7 @@ Provide all details concerning your software environment
 Provide all details concerning the specific issue
 -------------------------------------------------
 * Update My Own Notes to latest version. If you are using F-Droid, that may take a day or two. Look at `our git repository`_ and browse the tags to see which version is the newest one.
+* Enable extensive LogCat messages under "Settings/Debug" in MyOwnNotes.
 * Submit the crash report on your phone. This way we can determine the problem in the google developers console (please be aware that you are sending the crash report to google).
 * If you don't want to send data to google: send us the Output of `logcat`_
 * Or look at /data/anr/traces.txt on your device and submit the crash log
