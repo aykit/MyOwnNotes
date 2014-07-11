@@ -78,6 +78,7 @@ public class NoteSingleActivity extends Activity {
 
 				content = intent.getStringExtra("content");
 				title = intent.getStringExtra("title");
+				getActionBar().setTitle(title);
 				id = intent.getLongExtra("id", -1);
 				//Log.d(TAG, "id from intent: " + id);
 				status = intent.getStringExtra("status");
@@ -109,6 +110,8 @@ public class NoteSingleActivity extends Activity {
 					
 					editTextTitle.setText(dateAndTime);
 				}
+				
+				getActionBar().setTitle(R.string.action_new);
 			}
 		}
 		else
