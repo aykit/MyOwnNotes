@@ -11,7 +11,7 @@ Make sure you read the README of the appropriate branch. The one you are seeing 
 
 Contribute
 ==========
-Please take a look at `CONTRIBUTING`_ for information regarding extending this application.
+Please take a look at CONTRIBUTING.rst for information regarding extending this application.
 
 The information there applies to **translations** and **Issue submissions** as well.
 
@@ -42,7 +42,7 @@ Short answer: yes. Please read our comment on `Entwicklerbier.org`_ for more inf
 
 I can't connect via SSL. How do I add (self-signed) certificates?
 -----------------------------------------------------------------
-Use the android Security Settings to add self-signed certificates. Open your Settings, browse to Security and add them there. You can find more information on this feature at `google dev`_.
+Use the android Security Settings to add self-signed certificates. Open your Settings, browse to Security and add them there. You can find more information on our `My Own Notes Website`_ and at `google dev`_.
 
 If you still need help, feel free to `contact us`_. Please be aware that this mailadress changes as we want to keep spam to a minimum and that it may take a while for us to help out.
 
@@ -90,11 +90,11 @@ My Own Notes and all contributions are licensed as `GPL3`_
 
 .. _CheapSSLsecurity: https://cheapsslsecurity.com
 .. _contact us: mailto:z-o48hohw4l9qla@ay.vc
-.. _CONTRIBUTING: https://github.com/aykit/myownnotes-android/blob/master/CONTRIBUTE.rst
 .. _Entwicklerbier.org: https://blog.entwicklerbier.org/2014/05/securing-the-internet-of-things-how-about-securing-the-internet-first/
 .. _google dev: https://code.google.com/p/android/issues/detail?id=11231#c107
 .. _GPL3: https://github.com/aykit/myownnotes-android/blob/master/LICENSE
 .. _My Own Notes App: https://github.com/aykit/myownnotes-android
+.. _My Own Notes Website: https://aykit.org/sites/myownnotes.html
 .. _ownCloud Docs: http://doc.owncloud.org/
 .. _ownCloud Notes App: http://apps.owncloud.com/content/show.php/Notes?content=160567
 .. _SSL Labs: https://www.ssllabs.com/ssltest/
