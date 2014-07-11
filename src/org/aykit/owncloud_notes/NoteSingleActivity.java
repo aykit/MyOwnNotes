@@ -111,7 +111,7 @@ public class NoteSingleActivity extends Activity {
 					editTextTitle.setText(dateAndTime);
 				}
 				
-				getActionBar().setTitle(R.string.action_new);
+				getActionBar().setTitle(R.string.new_note);
 			}
 		}
 		else
