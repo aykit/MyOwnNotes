@@ -110,6 +110,9 @@ public class NoteListActivity
 		editor.putLong("id", 0);
 		editor.putString("status", "");
 		editor.commit();
+		
+		makeSureSqlDatabaseIsOpen();
+		
 		showAndFillListView();
 	}
 	
@@ -135,11 +138,25 @@ public class NoteListActivity
 				sqlDatabase.close();
 			}
 		}
+		
+		if(notesOpenHelper != null)
+		{
+			notesOpenHelper.close();
+		}
 	}
 	
-	@SuppressWarnings("deprecation")
-	private void showAndFillListView()
+	/**
+	 * checks whether <code>notesOpenHelper</code> is open and
+	 * whether <code>sqlDatabase</code> is open
+	 * and makes sure, that both are.
+	 */
+	public void makeSureSqlDatabaseIsOpen ()
 	{
+		if(notesOpenHelper == null)
+		{
+			notesOpenHelper = new NotesOpenHelper(this);
+		}
+		
 		if(sqlDatabase == null)
 		{
 			sqlDatabase = notesOpenHelper.getWritableDatabase();
@@ -151,7 +168,12 @@ public class NoteListActivity
 				sqlDatabase = notesOpenHelper.getWritableDatabase();
 			}
 		}
-		
+	}
+	
+	@SuppressWarnings("deprecation")
+	private void showAndFillListView()
+	{
+		makeSureSqlDatabaseIsOpen();
 		
 		String[] from = { NotesTable.COLUMN_TITLE, NotesTable.CLOUMN_CONTENT, NotesTable.COLUMN_STATUS };
 		int[] to = {R.id.textview_note_row_title, R.id.textview_note_row_content, R.id.textview_note_row_marked };
@@ -392,18 +414,7 @@ public class NoteListActivity
 	{
 		//update the database with "result" (= a json with _all_ notes)
 		//Toast.makeText(this, result, Toast.LENGTH_LONG).show();
-		if(sqlDatabase == null)
-		{
-			sqlDatabase = notesOpenHelper.getWritableDatabase();
-		}
-		else
-		{
-			if( ! sqlDatabase.isOpen() )
-			{
-				sqlDatabase = notesOpenHelper.getWritableDatabase();
-			}
-		}
-		
+		makeSureSqlDatabaseIsOpen();
 		
 		notesOpenHelper.emptyTheDatabase(sqlDatabase);
 		
@@ -442,13 +453,11 @@ public class NoteListActivity
 				}
 				//Log.d(TAG, "CONTENT:" + content);
 				
-				
 				values.put(NotesTable.COLUMN_ID, id);
 				values.put(NotesTable.COLUMN_TITLE, title );
 				values.put(NotesTable.CLOUMN_CONTENT, content);
 				
 				sqlDatabase.insert(NotesTable.NOTES_TABLE_NAME, null, values);
-				
 			}
 		}
 		catch(JSONException jsonE)
@@ -459,12 +468,8 @@ public class NoteListActivity
 			Log.e(TAG, "no correct JSON data returned from server. result from server:" + result);
 		}
 		
-		
-		
-		
 		showAndFillListView(); //refresh listview
 		hideProgressBar();
-		
 	}
 	
 	public void writeNewNotesToServer(String urlToServer)
@@ -544,17 +549,7 @@ public class NoteListActivity
 	
 	private Cursor getCursor(String status)
 	{
-		if (sqlDatabase == null)
-		{
-			sqlDatabase = notesOpenHelper.getWritableDatabase();
-		}
-		else
-		{
-			if( ! sqlDatabase.isOpen() )
-			{
-				sqlDatabase = notesOpenHelper.getWritableDatabase();
-			}
-		}
+		makeSureSqlDatabaseIsOpen();
 		
 		String selection = NotesTable.COLUMN_STATUS + " = ?";
 		String[] selectionArgs = new String[1];
@@ -595,17 +590,7 @@ public class NoteListActivity
 		MySimpleCursorLoader mySimpleCursorLoader;
 		String[] projection = NotesTable.COLUMNNAMES;
 		
-		if(sqlDatabase == null)
-		{
-			sqlDatabase = notesOpenHelper.getWritableDatabase();
-		}
-		else
-		{
-			if( ! sqlDatabase.isOpen() )
-			{
-				sqlDatabase = notesOpenHelper.getWritableDatabase();
-			}
-		}
+		makeSureSqlDatabaseIsOpen();
 		
 		mySimpleCursorLoader = new MySimpleCursorLoader(this, sqlDatabase, projection);
 		
