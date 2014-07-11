@@ -82,6 +82,10 @@ Translators
 * Spanish: `tmelikoff`_ 
 * Turkish: `wakeup`_ 
 
+Testers
+-------
+Unfortunately, we are not able to greet everyone in person. Without your feedback, we wouldn't be able to improve My Own Notes. Please keep up testing and providing valuable information regarding your issues. We promise we will keep up fixing and improving as best as we can.
+
 
 License
 =======
