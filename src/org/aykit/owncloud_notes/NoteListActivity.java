@@ -61,12 +61,15 @@ public class NoteListActivity
 	private Menu theMenu;
 	private boolean connectionError;
 	
+	private final String apiPath = "/index.php/apps/notes/api/v0.2/notes";
+	
 	/**
-	 * use this variable to turn extensive logcat messages on or off. 
+	 * used to turn extensive logcat messages on or off. 
 	 * debugOn == true -> show more log messages
 	 * debugOn == false -> show only essential messages
+	 * edited in SettingsActivity
 	 */
-	private final boolean debugOn = false;
+	private boolean debugOn;
 	
 	
 	@Override
@@ -75,12 +78,15 @@ public class NoteListActivity
 		setContentView(R.layout.activity_note_list);
 		
 		updateSettings();
+		debugOn = settings.getBoolean(SettingsActivity.PREF_EXTENSIVE_LOG, false); 
+		
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putBoolean(SettingsActivity.PREF_MENU_INFLATED, false); //this is done to save the fact that menus are not inflated yet.
 		editor.commit();
 		
 		loaderManager = getLoaderManager();
 		notesOpenHelper = new NotesOpenHelper(this);
+		
 	}
 	
 	@Override
@@ -104,6 +110,9 @@ public class NoteListActivity
 		editor.putLong("id", 0);
 		editor.putString("status", "");
 		editor.commit();
+		
+		makeSureSqlDatabaseIsOpen();
+		
 		showAndFillListView();
 	}
 	
@@ -129,11 +138,25 @@ public class NoteListActivity
 				sqlDatabase.close();
 			}
 		}
+		
+		if(notesOpenHelper != null)
+		{
+			notesOpenHelper.close();
+		}
 	}
 	
-	@SuppressWarnings("deprecation")
-	private void showAndFillListView()
+	/**
+	 * checks whether <code>notesOpenHelper</code> is open and
+	 * whether <code>sqlDatabase</code> is open
+	 * and makes sure, that both are.
+	 */
+	public void makeSureSqlDatabaseIsOpen ()
 	{
+		if(notesOpenHelper == null)
+		{
+			notesOpenHelper = new NotesOpenHelper(this);
+		}
+		
 		if(sqlDatabase == null)
 		{
 			sqlDatabase = notesOpenHelper.getWritableDatabase();
@@ -145,7 +168,12 @@ public class NoteListActivity
 				sqlDatabase = notesOpenHelper.getWritableDatabase();
 			}
 		}
-		
+	}
+	
+	@SuppressWarnings("deprecation")
+	private void showAndFillListView()
+	{
+		makeSureSqlDatabaseIsOpen();
 		
 		String[] from = { NotesTable.COLUMN_TITLE, NotesTable.CLOUMN_CONTENT, NotesTable.COLUMN_STATUS };
 		int[] to = {R.id.textview_note_row_title, R.id.textview_note_row_content, R.id.textview_note_row_marked };
@@ -167,7 +195,7 @@ public class NoteListActivity
 		getMenuInflater().inflate(R.menu.note_list, menu);
 		this.theMenu = menu;
 		
-		//save, that Menu has been inflated
+		//save the fact that the Menu has been inflated
 		updateSettings();
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putBoolean(SettingsActivity.PREF_MENU_INFLATED, true);
@@ -240,9 +268,9 @@ public class NoteListActivity
 		Intent intent = new Intent(this, NoteSingleActivity.class);
 		intent.putExtra("isNewNote", false); //tell intent that no new note must be created
 		
-		String title = ((TextView) v.findViewById(R.id.textview_note_row_title)).getText().toString();
-		String content = ((TextView) v.findViewById(R.id.textview_note_row_content)).getText().toString();
-		String status = ( (TextView) v.findViewById(R.id.textview_note_row_marked)).getText().toString();
+		String title = 		((TextView) v.findViewById(R.id.textview_note_row_title)).getText().toString();
+		String content = 	((TextView) v.findViewById(R.id.textview_note_row_content)).getText().toString();
+		String status = 	((TextView) v.findViewById(R.id.textview_note_row_marked)).getText().toString();
 		
 		intent.putExtra("title", title);
 		intent.putExtra("content", content);
@@ -258,7 +286,7 @@ public class NoteListActivity
 	}
 	
 	/**
-	 * initiates synchronization with owncloud server.
+	 * initiates synchronization with ownCloud server.
 	 * follows this order:
 	 * <li>upload all new notes (marked <code>NEW_NOTE</code>)</li>
 	 * <li>update all modified notes (marked <code>TO_UPDATE</code>)</li>
@@ -273,58 +301,73 @@ public class NoteListActivity
 		Log.d(TAG, "starting note synchonization");
 		showProgressBar();
 		connectionError = false;
-		
-		String username = settings.getString(SettingsActivity.PREF_USERNAME, "username"); 			//defaultvalue = "username"
-		String password = settings.getString(SettingsActivity.PREF_PASSWOORD, "password"); 			//defaultvalue = "password"
+	
 		String serverUrl = settings.getString(SettingsActivity.PREF_ADDRESS, "https://www.example.com");	//defaultvalue = "https://www.example.com"
 		String urlToConnect = "";
+		String basePath = "";
 		
 		try
 		{
-			String basePath = "";
+			//create basePath
+			
 			URL tempUrl = new URL(serverUrl);
 			//must be like: https://user:password@yourowncloud.com/index.php/apps/notes/api/v0.2/notes
-			if(tempUrl.getPort() == -1)
+			
+			if(tempUrl.getPort() == -1) //no port was given
 			{
-				basePath = tempUrl.getHost() + tempUrl.getPath() + "/index.php/apps/notes/api/v0.2/notes";
+				basePath = tempUrl.getHost() + tempUrl.getPath() + apiPath;
+				
 				if(debugOn)
 				{
 					Log.d(TAG, "basePath no port: " + basePath);
+					//Log.d(TAG, "u:" + username + " pw:" + password);
 				}
 			}
-			else
-			{
-				basePath = tempUrl.getHost() + ":" + tempUrl.getPort() + tempUrl.getPath() + "/index.php/apps/notes/api/v0.2/notes";
+			else //port was given
+			{ 	
+				basePath = tempUrl.getHost() + ":" + tempUrl.getPort() + tempUrl.getPath() + apiPath;
+				
 				if(debugOn)
 				{
 					Log.d(TAG, "basePath with port: " + basePath);
+					//Log.d(TAG, "u:" + username + " pw:" + password);
 				}
 			}
-			urlToConnect = "https://" + username + ":" + password + "@" + basePath;
+			
+			urlToConnect = "https://" + basePath;  //this string will be passed to the async tasks
+			
+			if(debugOn)
+			{
+				Log.d(TAG, "urlToConnect:" + urlToConnect);
+			}
 		}
 		catch(MalformedURLException e)
 		{
+			connectionError = true;
 			e.printStackTrace();
 			if(debugOn)
         	{
-				Log.e(TAG, "tempUrl malforemd: String=" + serverUrl);
+				Log.e(TAG, "tempUrl malforemd: serverUrl=" + serverUrl);
         	}
 		}
 		
-		//upload new notes
-		writeNewNotesToServer(urlToConnect);
-		
-		//update modified notes
-		writeModifiedNotesToServer(urlToConnect);
-		
-		//delete marked notes
-		deleteMarkedNotesFromServer(urlToConnect);
-		
-		
-		//get all notes
-		Log.d(TAG, "getting notes from server");
-		new DownloadNotesTask().execute(urlToConnect);
-		//rest done in updateDatabase(), which is called when download is finished.
+		//only proceed if no problems occurred
+		if( ! connectionError)
+		{
+			//upload new notes
+			writeNewNotesToServer(urlToConnect);
+			
+			//update modified notes
+			writeModifiedNotesToServer(urlToConnect);
+			
+			//delete marked notes
+			deleteMarkedNotesFromServer(urlToConnect);
+			
+			//get all notes
+			Log.d(TAG, "getting notes from server");
+			new DownloadNotesTask().execute(urlToConnect);
+			//rest done in updateDatabase(), which is called when download is finished.
+		}
 	}
 	
 	private void showProgressBar()
@@ -371,18 +414,7 @@ public class NoteListActivity
 	{
 		//update the database with "result" (= a json with _all_ notes)
 		//Toast.makeText(this, result, Toast.LENGTH_LONG).show();
-		if(sqlDatabase == null)
-		{
-			sqlDatabase = notesOpenHelper.getWritableDatabase();
-		}
-		else
-		{
-			if( ! sqlDatabase.isOpen() )
-			{
-				sqlDatabase = notesOpenHelper.getWritableDatabase();
-			}
-		}
-		
+		makeSureSqlDatabaseIsOpen();
 		
 		notesOpenHelper.emptyTheDatabase(sqlDatabase);
 		
@@ -421,13 +453,11 @@ public class NoteListActivity
 				}
 				//Log.d(TAG, "CONTENT:" + content);
 				
-				
 				values.put(NotesTable.COLUMN_ID, id);
 				values.put(NotesTable.COLUMN_TITLE, title );
 				values.put(NotesTable.CLOUMN_CONTENT, content);
 				
 				sqlDatabase.insert(NotesTable.NOTES_TABLE_NAME, null, values);
-				
 			}
 		}
 		catch(JSONException jsonE)
@@ -435,15 +465,11 @@ public class NoteListActivity
 			//something went wrong with json
 			Toast.makeText(this, R.string.toast_not_correct_json, Toast.LENGTH_LONG).show();
 			jsonE.printStackTrace();
-			Log.e(TAG, "no correct JSON data returned from server. first 30 chars from server:" + result.substring(0, 29));
+			Log.e(TAG, "no correct JSON data returned from server. result from server:" + result);
 		}
-		
-		
-		
 		
 		showAndFillListView(); //refresh listview
 		hideProgressBar();
-		
 	}
 	
 	public void writeNewNotesToServer(String urlToServer)
@@ -523,17 +549,7 @@ public class NoteListActivity
 	
 	private Cursor getCursor(String status)
 	{
-		if (sqlDatabase == null)
-		{
-			sqlDatabase = notesOpenHelper.getWritableDatabase();
-		}
-		else
-		{
-			if( ! sqlDatabase.isOpen() )
-			{
-				sqlDatabase = notesOpenHelper.getWritableDatabase();
-			}
-		}
+		makeSureSqlDatabaseIsOpen();
 		
 		String selection = NotesTable.COLUMN_STATUS + " = ?";
 		String[] selectionArgs = new String[1];
@@ -574,17 +590,7 @@ public class NoteListActivity
 		MySimpleCursorLoader mySimpleCursorLoader;
 		String[] projection = NotesTable.COLUMNNAMES;
 		
-		if(sqlDatabase == null)
-		{
-			sqlDatabase = notesOpenHelper.getWritableDatabase();
-		}
-		else
-		{
-			if( ! sqlDatabase.isOpen() )
-			{
-				sqlDatabase = notesOpenHelper.getWritableDatabase();
-			}
-		}
+		makeSureSqlDatabaseIsOpen();
 		
 		mySimpleCursorLoader = new MySimpleCursorLoader(this, sqlDatabase, projection);
 		
@@ -621,13 +627,15 @@ public class NoteListActivity
 
 				urlConnection.setRequestMethod("DELETE");
 				urlConnection.setUseCaches(false);
-				String auth = url.getUserInfo();
+				
+				String auth = settings.getString(SettingsActivity.PREF_USERNAME, "username") + ":" + settings.getString(SettingsActivity.PREF_PASSWOORD, "password");
 				String basicAuth = "Basic " + new String(Base64.encode(auth.getBytes(), Base64.DEFAULT));
 				urlConnection.setRequestProperty("Authorization", basicAuth);
 				
+				
 				if (Build.VERSION.SDK_INT > 13) 
 				{
-						urlConnection.setRequestProperty("Connection", "close");
+					urlConnection.setRequestProperty("Connection", "close");
 				}
 				
 				urlConnection.connect();
@@ -644,29 +652,33 @@ public class NoteListActivity
 				}
 				else if(connectionCode == 404)
 				{
+					connectionError = true;
 					Log.e(TAG, "failure @ delete note. note " + urlString.substring(urlString.lastIndexOf('/')) + " does not exist");
 					return false;
 				}
 				else if(connectionCode == 403)
 				{
+					connectionError = true;
 					Log.e(TAG, "failure @ delete note. permission problem (error code 403)");
 					return false;
 				}
 				else
 				{
+					connectionError = true;
 					Log.e(TAG, "failure @ delete new Note. response code:" + connectionCode);
 					return false;
 				}
-				
 			}
 			catch(MalformedURLException e)
 			{
+				connectionError = true;
 				e.printStackTrace();
 				Log.e(TAG, "malformed url in UpdateNotesTask:" + e.toString());
 				return false;
 			}
 			catch(IOException e)
 			{
+				connectionError = true;
 				e.printStackTrace();
 				Log.e(TAG, "ioException in UpdateNotesTask:" + e.toString());
 				return false;
@@ -678,9 +690,7 @@ public class NoteListActivity
 					urlConnection.disconnect();
 				}
 			}
-			
 		}
-		
 		
 		protected void onPostExecute(Boolean result)
 		{
@@ -688,13 +698,9 @@ public class NoteListActivity
 			{
 				//there was a delete-error. no connection could be made.
 				connectionError = true; //this variable is checked before the sql-database is updated.
-				if(debugOn)
-				{
-					Log.e(TAG, "onPost: delete error");
-				}
+				Log.e("DELETENOTES", "onPost: delete error");
 			}
 		}
-		
 	}
 		
 	//----------------------------------
@@ -714,13 +720,16 @@ public class NoteListActivity
 			{
 				JSONObject json = new JSONObject(toPost);
 				url = new URL(urlString);
+				
 				urlConnection = (HttpsURLConnection) url.openConnection();
 				urlConnection.setDoOutput(true);
 				urlConnection.setRequestMethod("PUT");
 				urlConnection.setUseCaches(false);
-				String auth = url.getUserInfo();
+				
+				String auth = settings.getString(SettingsActivity.PREF_USERNAME, "username") + ":" + settings.getString(SettingsActivity.PREF_PASSWOORD, "password");
 				String basicAuth = "Basic " + new String(Base64.encode(auth.getBytes(), Base64.DEFAULT));
 				urlConnection.setRequestProperty("Authorization", basicAuth);
+				
 				urlConnection.setFixedLengthStreamingMode(json.toString().getBytes().length);
 				
 				urlConnection.setRequestProperty("Content-Type", "application/json");
@@ -749,35 +758,40 @@ public class NoteListActivity
 				}
 				else if(connectionCode == 404)
 				{
+					connectionError = true;
 					Log.e(TAG, "failure @ update note. note " + urlString.substring(urlString.lastIndexOf('/')) + " does not exist");
 					return false;
 				}
 				else if(connectionCode == 403)
 				{
+					connectionError = true;
 					Log.e(TAG, "failure @ update note. permission problem (error code 403)");
 					return false;
 				}				
 				else
 				{
+					connectionError = true;
 					Log.e(TAG, "failure @ update new Note. response code:" + connectionCode);
 					return false;
 				}
-				
 			}
 			catch(MalformedURLException e)
 			{
+				connectionError = true;
 				e.printStackTrace();
 				Log.e(TAG, "malformed url in UpdateNotesTask:" + e.toString());
 				return false;
 			}
 			catch(IOException e)
 			{
+				connectionError = true;
 				e.printStackTrace();
 				Log.e(TAG, "ioException in UpdateNotesTask:" + e.toString());
 				return false;
 			}
 			catch(JSONException jsonE)
 			{
+				connectionError = true;
 				jsonE.printStackTrace();
 				Log.e(TAG, "jasonException in UpdateNotesTask:" + jsonE.toString());
 				return false;
@@ -789,7 +803,6 @@ public class NoteListActivity
 					urlConnection.disconnect();
 				}
 			}
-			
 		}
 		
 		protected void onPostExecute(Boolean result)
@@ -798,10 +811,7 @@ public class NoteListActivity
 			{
 				//there was an update-error. seems that no connection could be made.
 				connectionError = true; //this variable is checked before the sql-database is updated.
-				if(debugOn)
-				{
-					Log.e(TAG, "onPost: update error");
-				}
+				Log.e("UPDATETASK", "onPost: update error");
 			}
 		}
 		
@@ -828,7 +838,8 @@ public class NoteListActivity
 				urlConnection.setDoOutput(true);
 				urlConnection.setRequestMethod("POST");
 				urlConnection.setUseCaches(false);
-				String auth = url.getUserInfo();
+				
+				String auth = settings.getString(SettingsActivity.PREF_USERNAME, "username") + ":" + settings.getString(SettingsActivity.PREF_PASSWOORD, "password");
 				String basicAuth = "Basic " + new String(Base64.encode(auth.getBytes(), Base64.DEFAULT));
 				urlConnection.setRequestProperty("Authorization", basicAuth);
 				
@@ -838,7 +849,6 @@ public class NoteListActivity
 				}
 				
 				urlConnection.setFixedLengthStreamingMode(json.toString().getBytes().length);
-				
 				urlConnection.setRequestProperty("Content-Type", "application/json");
 
 				urlConnection.connect();
@@ -850,8 +860,6 @@ public class NoteListActivity
 				
 				int connectionCode = urlConnection.getResponseCode();
 				
-				
-				
 				if(connectionCode == 200)
 				{
 					if(debugOn)
@@ -862,37 +870,40 @@ public class NoteListActivity
 				}
 				else if(connectionCode == 404)
 				{
+					connectionError = true;
 					Log.e(TAG, "failure @ upload note. note " + urlString.substring(urlString.lastIndexOf('/')) + " does not exist");
 					return false;
 				}
 				else if(connectionCode == 403)
 				{
+					connectionError = true;
 					Log.e(TAG, "failure @ upload note. permission problem (error code 403)");
 					return false;
 				}
 				else
 				{
+					connectionError = true;
 					Log.e(TAG, "failure @ upload new Note. response code:" + connectionCode);
 					return false;
 				}
-				
-				
-				
 			}
 			catch(MalformedURLException e)
 			{
+				connectionError = true;
 				e.printStackTrace();
 				Log.e(TAG, "malformed url in UploadNotesTask:" + e.toString());
 				return false;
 			}
 			catch(IOException e)
 			{
+				connectionError = true;
 				e.printStackTrace();
 				Log.e(TAG, "ioException in UploadNotesTask:" + e.toString());
 				return false;
 			}
 			catch(JSONException jsonE)
 			{
+				connectionError = true;
 				jsonE.printStackTrace();
 				Log.e(TAG, "jasonException in UplaodNotesTask:" + jsonE.toString());
 				return false;
@@ -904,7 +915,6 @@ public class NoteListActivity
 					urlConnection.disconnect();
 				}
 			}
-			
 		}
 		
 		protected void onPostExecute(Boolean result)
@@ -913,10 +923,7 @@ public class NoteListActivity
 			{
 				//there was an upload-error. seems that no connection could be made.
 				connectionError = true; //this variable is checked before the sql-database is updated.
-				if(debugOn)
-				{
-					Log.e(TAG, "onPost: upload error");
-				}
+				Log.e("UPLOADTASK", "onPost: upload error");
 			}
 		}
 		
@@ -941,11 +948,20 @@ public class NoteListActivity
 	    	
 			try {
 				url = new URL(anUrl[0]);
-				urlConnection = (HttpsURLConnection) url.openConnection();
+
+				if(debugOn)
+				{
+					Log.d("DOWNLOADTASK", "url:" + url.toString() );
+				}
 				
+				urlConnection = (HttpsURLConnection) url.openConnection();
 				urlConnection.setDoInput(true);
 				urlConnection.setRequestMethod("GET");
-				String auth = url.getUserInfo(); 
+				
+				String auth = settings.getString(SettingsActivity.PREF_USERNAME, "username") + ":" + settings.getString(SettingsActivity.PREF_PASSWOORD, "password");
+				
+				//Log.d("DOWNLOADTASK", "auth=" + auth);
+				
 				String basicAuth = "Basic " + new String(Base64.encode(auth.getBytes(), Base64.DEFAULT));
 				urlConnection.setRequestProperty("Authorization", basicAuth);
 				
@@ -965,26 +981,23 @@ public class NoteListActivity
 			} 
 			catch (MalformedURLException e) 
 			{
-				if(debugOn)
-				{
-					e.printStackTrace();
-					Log.e(TAG, e.toString());
-				}
+				connectionError = true;
+				e.printStackTrace();
+				Log.e(TAG, e.toString());
 				
 				return "ERROR MalformedURLException";
 			}
 			catch(FileNotFoundException e)
 			{
-				if(debugOn)
-				{
-					e.printStackTrace();
-					Log.e(TAG, e.toString());
-				}
+				connectionError = true;
+				e.printStackTrace();				
+				Log.e(TAG, e.toString() );
 				
 				return "ERROR FileNotFoundException";
 			}
 			catch(SSLHandshakeException e)
 			{
+				connectionError = true;
 				if(debugOn)
 				{
 					e.printStackTrace();
@@ -995,11 +1008,9 @@ public class NoteListActivity
 			}
 	    	catch (IOException e) 
 	    	{
-	    		if(debugOn)
-				{
-	    			e.printStackTrace();
-	    			Log.e(TAG, e.toString() );
-				}
+	    		connectionError = true;
+	    		e.printStackTrace();
+	    		Log.e(TAG, e.toString() );
 	    		
 	    		return "ERROR IOException";
 			}
@@ -1011,7 +1022,6 @@ public class NoteListActivity
 				}
 			}
 			
-	    	
 	    	return stringBuilder.toString();
 	    }
 	    
@@ -1041,8 +1051,7 @@ public class NoteListActivity
 	    	else
 	    	{
 	    		//"result" contains a JSON with _all_ notes from owncloud server.
-	    		
-	    		if(!connectionError) //only update database, if upload/update/delete cycle was successful
+	    		if( ! connectionError) //only update database, if upload/update/delete cycle was successful
 	    		{
 	    			updateDatabase(result);
 	    			if(debugOn)
@@ -1052,7 +1061,8 @@ public class NoteListActivity
 	    		}
 	    		else
 	    		{
-	    			Log.e(TAG, "list not updated due to upload error");
+	    			Log.e(TAG, "list not updated due to connection error");
+	    			Toast.makeText(getApplicationContext(), R.string.toast_connection_error, Toast.LENGTH_LONG).show();
 	    			hideProgressBar();
 	    		}
 	    	}
