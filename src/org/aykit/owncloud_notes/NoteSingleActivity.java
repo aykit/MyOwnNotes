@@ -42,6 +42,7 @@ public class NoteSingleActivity extends Activity {
 	private boolean noButtonWasPressed;
 	private boolean wasPaused;
 	private boolean wasCreatedBefore;
+	private boolean debugOn;
 	private SharedPreferences settings;
 	
 	@Override
@@ -54,6 +55,7 @@ public class NoteSingleActivity extends Activity {
 		setContentView(R.layout.activity_note_single);
 		
 		settings = PreferenceManager.getDefaultSharedPreferences(this);
+		debugOn = settings.getBoolean(SettingsActivity.PREF_EXTENSIVE_LOG, false);
 		
 		editTextContent = (EditText) findViewById(R.id.edittext_note_content);
 		editTextTitle = (EditText) findViewById(R.id.edittext_note_title);
@@ -124,7 +126,10 @@ public class NoteSingleActivity extends Activity {
 	protected void onResume()
 	{
 		super.onResume();
-		//Log.d(TAG, "resuming note");
+		if(debugOn)
+		{	
+			Log.d(TAG, "resuming note");
+		}
 		noButtonWasPressed = true;
 		wasPaused = settings.getBoolean("wasPaused", false);
 		if (wasPaused)
@@ -142,7 +147,10 @@ public class NoteSingleActivity extends Activity {
 	protected void onPause()
 	{
 		super.onPause();
-		//Log.d(TAG, "pausing note");
+		if(debugOn)
+		{
+			Log.d(TAG, "pausing note");
+		}
 		wasPaused = true;
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putBoolean("wasPaused", true);
@@ -263,7 +271,11 @@ public class NoteSingleActivity extends Activity {
 		if(isNewNote)
 		{
 			//no row in table NoteTable to update exists. create new.
-			//Log.d(TAG, "isNewNote");
+			if(debugOn)
+			{
+				Log.d(TAG, "isNewNote");
+			}
+			
 			if( newContent.equals("") && newTitle.equals("") )
 			{
 				//empty note will not be saved
@@ -283,7 +295,11 @@ public class NoteSingleActivity extends Activity {
 		else if(status.equals(NotesTable.NEW_NOTE))
 		{
 			//check whether this new note has been changed before first upload
-			//Log.d(TAG, "status = new note");
+			if(debugOn)
+			{
+				Log.d(TAG, "status = new note");
+			}
+			
 			if (! newContent.equals(content)  || ! newTitle.equals(title) )
 			{
 				//note is new but was changed before first upload
@@ -302,18 +318,27 @@ public class NoteSingleActivity extends Activity {
 			else
 			{
 				//nothing to do here. note has not been changed.
-				//Log.d(TAG, "do nothing, new note");
+				if(debugOn)
+				{
+					Log.d(TAG, "do nothing, new note");
+				}
 			}
 		}
 		else
 		{
 			//check whether existing note has been changed
-			//Log.d(TAG, "existing note");
+			if(debugOn)
+			{
+				Log.d(TAG, "existing note");
+			}
 			
 			if (! newContent.equals(content)  || ! newTitle.equals(title) ) 
 			{
 				//must update existing NoteTable
-				//Log.d(TAG, "existing note was changed, do save");
+				if(debugOn)
+				{
+					Log.d(TAG, "existing note was changed, do save");
+				}
 				//Log.d(TAG, "content: " + content + "; newContent: " + newContent);
 				//Log.d(TAG, "title: " + title + "; newtitle: " + newTitle);
 				//Log.d(TAG, "id: " + id);
@@ -332,7 +357,10 @@ public class NoteSingleActivity extends Activity {
 			else
 			{
 				//nothing to do here. note has not been changed.
-				//Log.d(TAG, "do nothing");
+				if(debugOn)
+				{
+					Log.d(TAG, "do nothing");
+				}
 			}
 		}
 		
