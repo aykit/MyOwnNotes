@@ -26,6 +26,7 @@ public class SettingsActivity extends Activity {
 	public static final String PREF_DEFAULT_TITLE = "defaultTitle";
 	public static final String PREF_INITIALIZED = "initialized";
 	public static final String PREF_MENU_INFLATED = "menuInflated";
+	public static final String PREF_EXTENSIVE_LOG = "extensiveLog";
 	
 	private final int minimumPasswordLength = 1;
 	private final char[] forbiddenSymbols = { '"', '\'' };
@@ -35,6 +36,7 @@ public class SettingsActivity extends Activity {
 	private EditText address;
 	private CheckBox autoSync;
 	private CheckBox defaultTitle;
+	private CheckBox extensiveLogCat;
 	private SharedPreferences settings;
 
 	@Override
@@ -53,7 +55,7 @@ public class SettingsActivity extends Activity {
 		address = (EditText) findViewById(R.id.edittext_server_address);
 		autoSync = (CheckBox) findViewById(R.id.checkbox_sync_automatically);
 		defaultTitle = (CheckBox) findViewById(R.id.checkbox_defaultnotetitle);
-		
+		extensiveLogCat = (CheckBox) findViewById(R.id.checkbox_extensive_log);
 		
 		settings = PreferenceManager.getDefaultSharedPreferences(this);
 		
@@ -62,8 +64,7 @@ public class SettingsActivity extends Activity {
 		address.setText(settings.getString(PREF_ADDRESS, ""));
 		autoSync.setChecked(settings.getBoolean(PREF_AUTOSYNC, true));
 		defaultTitle.setChecked( settings.getBoolean(PREF_DEFAULT_TITLE, true));
-		
-		
+		extensiveLogCat.setChecked(settings.getBoolean(PREF_EXTENSIVE_LOG, false));
 	}
 
 	@Override
@@ -149,6 +150,7 @@ public class SettingsActivity extends Activity {
 		//save sync and defaultTitle checkbox-states
 		editor.putBoolean(PREF_AUTOSYNC, autoSync.isChecked());
 		editor.putBoolean(PREF_DEFAULT_TITLE, defaultTitle.isChecked() );
+		editor.putBoolean(PREF_EXTENSIVE_LOG, extensiveLogCat.isChecked() );
 		editor.putBoolean(PREF_INITIALIZED, true);
 		
 		editor.commit();
@@ -189,8 +191,7 @@ public class SettingsActivity extends Activity {
 	public boolean containsForbiddenSymbols(String toCheck, char... chars)
 	{
 		if(	toCheck.indexOf(chars[0]) != -1 ||	// "
-			toCheck.indexOf(chars[1]) != -1		// '
-		  )
+			toCheck.indexOf(chars[1]) != -1 )   // '
 		{
 			return true;
 		}

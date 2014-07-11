@@ -64,11 +64,12 @@ public class NoteListActivity
 	private final String apiPath = "/index.php/apps/notes/api/v0.2/notes";
 	
 	/**
-	 * use this variable to turn extensive logcat messages on or off. 
+	 * used to turn extensive logcat messages on or off. 
 	 * debugOn == true -> show more log messages
 	 * debugOn == false -> show only essential messages
+	 * edited in SettingsActivity
 	 */
-	private final boolean debugOn = false;
+	private boolean debugOn;
 	
 	
 	@Override
@@ -77,12 +78,15 @@ public class NoteListActivity
 		setContentView(R.layout.activity_note_list);
 		
 		updateSettings();
+		debugOn = settings.getBoolean(SettingsActivity.PREF_EXTENSIVE_LOG, false); 
+		
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putBoolean(SettingsActivity.PREF_MENU_INFLATED, false); //this is done to save the fact that menus are not inflated yet.
 		editor.commit();
 		
 		loaderManager = getLoaderManager();
 		notesOpenHelper = new NotesOpenHelper(this);
+		
 	}
 	
 	@Override
@@ -971,10 +975,7 @@ public class NoteListActivity
 				
 				String auth = settings.getString(SettingsActivity.PREF_USERNAME, "username") + ":" + settings.getString(SettingsActivity.PREF_PASSWOORD, "password");
 				
-				if(debugOn)
-				{
-					Log.d("DOWNLOADTASK", "auth=" + auth);
-				}
+				//Log.d("DOWNLOADTASK", "auth=" + auth);
 				
 				String basicAuth = "Basic " + new String(Base64.encode(auth.getBytes(), Base64.DEFAULT));
 				urlConnection.setRequestProperty("Authorization", basicAuth);
