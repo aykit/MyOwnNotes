@@ -43,8 +43,8 @@ New Translations
 ----------------
 To avoid incomplete translations, new ones will be added in a seperate branch. Please submit an issue and we will add this branch for you. Be aware that all new translations should be proof read by at least one other user before being merged into the development branch. If no one complains about the translation in a week's time, the pull request is treated as being ok and will be merged.
 
-Improvements to existing translations
--------------------------------------
+Improving existing translations
+-------------------------------
 Just do your edits in the development branch.
 
 Proof read translations
