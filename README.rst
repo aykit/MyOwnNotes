@@ -13,7 +13,7 @@ Contribute
 ==========
 Please take a look at CONTRIBUTING.rst for information regarding extending this application.
 
-The information there applies to **translations** and **Issue submissions** as well.
+The information there applies to **translations** and **issue submissions** as well.
 
 
 Install

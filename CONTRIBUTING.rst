@@ -18,7 +18,7 @@ Together we are be able to write a really good application for all of us.
 
 How to submit bugs / issues
 ===========================
-Bugs are nasty and we hate them at least as much as you do. Whenever you submit an issue provide the following information. This is not to annoy you! Without that information, we don't know where to look:
+Bugs are nasty and we hate them as much as you do. Whenever you submit an issue, provide the following information. This is not to annoy you! Without that information, we don't know where to look:
 
 Provide all details concerning your software environment
 --------------------------------------------------------
@@ -41,7 +41,7 @@ How to submit translations
 
 New Translations
 ----------------
-To avoid incomplete translations, new ones will be added in a seperate branch. Please submit an issue and we will add a this branch for you.
+To avoid incomplete translations, new ones will be added in a seperate branch. Please submit an issue and we will add this branch for you. Be aware that all new translations should be proof read by at least one other user before being merged into the development branch. If no one complains about the translation in a week's time, the pull request is treated as being ok and will be merged.
 
 Improvements to existing translations
 -------------------------------------
@@ -49,11 +49,11 @@ Just do your edits in the development branch.
 
 Proof read translations
 -----------------------
-This is crucial. You really need to proof read your translations! Starting now (July 2014), all new translations should be proof read by at least one other user before being merged into the master branch. If no one complains about the translation in a week's time, the pull request is treated as being ok and will be merged.
+This is crucial. You really need to proof read your translations!
 
 Critical Translations
 ---------------------
-Starting July 2014, translation requests (issues) blocking critical bugfixes will be marked as critical. If they are not provided in 48 hours time, the release containing critical bugfixes will be distributed nevertheless. The translation request will be marked "critical, delayed" and should be treated with uttermost priority.
+Translation requests (issues) blocking critical bugfixes will be marked as critical. If they are not provided 48 hours later, the release containing critical bugfixes will be distributed nevertheless. The translation request will be marked "critical, delayed" and should be treated with uttermost priority.
 
 
 How to submit code
