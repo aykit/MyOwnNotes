@@ -51,6 +51,10 @@ Proof read translations
 -----------------------
 This is crucial. You really need to proof read your translations! Starting now (July 2014), all new translations should be proof read by at least one other user before being merged into the master branch. If no one complains about the translation in a week's time, the pull request is treated as being ok and will be merged.
 
+Critical Translations
+---------------------
+Starting July 2014, translation requests (issues) blocking critical bugfixes will be marked as critical. If they are not provided in 48 hours time, the release containing critical bugfixes will be distributed nevertheless. The translation request will be marked "critical, delayed" and should be treated with uttermost priority.
+
 
 How to submit code
 ==================
