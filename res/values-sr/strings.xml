@@ -55,6 +55,8 @@
     <string name="settings_text_defaultnotetitle">Подраз. име белешке</string>
     <string name="settings_text_defaultnotetitle_datetime">Датум и време</string>
     <string name="settings_text_saved">Поставке су сачуване</string>
+    <string name="settings_text_debug">Отклањање грешака</string>
+    <string name="settings_text_extensive_log_output">Омогући исцрпан излаз за LogCat</string>
     <!-- Toasts -->
     <string name="toast_enter_valid_username">Унесите корисничко име за ваш ownCloud сервер</string>
     <string name="toast_enter_password">Унесите лозинку за ваш ownCloud сервер</string>
