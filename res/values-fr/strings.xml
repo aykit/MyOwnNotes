@@ -56,6 +56,8 @@
     <string name="settings_text_defaultnotetitle">titre par défaut de la note</string>
     <string name="settings_text_defaultnotetitle_datetime">Date et heure</string>
     <string name="settings_text_saved">Paramètres enregistrés</string>
+    <string name="settings_text_debug">Debug/Afficher les erreurs</string>
+    <string name="settings_text_extensive_log_output">Activer le journal d'activité LogCat</string>
 
     <!-- Toasts -->
     <string name="toast_enter_valid_username">Saisissez votre nom d\'utilisateur, s\'il vous plaît.</string>
