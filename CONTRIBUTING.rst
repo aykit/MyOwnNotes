@@ -41,15 +41,15 @@ How to submit translations
 
 New Translations
 ----------------
-To avoid incomplete translations, translations will be added and edited pushed to a seperate branch. Please submit an issue and we will add a this branch for you.
+To avoid incomplete translations, new ones will be added in a seperate branch. Please submit an issue and we will add a this branch for you.
 
 Improvements to existing translations
 -------------------------------------
-Just make the changes in the specific branch of your language.
+Just do your edits in the development branch.
 
 Proof read translations
 -----------------------
-This is crucial. You really need to proof read your translations! Starting now (July 2014), all new and old translations should be proof read by at least one other user before being merged into the master branch. If no one complains about the translation in a week's time, the pull request is treated as being ok and will be merged.
+This is crucial. You really need to proof read your translations! Starting now (July 2014), all new translations should be proof read by at least one other user before being merged into the master branch. If no one complains about the translation in a week's time, the pull request is treated as being ok and will be merged.
 
 
 How to submit code
