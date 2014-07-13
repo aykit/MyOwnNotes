@@ -62,6 +62,10 @@ How to submit code
 5. Beautify
 6. Repeat Steps 1-5 as often as necessary
 7. `Submit`_
+   
+Notes regarding the workflow
+----------------------------
+* New entries in values/strings.xml have to be added in all other languages as well. That way, translators will be able to find new strings easily. Additionally, the code does not break if a string is forgotten.
 
 
 License
