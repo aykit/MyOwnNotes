@@ -11,9 +11,9 @@ Make sure you read the README of the appropriate branch. The one you are seeing 
 
 Contribute
 ==========
-Please take a look at CONTRIBUTE.rst for information regarding extending this application.
+Please take a look at CONTRIBUTING.rst for information regarding extending this application.
 
-The information there applies to **translations** and **Issue submissions** as well.
+The information there applies to **translations** and **issue submissions** as well.
 
 
 Install
@@ -42,7 +42,7 @@ Short answer: yes. Please read our comment on `Entwicklerbier.org`_ for more inf
 
 I can't connect via SSL. How do I add (self-signed) certificates?
 -----------------------------------------------------------------
-Use the android Security Settings to add self-signed certificates. Open your Settings, browse to Security and add them there. You can find more information on this feature at `google dev`_.
+Use the android Security Settings to add self-signed certificates. Open your Settings, browse to Security and add them there. You can find more information on our `My Own Notes Website`_ and at `google dev`_.
 
 If you still need help, feel free to `contact us`_. Please be aware that this mailadress changes as we want to keep spam to a minimum and that it may take a while for us to help out.
 
@@ -62,15 +62,53 @@ Download the official android sdk here: http://developer.android.com/sdk/index.h
 + Run "Android Application"
 
 
+Contributors
+============
+
+Here is  a list of all contributers, including ourselves. A big thank you to all the people who help developing this application. Please be aware that all contributions are GPL3 licensed.
+
+Maintainer
+----------
+* `aykit`_ : Non-profit organisation supporting art, culture and science
+
+Developers
+----------
+* Main Developer: `steppenhahn`_ 
+
+Translators
+-----------
+* French: `flo1`_ , `gityeti`_ 
+* Serbian: `pejakm`_ 
+* Spanish: `tmelikoff`_ 
+* Turkish: `wakeup`_ 
+
+Testers
+-------
+Unfortunately, we are not able to greet everyone in person. Without your feedback, we wouldn't be able to improve My Own Notes. Please keep up testing and providing valuable information regarding your issues. We promise we will keep up fixing and improving as best as we can.
+
+
+License
+=======
+My Own Notes and all contributions are licensed as `GPL3`_ 
 
 
 .. _CheapSSLsecurity: https://cheapsslsecurity.com
 .. _contact us: mailto:z-o48hohw4l9qla@ay.vc
 .. _Entwicklerbier.org: https://blog.entwicklerbier.org/2014/05/securing-the-internet-of-things-how-about-securing-the-internet-first/
 .. _google dev: https://code.google.com/p/android/issues/detail?id=11231#c107
+.. _GPL3: https://github.com/aykit/myownnotes-android/blob/master/LICENSE
 .. _My Own Notes App: https://github.com/aykit/myownnotes-android
+.. _My Own Notes Website: https://aykit.org/sites/myownnotes.html
 .. _ownCloud Docs: http://doc.owncloud.org/
 .. _ownCloud Notes App: http://apps.owncloud.com/content/show.php/Notes?content=160567
 .. _SSL Labs: https://www.ssllabs.com/ssltest/
 .. _StartSSL: https://startssl.com
 .. _Setting up owncloud on Speed: https://blog.entwicklerbier.org/2014/06/setting-up-owncloud-on-speed/
+
+.. _aykit: https://aykit.org
+.. _flo1: http:// https://github.com/flo1
+.. _gityeti: https://github.com/gityeti
+.. _pejakm: https://github.com/pejakm
+.. _steppenhahn: https://github.com/steppenhahn
+.. _tmelikoff: http://https://github.com/tmelikoff
+.. _wakeup: https://github.com/wakeup

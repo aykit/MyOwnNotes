@@ -44,7 +44,7 @@
     <!-- Settings strings -->
     <string name="settings_text_credentials">Kimlik Bilgileri:</string>
     <string name="settings_text_server_address">Sunucu Adresi:</string>
-    <string name="settings_text_server_address_hint">www.owncloudsunucunuz.com</string>
+    <string name="settings_text_server_address_hint">https://www.sunucu.com[:port]</string>
     <string name="settings_text_https">https://</string>
     <string name="settings_text_username">Kullanıcı Adı:</string>
     <string name="settings_text_username_hint">kullanıcı adı</string>
@@ -55,6 +55,8 @@
     <string name="settings_text_defaultnotetitle">Öntanımlı Not Başlığı</string>
     <string name="settings_text_defaultnotetitle_datetime">Tarih ve zaman</string>
     <string name="settings_text_saved">Ayarlar kaydedildi</string>
+    <string name="settings_text_debug">Hata ayıklama</string>
+    <string name="settings_text_extensive_log_output">Arttırılmış LogCat çıktısını etkinleştir</string>
     <!-- Toasts -->
     <string name="toast_enter_valid_username">Lütfen ownCloud sunucu kullanıcı adınızı girin</string>
     <string name="toast_enter_password">Lütfen ownCloud sunucu parolanızı girin</string>

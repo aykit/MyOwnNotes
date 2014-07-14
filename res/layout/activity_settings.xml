@@ -33,7 +33,7 @@
 	    <EditText 
 	        android:id="@+id/edittext_server_address"
 	        android:inputType="textUri"
-	        android:text="@string/settings_text_https"
+	        android:hint="@string/settings_text_server_address_hint"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:lines="1"
@@ -99,6 +99,31 @@
 	         android:layout_width="wrap_content"
 	         android:layout_height="wrap_content"
 	         android:text="@string/settings_text_defaultnotetitle_datetime"
+	         />
+	     
+	     <!-- horizontal line -->
+
+	     <View
+	         android:id="@+id/grey_line"
+	         android:layout_width="match_parent"
+	         android:layout_height="1dp"
+	         android:background="#aaaaaa"
+	         android:layout_marginTop="30dp" />
+	     
+	     <!-- Extensive logcat -->
+	     <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/settings_text_debug" 
+	        android:textSize="17sp"
+	        android:layout_marginTop="3dp"
+	        />
+	     <CheckBox 
+	         android:id="@+id/checkbox_extensive_log"
+	         android:checked="false"
+	         android:layout_width="wrap_content"
+	         android:layout_height="wrap_content"
+	         android:text="@string/settings_text_extensive_log_output"
 	         />
 	     
 	    

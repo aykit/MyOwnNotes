@@ -44,7 +44,7 @@
     <!-- Settings strings -->
     <string name="settings_text_credentials">Credenciales:</string>
     <string name="settings_text_server_address">Dirección-servidor:</string>
-    <string name="settings_text_server_address_hint">www.tuowncloud.com</string>
+    <string name="settings_text_server_address_hint">https://www.server.com[:port]</string>
     <string name="settings_text_https">https://</string>
     <string name="settings_text_username">Usuario:</string>
     <string name="settings_text_username_hint">usuario</string>
@@ -55,6 +55,9 @@
     <string name="settings_text_defaultnotetitle">Nombre nota por defecto</string>
     <string name="settings_text_defaultnotetitle_datetime">Fecha y hora</string>
     <string name="settings_text_saved">Ajustes guardados</string>
+    <string name="settings_text_debug">depurar</string>
+    <string name="settings_text_extensive_log_output">Activar mensajes extensos Logcat</string>
+ 
     <!-- Toasts -->
     <string name="toast_enter_valid_username">Por favor introduce el usuario de tu cuenta ownCloud</string>
     <string name="toast_enter_password">Por favor introduce la contraseña de tu cuenta ownCloud</string>

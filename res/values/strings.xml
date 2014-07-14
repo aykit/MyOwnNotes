@@ -44,7 +44,7 @@
     <!-- Settings strings -->
     <string name="settings_text_credentials">Credentials:</string>
     <string name="settings_text_server_address">Server-Address:</string>
-    <string name="settings_text_server_address_hint">www.yourowncloudserver.com</string>
+    <string name="settings_text_server_address_hint">https://www.server.com[:port]</string>
     <string name="settings_text_https">https://</string>
     <string name="settings_text_username">Username:</string>
     <string name="settings_text_username_hint">username</string>
@@ -55,6 +55,9 @@
     <string name="settings_text_defaultnotetitle">Default Note Title</string>
     <string name="settings_text_defaultnotetitle_datetime">Date and time</string>
     <string name="settings_text_saved">Settings saved</string>
+    <string name="settings_text_debug">Debug</string>
+    <string name="settings_text_extensive_log_output">Enable extensive LogCat output</string>
+    
     <!-- Toasts -->
     <string name="toast_enter_valid_username">Please enter your ownCloud-server username</string>
     <string name="toast_enter_password">Please enter your ownCloud-server password</string>
@@ -63,6 +66,7 @@
     <!-- About strings -->
     <string name="text_aykit_logo">The aykit logo</string>
     <string name="text_about_text">This app is brought to you by aykit - an association supporting art, culture and science. \nMore information on our website: \n\nhttp://aykit.org</string>
+    <string name="text_version">MyOwnNotes 1.2.2</string>
     
     <!-- Help strings -->
     <string name="text_help_text">

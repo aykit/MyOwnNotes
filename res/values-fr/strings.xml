@@ -45,7 +45,7 @@
     <!--  Settings strings -->
     <string name="settings_text_credentials">Données de connexion :</string>
     <string name="settings_text_server_address">Adresse du serveur :</string>
-    <string name="settings_text_server_address_hint">www.monserveur.com</string>
+    <string name="settings_text_server_address_hint">https://www.server.com[:port]</string>
     <string name="settings_text_https">https://</string>
     <string name="settings_text_username">Nom d\'utilisateur :</string>
     <string name="settings_text_username_hint">le nom d\'utilisateur</string>
@@ -56,6 +56,8 @@
     <string name="settings_text_defaultnotetitle">titre par défaut de la note</string>
     <string name="settings_text_defaultnotetitle_datetime">Date et heure</string>
     <string name="settings_text_saved">Paramètres enregistrés</string>
+    <string name="settings_text_debug">Debug/Afficher les erreurs</string>
+    <string name="settings_text_extensive_log_output">Activer le journal d\'activité LogCat</string>
 
     <!-- Toasts -->
     <string name="toast_enter_valid_username">Saisissez votre nom d\'utilisateur, s\'il vous plaît.</string>
