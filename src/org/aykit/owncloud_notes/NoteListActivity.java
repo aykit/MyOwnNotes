@@ -20,6 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -286,6 +287,35 @@ public class NoteListActivity
 	}
 	
 	/**
+	 * checks if there is an active internet connection available.
+	 * <br \>
+	 * uses <code>ConnectivityManager</code> to check
+	 * 
+	 * @return	true, iff connected to the internet
+	 */
+	private boolean hasInternetConnection()
+	{
+		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(NoteListActivity.CONNECTIVITY_SERVICE);
+		if (connectivityManager.getActiveNetworkInfo() != null )
+		{
+			if( connectivityManager.getActiveNetworkInfo().isAvailable() && 
+				connectivityManager.getActiveNetworkInfo().isConnected()  )
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+			
+		} 
+		else 
+		{
+			return false;
+		}
+	}
+	
+	/**
 	 * initiates synchronization with ownCloud server.
 	 * follows this order:
 	 * <li>upload all new notes (marked <code>NEW_NOTE</code>)</li>
@@ -302,6 +332,8 @@ public class NoteListActivity
 		showProgressBar();
 		connectionError = false;
 	
+		//check internet connection
+		
 		String serverUrl = settings.getString(SettingsActivity.PREF_ADDRESS, "https://www.example.com");	//defaultvalue = "https://www.example.com"
 		String urlToConnect = "";
 		String basePath = "";
@@ -309,28 +341,23 @@ public class NoteListActivity
 		try
 		{
 			//create basePath
-			
 			URL tempUrl = new URL(serverUrl);
 			//must be like: https://user:password@yourowncloud.com/index.php/apps/notes/api/v0.2/notes
 			
 			if(tempUrl.getPort() == -1) //no port was given
 			{
 				basePath = tempUrl.getHost() + tempUrl.getPath() + apiPath;
-				
 				if(debugOn)
 				{
 					Log.d(TAG, "basePath no port: " + basePath);
-					//Log.d(TAG, "u:" + username + " pw:" + password);
 				}
 			}
 			else //port was given
 			{ 	
 				basePath = tempUrl.getHost() + ":" + tempUrl.getPort() + tempUrl.getPath() + apiPath;
-				
 				if(debugOn)
 				{
 					Log.d(TAG, "basePath with port: " + basePath);
-					//Log.d(TAG, "u:" + username + " pw:" + password);
 				}
 			}
 			
@@ -352,21 +379,42 @@ public class NoteListActivity
 		}
 		
 		//only proceed if no problems occurred
-		if( ! connectionError)
+		if(hasInternetConnection() )
 		{
-			//upload new notes
-			writeNewNotesToServer(urlToConnect);
-			
-			//update modified notes
-			writeModifiedNotesToServer(urlToConnect);
-			
-			//delete marked notes
-			deleteMarkedNotesFromServer(urlToConnect);
-			
-			//get all notes
-			Log.d(TAG, "getting notes from server");
-			new DownloadNotesTask().execute(urlToConnect);
-			//rest done in updateDatabase(), which is called when download is finished.
+			if (!connectionError)
+			{
+				//upload new notes
+				writeNewNotesToServer(urlToConnect);
+				
+				//update modified notes
+				if(!connectionError)
+				{
+					writeModifiedNotesToServer(urlToConnect);
+				}
+				
+				//delete marked notes
+				if(!connectionError)
+				{
+					deleteMarkedNotesFromServer(urlToConnect);
+				}
+				
+				//get all notes
+				if(!connectionError)
+				{
+					Log.d(TAG, "getting notes from server");
+					new DownloadNotesTask().execute(urlToConnect);
+					//rest done in updateDatabase(), which is called when download is finished.
+				}
+			}
+			else
+			{
+				Toast.makeText(this, R.string.toast_connection_error, Toast.LENGTH_LONG).show();
+			}
+		}
+		else
+		{
+			Toast.makeText(this, R.string.toast_no_internet_connection, Toast.LENGTH_LONG).show();
+			hideProgressBar();
 		}
 	}
 	
@@ -489,7 +537,7 @@ public class NoteListActivity
 			String content = cursor.getString(cursor.getColumnIndex(NotesTable.CLOUMN_CONTENT));
 			String title = cursor.getString( cursor.getColumnIndex(NotesTable.COLUMN_TITLE) );
 			String toPost = "{ content: \"" + title + "\n" + content + "\"}";
-			//Log.d(TAG, "to post:" + toPost);
+			Log.d(TAG, "to post:" + toPost);
 			
 			new UploadNotesTask().execute(urlToServer, toPost);
 			
@@ -712,6 +760,7 @@ public class NoteListActivity
 		{
 			URL url = null;
 			HttpsURLConnection urlConnection = null;
+			HttpsURLConnection urlTestConnection = null;
 			OutputStream outputStream = null;
 			String urlString = strings[0];
 			String toPost = strings[1];
@@ -721,6 +770,8 @@ public class NoteListActivity
 				JSONObject json = new JSONObject(toPost);
 				url = new URL(urlString);
 				
+				urlTestConnection = (HttpsURLConnection) url.openConnection();
+				
 				urlConnection = (HttpsURLConnection) url.openConnection();
 				urlConnection.setDoOutput(true);
 				urlConnection.setRequestMethod("PUT");
@@ -729,49 +780,65 @@ public class NoteListActivity
 				String auth = settings.getString(SettingsActivity.PREF_USERNAME, "username") + ":" + settings.getString(SettingsActivity.PREF_PASSWOORD, "password");
 				String basicAuth = "Basic " + new String(Base64.encode(auth.getBytes(), Base64.DEFAULT));
 				urlConnection.setRequestProperty("Authorization", basicAuth);
+				urlTestConnection.setRequestProperty("Authorization", basicAuth);
 				
 				urlConnection.setFixedLengthStreamingMode(json.toString().getBytes().length);
-				
 				urlConnection.setRequestProperty("Content-Type", "application/json");
 				
 				if (Build.VERSION.SDK_INT > 13) 
 				{
 						urlConnection.setRequestProperty("Connection", "close");
+						urlTestConnection.setRequestProperty("Connection", "close");
 				}
 
-				urlConnection.connect();
+				urlTestConnection.connect();
 				
-				outputStream = new BufferedOutputStream(urlConnection.getOutputStream() );
-				outputStream.write(json.toString().getBytes());
-				outputStream.flush();
-				outputStream.close();
+				int testConnectionResponseCode = urlTestConnection.getResponseCode();
 				
-				int connectionCode = urlConnection.getResponseCode();
-				
-				if(connectionCode == 200)
+				if( testConnectionResponseCode == 200)
 				{
-					if(debugOn)
+					Log.d(TAG, "update connection ok, doing the updating");
+					urlConnection.connect();
+					
+					outputStream = new BufferedOutputStream(urlConnection.getOutputStream() );
+					outputStream.write(json.toString().getBytes());
+					outputStream.flush();
+					outputStream.close();
+					
+					int connectionCode = urlConnection.getResponseCode();
+				
+					if(connectionCode == 200)
 					{
-						Log.d(TAG, "success @ update new Note");
+						if(debugOn)
+						{
+							Log.d(TAG, "success @ update new Note");
+						}
+						return true;
 					}
-					return true;
+					else if(connectionCode == 404)
+					{
+						connectionError = true;
+						Log.e(TAG, "failure @ update note. note " + urlString.substring(urlString.lastIndexOf('/')) + " does not exist");
+						return false;
+					}
+					else if(connectionCode == 403)
+					{
+						connectionError = true;
+						Log.e(TAG, "failure @ update note. permission problem (error code 403)");
+						return false;
+					}				
+					else
+					{
+						connectionError = true;
+						Log.e(TAG, "failure @ update new Note. response code:" + connectionCode);
+						return false;
+					}
+				
 				}
-				else if(connectionCode == 404)
-				{
-					connectionError = true;
-					Log.e(TAG, "failure @ update note. note " + urlString.substring(urlString.lastIndexOf('/')) + " does not exist");
-					return false;
-				}
-				else if(connectionCode == 403)
-				{
-					connectionError = true;
-					Log.e(TAG, "failure @ update note. permission problem (error code 403)");
-					return false;
-				}				
 				else
 				{
 					connectionError = true;
-					Log.e(TAG, "failure @ update new Note. response code:" + connectionCode);
+					Log.e(TAG, "No update connection could be established. Response code: " + testConnectionResponseCode );
 					return false;
 				}
 			}
@@ -826,6 +893,7 @@ public class NoteListActivity
 		{
 			URL url = null;
 			HttpsURLConnection urlConnection = null;
+			HttpsURLConnection urlTestConnection = null;
 			OutputStream outputStream = null;
 			String urlString = strings[0];
 			String toPost = strings[1];
@@ -833,7 +901,11 @@ public class NoteListActivity
 			try
 			{
 				JSONObject json = new JSONObject(toPost);
+				Log.d(TAG, "json= " + json.toString() );
 				url = new URL(urlString);
+				
+				urlTestConnection = (HttpsURLConnection) url.openConnection();
+				
 				urlConnection = (HttpsURLConnection) url.openConnection();
 				urlConnection.setDoOutput(true);
 				urlConnection.setRequestMethod("POST");
@@ -842,51 +914,68 @@ public class NoteListActivity
 				String auth = settings.getString(SettingsActivity.PREF_USERNAME, "username") + ":" + settings.getString(SettingsActivity.PREF_PASSWOORD, "password");
 				String basicAuth = "Basic " + new String(Base64.encode(auth.getBytes(), Base64.DEFAULT));
 				urlConnection.setRequestProperty("Authorization", basicAuth);
+				urlTestConnection.setRequestProperty("Authorization", basicAuth);
 				
 				if (Build.VERSION.SDK_INT > 13) 
 				{
 						urlConnection.setRequestProperty("Connection", "close");
+						urlTestConnection.setRequestProperty("Connection", "close");
 				}
 				
 				urlConnection.setFixedLengthStreamingMode(json.toString().getBytes().length);
 				urlConnection.setRequestProperty("Content-Type", "application/json");
 
-				urlConnection.connect();
+				urlTestConnection.connect();
 				
-				outputStream = new BufferedOutputStream(urlConnection.getOutputStream() );
-				outputStream.write(json.toString().getBytes());
-				outputStream.flush();
-				outputStream.close();
+				int testConnectionResponseCode = urlTestConnection.getResponseCode();
 				
-				int connectionCode = urlConnection.getResponseCode();
-				
-				if(connectionCode == 200)
+				if( testConnectionResponseCode == 200)
 				{
-					if(debugOn)
+					Log.d(TAG, "upload connection ok, doing the uploading");
+					
+					urlConnection.connect();
+					
+					outputStream = new BufferedOutputStream(urlConnection.getOutputStream() );
+					outputStream.write(json.toString().getBytes());
+					outputStream.flush();
+					outputStream.close();
+				
+					int connectionCode = urlConnection.getResponseCode();
+					
+					if(connectionCode == 200)
 					{
-						Log.d(TAG, "success @ upload new Note");
+						if(debugOn)
+						{
+							Log.d(TAG, "success @ upload new Note");
+						}
+						return true;
 					}
-					return true;
-				}
-				else if(connectionCode == 404)
-				{
-					connectionError = true;
-					Log.e(TAG, "failure @ upload note. note " + urlString.substring(urlString.lastIndexOf('/')) + " does not exist");
-					return false;
-				}
-				else if(connectionCode == 403)
-				{
-					connectionError = true;
-					Log.e(TAG, "failure @ upload note. permission problem (error code 403)");
-					return false;
+					else if(connectionCode == 404)
+					{
+						connectionError = true;
+						Log.e(TAG, "failure @ upload note. note " + urlString.substring(urlString.lastIndexOf('/')) + " does not exist");
+						return false;
+					}
+					else if(connectionCode == 403)
+					{
+						connectionError = true;
+						Log.e(TAG, "failure @ upload note. permission problem (error code 403)");
+						return false;
+					}
+					else
+					{
+						connectionError = true;
+						Log.e(TAG, "failure @ upload new Note. response code:" + connectionCode);
+						return false;
+					}
 				}
 				else
 				{
-					connectionError = true;
-					Log.e(TAG, "failure @ upload new Note. response code:" + connectionCode);
+					Log.e(TAG, "No upload connection could be established. Response code: " + testConnectionResponseCode );
 					return false;
 				}
 			}
+			
 			catch(MalformedURLException e)
 			{
 				connectionError = true;
@@ -970,13 +1059,26 @@ public class NoteListActivity
 						urlConnection.setRequestProperty("Connection", "close");
 				}
 				
-				BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+				urlConnection.connect();
+				int connectionCode = urlConnection.getResponseCode();
 				
-				String line;
-				while( (line = reader.readLine() ) != null)
+				if(connectionCode == 200)
 				{
-					stringBuilder.append(line);
-					//Log.d(TAG, "line:" + line);
+					Log.d(TAG, "download connection ok, doing the downloading");
+					BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+					
+					String line;
+					while( (line = reader.readLine() ) != null)
+					{
+						stringBuilder.append(line);
+						//Log.d(TAG, "line:" + line);
+					}
+				}
+				else
+				{
+					connectionError = true;
+					Log.e(TAG, "error @ downloading notes. response code: " + connectionCode);
+					return "ERROR connection";
 				}
 			} 
 			catch (MalformedURLException e) 
@@ -1040,13 +1142,18 @@ public class NoteListActivity
 			}
 	    	else if(result.equals("ERROR FileNotFoundException" ) )
 	    	{
-	    		Toast.makeText(getApplicationContext(), R.string.toast_connection_error, Toast.LENGTH_LONG).show();
+	    		Toast.makeText(getApplicationContext(), R.string.toast_connection_error + R.string.toast_check_username_password, Toast.LENGTH_LONG).show();
 	    		hideProgressBar();
 	    	}
 	    	else if(result.equals("ERROR SSLHandshakeException") )
 	    	{
 	    		hideProgressBar();
 	    		showSSLAlert();
+	    	}
+	    	else if(result.equals("ERROR connection"))
+	    	{
+	    		Toast.makeText(getApplicationContext(), R.string.toast_connection_error, Toast.LENGTH_LONG).show();
+	    		hideProgressBar();
 	    	}
 	    	else
 	    	{

@@ -39,7 +39,9 @@
     <string name="toast_not_correct_json">Sunucudan doğru JSON alınamıyor. Sunucu çalışıyor mu?</string>
     <string name="toast_url_not_correctly_formed">Veri istediğiniz URL doğru bir şekilde biçimlendirilmemiş</string>
     <string name="toast_url_doesnt_exist">Veri istediğiniz URL mevcut değil gibi görünüyor. Yazımınızı veya İnternet bağlantınızı denetleyin</string>
-    <string name="toast_connection_error">Bir bağlantı hatası oluştu. Lütfen kullanıcı adı ve parolanızı denetleyin.</string>
+    <string name="toast_connection_error">Bir bağlantı hatası oluştu.</string>
+    <string name="toast_check_username_password">Lütfen kullanıcı adı ve parolanızı denetleyin.</string>
+    <string name="toast_no_internet_connection">TO TRANSLATE: No internet-connection has been found. Please connect to the internet to synchronize.</string>
 
     <!-- Settings strings -->
     <string name="settings_text_credentials">Kimlik Bilgileri:</string>
