@@ -33,7 +33,6 @@ public class NoteSingleActivity extends Activity {
 	private SQLiteDatabase sqlDatabase;
 	
 	private EditText editTextContent;
-	private EditText editTextTitle;
 	private String title;
 	private String content;
 	private String status = "";
@@ -58,7 +57,6 @@ public class NoteSingleActivity extends Activity {
 		debugOn = settings.getBoolean(SettingsActivity.PREF_EXTENSIVE_LOG, false);
 		
 		editTextContent = (EditText) findViewById(R.id.edittext_note_content);
-		editTextTitle = (EditText) findViewById(R.id.edittext_note_title);
 		id = -1;
 		
 		notesOpenHelper = new NotesOpenHelper(this);
@@ -77,7 +75,8 @@ public class NoteSingleActivity extends Activity {
 				//open saved note: load note-data from intent
 
 				content = intent.getStringExtra("content");
-				title = intent.getStringExtra("title");
+				title = getFirstLineOf(content);
+
 				getActionBar().setTitle(title);
 				id = intent.getLongExtra("id", -1);
 				//Log.d(TAG, "id from intent: " + id);
@@ -85,7 +84,6 @@ public class NoteSingleActivity extends Activity {
 
 				
 				editTextContent.setText(content);
-				editTextTitle.setText(title);
 				
 				if(id == -1)
 				{
@@ -99,6 +97,7 @@ public class NoteSingleActivity extends Activity {
 			}
 			else
 			{
+				//new note
 				boolean useDateAndTimeAsDefaultTitle = settings.getBoolean(SettingsActivity.PREF_DEFAULT_TITLE, true); 
 				if(useDateAndTimeAsDefaultTitle)
 				{
@@ -108,7 +107,7 @@ public class NoteSingleActivity extends Activity {
 					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
 					String dateAndTime = format.format(date);
 					
-					editTextTitle.setText(dateAndTime);
+					editTextContent.setText(dateAndTime + "\n");
 				}
 				
 				getActionBar().setTitle(R.string.new_note);
@@ -117,9 +116,8 @@ public class NoteSingleActivity extends Activity {
 		else
 		//this note's onCreate()-method has been already called some time ago.
 		{
-			//get saved content and title from preferences
-			editTextContent.setText(settings.getString("content", "") );
-			editTextTitle.setText(settings.getString("title", "") );
+			//get saved content from preferences
+			editTextContent.setText( settings.getString("content", "") );
 		}
 		
 		wasPaused = false;
@@ -138,7 +136,6 @@ public class NoteSingleActivity extends Activity {
 		if (wasPaused)
 		{
 			content = editTextContent.getText().toString();
-			title = editTextTitle.getText().toString();
 			id = settings.getLong("id", -1);
 			status = settings.getString("status", "");
 		}
@@ -166,8 +163,6 @@ public class NoteSingleActivity extends Activity {
 			editor.putLong("id", id);
 			editor.putString("status", status);
 			editor.putString("content", editTextContent.getText().toString() );
-			editor.putString("title", editTextTitle.getText().toString() );
-			
 		}
 		editor.commit();
 		
@@ -190,6 +185,24 @@ public class NoteSingleActivity extends Activity {
 		noButtonWasPressed = false;
 		saveNote();
 		super.onBackPressed();
+	}
+	
+	/**
+	 * returns the first line of the String contentToParse. looks for the first linebreak (<code>\n</code>)
+	 * 
+	 * @param contentToParse	String containing content.
+	 * @return	String containing the first line of contentToParse - without tailing <code>\n</code> or an empty String if there is no linebreak.
+	 */
+	private String getFirstLineOf(String contentToParse)
+	{
+		if(contentToParse.indexOf("\n") != -1)
+		{
+			return content.substring(0, content.indexOf("\n") );
+		}
+		else
+		{
+			return contentToParse;
+		}
 	}
 	
 	/**
@@ -266,7 +279,6 @@ public class NoteSingleActivity extends Activity {
 		//save or update currently opened note
 		Log.d(TAG, "saving note");
 		
-		String newTitle = editTextTitle.getText().toString();
 		String newContent = editTextContent.getText().toString();
 		
 		makeSureSqlDatabaseIsOpen();
@@ -279,14 +291,13 @@ public class NoteSingleActivity extends Activity {
 				Log.d(TAG, "isNewNote");
 			}
 			
-			if( newContent.equals("") && newTitle.equals("") )
+			if( newContent.equals("") )
 			{
 				//empty note will not be saved
 			}
 			else
 			{
 				ContentValues values = new ContentValues();
-				values.put(NotesTable.COLUMN_TITLE, newTitle);
 				values.put(NotesTable.CLOUMN_CONTENT, newContent );
 				values.put(NotesTable.COLUMN_STATUS, NotesTable.NEW_NOTE); //mark note as new note
 				id = sqlDatabase.insert(NotesTable.NOTES_TABLE_NAME, null, values);
@@ -303,7 +314,7 @@ public class NoteSingleActivity extends Activity {
 				Log.d(TAG, "status = new note");
 			}
 			
-			if (! newContent.equals(content)  || ! newTitle.equals(title) )
+			if (! newContent.equals(content) )
 			{
 				//note is new but was changed before first upload
 				//must update existing note in NoteTable
@@ -311,7 +322,6 @@ public class NoteSingleActivity extends Activity {
 				String[] selectionArgs = { Long.toString(id) };
 				
 				ContentValues values = new ContentValues();
-				values.put(NotesTable.COLUMN_TITLE, newTitle );
 				values.put(NotesTable.CLOUMN_CONTENT, newContent);
 				values.put(NotesTable.COLUMN_STATUS, NotesTable.NEW_NOTE); //mark note as new note
 				
@@ -335,7 +345,7 @@ public class NoteSingleActivity extends Activity {
 				Log.d(TAG, "existing note");
 			}
 			
-			if (! newContent.equals(content)  || ! newTitle.equals(title) ) 
+			if (! newContent.equals(content) ) 
 			{
 				//must update existing NoteTable
 				if(debugOn)
@@ -350,7 +360,6 @@ public class NoteSingleActivity extends Activity {
 				String[] selectionArgs = { Long.toString(id) };
 				
 				ContentValues values = new ContentValues();
-				values.put(NotesTable.COLUMN_TITLE, newTitle );
 				values.put(NotesTable.CLOUMN_CONTENT, newContent);
 				values.put(NotesTable.COLUMN_STATUS, NotesTable.TO_UPDATE); //mark note for update
 				

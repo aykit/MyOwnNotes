@@ -16,15 +16,6 @@
 	    >
 	
 	    <EditText
-	        android:id="@+id/edittext_note_title"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:inputType="text"
-	        android:maxLines="1"
-	        android:hint="@string/note_title"
-	            />
-	
-	    <EditText
 		     android:id="@+id/edittext_note_content"
 		     android:layout_width="match_parent"
 		     android:layout_height="wrap_content"

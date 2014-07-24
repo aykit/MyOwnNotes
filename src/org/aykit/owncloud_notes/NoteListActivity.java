@@ -87,7 +87,6 @@ public class NoteListActivity
 		
 		loaderManager = getLoaderManager();
 		notesOpenHelper = new NotesOpenHelper(this);
-		
 	}
 	
 	@Override
@@ -107,7 +106,6 @@ public class NoteListActivity
 		editor.putBoolean("wasCreatedBefore", false);
 		editor.putBoolean("wasPaused", false);
 		editor.putString("content", "");
-		editor.putString("title", "");
 		editor.putLong("id", 0);
 		editor.putString("status", "");
 		editor.commit();
@@ -176,8 +174,8 @@ public class NoteListActivity
 	{
 		makeSureSqlDatabaseIsOpen();
 		
-		String[] from = { NotesTable.COLUMN_TITLE, NotesTable.CLOUMN_CONTENT, NotesTable.COLUMN_STATUS };
-		int[] to = {R.id.textview_note_row_title, R.id.textview_note_row_content, R.id.textview_note_row_marked };
+		String[] from = { NotesTable.CLOUMN_CONTENT, NotesTable.COLUMN_STATUS };
+		int[] to = {R.id.textview_note_row_content, R.id.textview_note_row_marked };
 		simpleCursorAdapter = new SimpleCursorAdapter(this, R.layout.note_listview_row, null, from, to);
 		
 		if(loaderManager.getLoader(1) != null) 
@@ -215,6 +213,7 @@ public class NoteListActivity
 	public boolean onOptionsItemSelected( MenuItem item ) {
 	    // Handle presses on the action bar items
 		Intent intent = null;
+		
 	    switch (item.getItemId() ) 
 	    {
 	        case R.id.action_new:
@@ -269,11 +268,9 @@ public class NoteListActivity
 		Intent intent = new Intent(this, NoteSingleActivity.class);
 		intent.putExtra("isNewNote", false); //tell intent that no new note must be created
 		
-		String title = 		((TextView) v.findViewById(R.id.textview_note_row_title)).getText().toString();
 		String content = 	((TextView) v.findViewById(R.id.textview_note_row_content)).getText().toString();
 		String status = 	((TextView) v.findViewById(R.id.textview_note_row_marked)).getText().toString();
 		
-		intent.putExtra("title", title);
 		intent.putExtra("content", content);
 		intent.putExtra("id", id);
 		intent.putExtra("status", status);
@@ -477,32 +474,21 @@ public class NoteListActivity
 				ContentValues values = new ContentValues();
 				
 				long id = jsonObject.getLong("id");
-				String title = "";
-				if(jsonObject.has("title") && !jsonObject.getString("title").isEmpty() )
-				{
-					title = jsonObject.getString("title");
-				}
-				else
-				{
-					title = "";
-				}
-				//Log.d(TAG, "TITLE:" + title);
 				String content = "";
 				if(jsonObject.has("content") && 
-						!jsonObject.getString("content").isEmpty() && 
-						( jsonObject.getString("content").length() >= ( title.length() + 1) )   )
+						!jsonObject.getString("content").isEmpty()  )
 				{
-					content = jsonObject.getString("content").substring(title.length() + 1 );
+					content = jsonObject.getString("content");
 					//substring because notes-api sends the "title" again in first line of "content". annoying but we have to accept it for now.
 				}
 				else
 				{
 					content = "";
 				}
-				//Log.d(TAG, "CONTENT:" + content);
+				
+				Log.d(TAG, "CONTENT:" + content);
 				
 				values.put(NotesTable.COLUMN_ID, id);
-				values.put(NotesTable.COLUMN_TITLE, title );
 				values.put(NotesTable.CLOUMN_CONTENT, content);
 				
 				sqlDatabase.insert(NotesTable.NOTES_TABLE_NAME, null, values);
@@ -535,8 +521,7 @@ public class NoteListActivity
 		while(!cursor.isAfterLast() )
 		{
 			String content = cursor.getString(cursor.getColumnIndex(NotesTable.CLOUMN_CONTENT));
-			String title = cursor.getString( cursor.getColumnIndex(NotesTable.COLUMN_TITLE) );
-			String toPost = "{ content: \"" + title + "\n" + content + "\"}";
+			String toPost = "{ content: \"" + content + "\"}";
 			Log.d(TAG, "to post:" + toPost);
 			
 			new UploadNotesTask().execute(urlToServer, toPost);
@@ -561,10 +546,9 @@ public class NoteListActivity
 		while ( !cursor.isAfterLast() )
 		{
 			String content = cursor.getString(cursor.getColumnIndex(NotesTable.CLOUMN_CONTENT));
-			String title = cursor.getString( cursor.getColumnIndex(NotesTable.COLUMN_TITLE) );
 			long id = cursor.getLong( cursor.getColumnIndex(NotesTable.COLUMN_ID) );
 			String urlToServerWithNoteId = urlToServer + "/" + id;
-			String toPost = "{ content: \"" + title + "\n" + content + "\"}";
+			String toPost = "{ content: \"" + content + "\"}";
 			
 			new UpdateNotesTask().execute(urlToServerWithNoteId, toPost);
 			cursor.moveToNext();
