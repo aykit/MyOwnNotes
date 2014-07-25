@@ -27,6 +27,7 @@ public class SettingsActivity extends Activity {
 	public static final String PREF_INITIALIZED = "initialized";
 	public static final String PREF_MENU_INFLATED = "menuInflated";
 	public static final String PREF_EXTENSIVE_LOG = "extensiveLog";
+	public static final String PREF_SYNC_IN_PROGRESS = "syncInProgress";
 	
 	private final int minimumPasswordLength = 1;
 	private final char[] forbiddenSymbols = { '"', '\'' };

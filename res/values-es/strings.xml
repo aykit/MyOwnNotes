@@ -42,6 +42,7 @@
     <string name="toast_connection_error">Hubo un error de conexión.</string>
     <string name="toast_check_username_password">Por favor comprueba tu usuario y contraseña.</string>
     <string name="toast_no_internet_connection">TO TRANSLATE: No internet-connection has been found. Please connect to the internet to synchronize.</string>
+    <string name="toast_sync_in_progress">TO TRANSLATE: Sync in progress</string>
     
 
     <!-- Settings strings -->

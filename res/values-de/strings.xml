@@ -42,6 +42,7 @@
     <string name="toast_connection_error">Es gab einen Verbindungs-Fehler.</string>
     <string name="toast_check_username_password">Bitte überprüfen Sie Ihren Benutzernamen und Ihr Passwort.</string>
     <string name="toast_no_internet_connection">Es wurde keine Internet-Verbindung gefunden. Bitte verbinden Sie ihr Gerät mit dem Internet um zu synchronisieren.</string>
+    <string name="toast_sync_in_progress">Synchronisation wird durchgeführt</string>
 
     <!--  Settings strings -->
     <string name="settings_text_credentials">Berechtigungsdaten:</string>

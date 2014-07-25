@@ -98,7 +98,10 @@ public class NoteListActivity
 				settings.getBoolean(SettingsActivity.PREF_INITIALIZED, false) &&	//the settings (serveraddress, username, password) must be entered
 				settings.getBoolean(SettingsActivity.PREF_MENU_INFLATED, false) ) 	//because we need to check whether the menu has been inflated or not
 		{																		  	//synchronizeNotes() accesses the menu. if menu is not inflated and access is tried -> NullPointerException
-			synchronizeNotes();
+			if ( ! settings.getBoolean(SettingsActivity.PREF_SYNC_IN_PROGRESS, false) ) //only start sync if there is no sync already in progress. set by synchronizeNotes() and updateDatabase()
+			{
+				synchronizeNotes();
+			}
 		}
 		
 		//tell settings, that a single note was not created yet.
@@ -203,7 +206,10 @@ public class NoteListActivity
 		if(settings.getBoolean(SettingsActivity.PREF_AUTOSYNC, true) &&				//autosync must be on
 				settings.getBoolean(SettingsActivity.PREF_INITIALIZED, false)  ) 	//because we need to check whether the menu has been inflated or not
 		{
-			synchronizeNotes();
+			if( ! settings.getBoolean(SettingsActivity.PREF_SYNC_IN_PROGRESS, false) )
+			{
+				synchronizeNotes();
+			}
 		}
 		
 		return true;
@@ -232,8 +238,16 @@ public class NoteListActivity
 	        	if(debugOn) 
 	        	{
 	        		Log.d(TAG, "menu: start sync");
-	        	}	
-	        	synchronizeNotes();
+	        	}
+	        	
+	        	if( ! settings.getBoolean(SettingsActivity.PREF_SYNC_IN_PROGRESS, false) )
+	        	{
+	        		synchronizeNotes();
+	        	}
+	        	else
+	        	{
+	        		Toast.makeText(this, R.string.toast_sync_in_progress, Toast.LENGTH_SHORT).show();
+	        	}
 	        	return true;
 	        	
 	        case R.id.action_settings:
@@ -326,6 +340,11 @@ public class NoteListActivity
 		//get all notes
 		updateSettings(); //get newest login-data in case it has changed
 		Log.d(TAG, "starting note synchonization");
+		
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putBoolean(SettingsActivity.PREF_SYNC_IN_PROGRESS, true);
+		editor.commit();
+		
 		showProgressBar();
 		connectionError = false;
 	
@@ -406,6 +425,7 @@ public class NoteListActivity
 			else
 			{
 				Toast.makeText(this, R.string.toast_connection_error, Toast.LENGTH_LONG).show();
+				hideProgressBar();
 			}
 		}
 		else
@@ -504,6 +524,11 @@ public class NoteListActivity
 		
 		showAndFillListView(); //refresh listview
 		hideProgressBar();
+		
+		updateSettings();
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putBoolean(SettingsActivity.PREF_SYNC_IN_PROGRESS, false);
+		editor.commit();
 	}
 	
 	public void writeNewNotesToServer(String urlToServer)
