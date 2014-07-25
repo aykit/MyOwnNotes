@@ -117,6 +117,7 @@ public class NoteSingleActivity extends Activity {
 		//this note's onCreate()-method has been already called some time ago.
 		{
 			//get saved content from preferences
+			getActionBar().setTitle( getFirstLineOf(settings.getString("content", "") ) );
 			editTextContent.setText( settings.getString("content", "") );
 		}
 		
@@ -147,6 +148,7 @@ public class NoteSingleActivity extends Activity {
 	protected void onPause()
 	{
 		super.onPause();
+		
 		if(debugOn)
 		{
 			Log.d(TAG, "pausing note");
@@ -168,15 +170,14 @@ public class NoteSingleActivity extends Activity {
 		
 		if(sqlDatabase != null)
 		{
-			if( sqlDatabase.isOpen() )
+			if( sqlDatabase.isOpen() && ! sqlDatabase.inTransaction() )
 			{
 				sqlDatabase.close();
+				if(notesOpenHelper != null)
+				{
+					notesOpenHelper.close();
+				}
 			}
-		}
-		
-		if(notesOpenHelper != null)
-		{
-			notesOpenHelper.close();
 		}
 	}
 	

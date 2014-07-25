@@ -83,6 +83,7 @@ public class NoteListActivity
 		
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putBoolean(SettingsActivity.PREF_MENU_INFLATED, false); //this is done to save the fact that menus are not inflated yet.
+		editor.putBoolean(SettingsActivity.PREF_SYNC_IN_PROGRESS, false);
 		editor.commit();
 		
 		loaderManager = getLoaderManager();
@@ -135,15 +136,15 @@ public class NoteListActivity
 		super.onPause();
 		if(sqlDatabase != null)
 		{
-			if(sqlDatabase.isOpen() )
+			if(sqlDatabase.isOpen() && ! sqlDatabase.inTransaction() )
 			{
 				sqlDatabase.close();
+				
+				if(notesOpenHelper != null)
+				{
+					notesOpenHelper.close();
+				}
 			}
-		}
-		
-		if(notesOpenHelper != null)
-		{
-			notesOpenHelper.close();
 		}
 	}
 	
@@ -495,8 +496,9 @@ public class NoteListActivity
 				
 				long id = jsonObject.getLong("id");
 				String content = "";
-				if(jsonObject.has("content") && 
-						!jsonObject.getString("content").isEmpty()  )
+				if(	jsonObject.has("content") && 
+					! jsonObject.getString("content").isEmpty()  
+					)
 				{
 					content = jsonObject.getString("content");
 					//substring because notes-api sends the "title" again in first line of "content". annoying but we have to accept it for now.
@@ -506,7 +508,7 @@ public class NoteListActivity
 					content = "";
 				}
 				
-				Log.d(TAG, "CONTENT:" + content);
+				//Log.d(TAG, "CONTENT:" + content);
 				
 				values.put(NotesTable.COLUMN_ID, id);
 				values.put(NotesTable.CLOUMN_CONTENT, content);
@@ -547,7 +549,7 @@ public class NoteListActivity
 		{
 			String content = cursor.getString(cursor.getColumnIndex(NotesTable.CLOUMN_CONTENT));
 			String toPost = "{ content: \"" + content + "\"}";
-			Log.d(TAG, "to post:" + toPost);
+			//Log.d(TAG, "to post:" + toPost);
 			
 			new UploadNotesTask().execute(urlToServer, toPost);
 			
@@ -910,7 +912,7 @@ public class NoteListActivity
 			try
 			{
 				JSONObject json = new JSONObject(toPost);
-				Log.d(TAG, "json= " + json.toString() );
+				//Log.d(TAG, "json= " + json.toString() );
 				url = new URL(urlString);
 				
 				urlTestConnection = (HttpsURLConnection) url.openConnection();
