@@ -639,6 +639,22 @@ public class NoteListActivity
 		return cursor;
 	}
 	
+	/**
+	 * deletes a note identified by an id from the sql database.
+	 * usually called after a connection error occurred and the server says that a certain note does no longer exist.
+	 * 
+	 * @param idToDelete	String containing the id of the note that has to be deleted
+	 */
+	private void removeNoteFromSqlDatabase(String idToDelete)
+	{
+		makeSureSqlDatabaseIsOpen();
+		String whereClause = NotesTable.COLUMN_ID + " = ?";
+		String[] whereArgs = { idToDelete };
+		sqlDatabase.delete(NotesTable.NOTES_TABLE_NAME, 
+							whereClause, 
+							whereArgs);
+	}
+	
 	
 	
 	//----------------------------------
@@ -671,9 +687,9 @@ public class NoteListActivity
 	//----------------------------------
 	//AsyncTask for doing the deleting
 	//----------------------------------
-	private class DeleteNotesTask extends AsyncTask<String, Void, Boolean> 
+	private class DeleteNotesTask extends AsyncTask<String, Void, String> 
 	{
-		protected Boolean doInBackground(String... strings) 
+		protected String doInBackground(String... strings) 
 		{
 			URL url = null;
 			HttpsURLConnection urlConnection = null;
@@ -707,25 +723,24 @@ public class NoteListActivity
 					{
 						Log.d(TAG, "success @ delete Note");
 					}
-					return true;
+					return "DONE";
 				}
 				else if(connectionCode == 404)
 				{
-					connectionError = true;
 					Log.e(TAG, "failure @ delete note. note " + urlString.substring(urlString.lastIndexOf('/')) + " does not exist");
-					return false;
+					return "404 " + urlString.substring(urlString.lastIndexOf('/') + 1);
 				}
 				else if(connectionCode == 403)
 				{
 					connectionError = true;
 					Log.e(TAG, "failure @ delete note. permission problem (error code 403)");
-					return false;
+					return "ERROR";
 				}
 				else
 				{
 					connectionError = true;
 					Log.e(TAG, "failure @ delete new Note. response code:" + connectionCode);
-					return false;
+					return "ERROR";
 				}
 			}
 			catch(MalformedURLException e)
@@ -733,14 +748,14 @@ public class NoteListActivity
 				connectionError = true;
 				e.printStackTrace();
 				Log.e(TAG, "malformed url in UpdateNotesTask:" + e.toString());
-				return false;
+				return "ERROR";
 			}
 			catch(IOException e)
 			{
 				connectionError = true;
 				e.printStackTrace();
 				Log.e(TAG, "ioException in UpdateNotesTask:" + e.toString());
-				return false;
+				return "ERROR";
 			}
 			finally
 			{
@@ -751,13 +766,29 @@ public class NoteListActivity
 			}
 		}
 		
-		protected void onPostExecute(Boolean result)
+		protected void onPostExecute(String result)
 		{
-			if(result == false)
+			if(result.equals("DONE") )
 			{
-				//there was a delete-error. no connection could be made.
-				connectionError = true; //this variable is checked before the sql-database is updated.
-				Log.e("DELETENOTES", "onPost: delete error");
+				//everything fine. nothing to do
+			}
+			else
+			{
+				//there was a delete-error. 
+				if(result.startsWith("404") )
+				{
+					//note to delete does not exist on server. must be deleted from sql database
+					String idToDelete = result.substring("404 ".length() );
+					Log.i("DELETETASK", "onPost: delete error: note not found. removing note with id=" + idToDelete + " from sqldatabase");
+					
+					removeNoteFromSqlDatabase(idToDelete);
+				}
+				else
+				{
+					//no connection could be made.
+					connectionError = true; //this variable is checked before the sql-database is updated.
+					Log.e("DELETENOTES", "onPost: delete error");
+				}
 			}
 		}
 	}
@@ -765,9 +796,9 @@ public class NoteListActivity
 	//----------------------------------
 	//AsyncTask for doing the updating
 	//----------------------------------
-	private class UpdateNotesTask extends AsyncTask<String, Void, Boolean> 
+	private class UpdateNotesTask extends AsyncTask<String, Void, String> 
 	{
-		protected Boolean doInBackground(String... strings) 
+		protected String doInBackground(String... strings) 
 		{
 			URL url = null;
 			HttpsURLConnection urlConnection = null;
@@ -824,33 +855,37 @@ public class NoteListActivity
 						{
 							Log.d(TAG, "success @ update new Note");
 						}
-						return true;
+						return "DONE";
 					}
 					else if(connectionCode == 404)
 					{
-						connectionError = true;
-						Log.e(TAG, "failure @ update note. note " + urlString.substring(urlString.lastIndexOf('/')) + " does not exist");
-						return false;
+						Log.e(TAG, "failure @ update note. note " + urlString.substring(urlString.lastIndexOf('/')) + " does not exist. ");
+						return "404 " + urlString.substring(urlString.lastIndexOf('/') + 1) ;
 					}
 					else if(connectionCode == 403)
 					{
 						connectionError = true;
 						Log.e(TAG, "failure @ update note. permission problem (error code 403)");
-						return false;
+						return "ERROR";
 					}				
 					else
 					{
 						connectionError = true;
 						Log.e(TAG, "failure @ update new Note. response code:" + connectionCode);
-						return false;
+						return "ERROR";
 					}
 				
+				}
+				else if(testConnectionResponseCode == 404)
+				{
+					Log.e(TAG, "failure @ update note. note " + urlString.substring(urlString.lastIndexOf('/')) + " does not exist. ");
+					return "404 " + urlString.substring(urlString.lastIndexOf('/') + 1) ;
 				}
 				else
 				{
 					connectionError = true;
 					Log.e(TAG, "No update connection could be established. Response code: " + testConnectionResponseCode );
-					return false;
+					return "ERROR";
 				}
 			}
 			catch(MalformedURLException e)
@@ -858,21 +893,21 @@ public class NoteListActivity
 				connectionError = true;
 				e.printStackTrace();
 				Log.e(TAG, "malformed url in UpdateNotesTask:" + e.toString());
-				return false;
+				return "ERROR";
 			}
 			catch(IOException e)
 			{
 				connectionError = true;
 				e.printStackTrace();
 				Log.e(TAG, "ioException in UpdateNotesTask:" + e.toString());
-				return false;
+				return "ERROR";
 			}
 			catch(JSONException jsonE)
 			{
 				connectionError = true;
 				jsonE.printStackTrace();
 				Log.e(TAG, "jasonException in UpdateNotesTask:" + jsonE.toString());
-				return false;
+				return "ERROR";
 			}
 			finally
 			{
@@ -883,13 +918,30 @@ public class NoteListActivity
 			}
 		}
 		
-		protected void onPostExecute(Boolean result)
+		protected void onPostExecute(String result)
 		{
-			if(result == false)
+			if(result.equals("DONE") )
 			{
-				//there was an update-error. seems that no connection could be made.
-				connectionError = true; //this variable is checked before the sql-database is updated.
-				Log.e("UPDATETASK", "onPost: update error");
+				//everything fine. nothing to do.
+			}
+			else
+			{
+				//there was an update-error. 
+				if(result.startsWith("404") )
+				{
+					//note to update not found on server. delete the note from database.
+					String idToDelete = result.substring("404 ".length() );
+					Log.i("UPDATETASK", "onPost: update error: note not found. removing note with id=" + idToDelete + " from sqldatabase");
+					
+					removeNoteFromSqlDatabase(idToDelete);
+				}
+				else
+				{
+					//seems that no connection could be made.
+					connectionError = true; //this variable is checked before the sql-database is updated.
+					Log.e("UPDATETASK", "onPost: update error");
+				}
+				
 			}
 		}
 		
@@ -1169,7 +1221,7 @@ public class NoteListActivity
 	    	else
 	    	{
 	    		//"result" contains a JSON with _all_ notes from owncloud server.
-	    		if( ! connectionError) //only update database, if upload/update/delete cycle was successful
+	    		if( ! connectionError) //only update database if upload/update/delete cycle was successful
 	    		{
 	    			updateDatabase(result);
 	    			if(debugOn)
@@ -1182,6 +1234,11 @@ public class NoteListActivity
 	    			Log.e(TAG, "list not updated due to connection error");
 	    			Toast.makeText(getApplicationContext(), R.string.toast_connection_error, Toast.LENGTH_LONG).show();
 	    			hideProgressBar();
+	    			
+	    			updateSettings();
+	    			SharedPreferences.Editor editor = settings.edit();
+	    			editor.putBoolean(SettingsActivity.PREF_SYNC_IN_PROGRESS, false);
+	    			editor.commit();
 	    		}
 	    	}
 	    	
