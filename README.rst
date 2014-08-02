@@ -11,7 +11,7 @@ Make sure you read the README of the appropriate branch. The one you are seeing 
 
 Contribute
 ==========
-Please take a look at CONTRIBUTING.rst for information regarding extending this application.
+**Use the development branch** and please take a look at CONTRIBUTING.rst for information regarding extending this application.
 
 The information there applies to **translations** and **issue submissions** as well.
 
