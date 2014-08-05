@@ -299,6 +299,34 @@ public class NoteListActivity
 	}
 	
 	/**
+	 * <li>shows the progress-bar (calls <code>showProgressBar()</code> )</li>
+	 * <li>updates settings (calls <code>updateSettings()</code> )</li>
+	 * <li>saves to settings that a sync is in progress (saves boolean to settings)</li>
+	 */
+	private void setSyncInProgress()
+	{
+		showProgressBar();
+		updateSettings();
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putBoolean(SettingsActivity.PREF_SYNC_IN_PROGRESS, true);
+		editor.commit();
+	}
+	
+	/**
+	 * <li>hides the progress-bar (calls <code>hideProgressBar()</code> )</li>
+	 * <li>updates settings (calls <code>updateSettings()</code>)</li>
+	 * <li>saves to settings that no sync is in progress (saves boolean to settings)</li>
+	 */
+	private void setSyncNotInProgress()
+	{
+		updateSettings();
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putBoolean(SettingsActivity.PREF_SYNC_IN_PROGRESS, false);
+		editor.commit();
+		hideProgressBar();
+	}
+	
+	/**
 	 * checks if there is an active internet connection available.
 	 * <br \>
 	 * uses <code>ConnectivityManager</code> to check
@@ -338,18 +366,13 @@ public class NoteListActivity
 	public void synchronizeNotes()
 	{
 		//push new notes
+		//push notes changes
+		//push delete notes
 		//get all notes
-		updateSettings(); //get newest login-data in case it has changed
 		Log.d(TAG, "starting note synchonization");
+		setSyncInProgress();
 		
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putBoolean(SettingsActivity.PREF_SYNC_IN_PROGRESS, true);
-		editor.commit();
-		
-		showProgressBar();
 		connectionError = false;
-	
-		//check internet connection
 		
 		String serverUrl = settings.getString(SettingsActivity.PREF_ADDRESS, "https://www.example.com");	//defaultvalue = "https://www.example.com"
 		String urlToConnect = "";
@@ -426,13 +449,13 @@ public class NoteListActivity
 			else
 			{
 				Toast.makeText(this, R.string.toast_connection_error, Toast.LENGTH_LONG).show();
-				hideProgressBar();
+				setSyncNotInProgress();
 			}
 		}
 		else
 		{
 			Toast.makeText(this, R.string.toast_no_internet_connection, Toast.LENGTH_LONG).show();
-			hideProgressBar();
+			setSyncNotInProgress();
 		}
 	}
 	
@@ -501,7 +524,6 @@ public class NoteListActivity
 					)
 				{
 					content = jsonObject.getString("content");
-					//substring because notes-api sends the "title" again in first line of "content". annoying but we have to accept it for now.
 				}
 				else
 				{
@@ -524,13 +546,8 @@ public class NoteListActivity
 			Log.e(TAG, "no correct JSON data returned from server. result from server:" + result);
 		}
 		
+		setSyncNotInProgress();
 		showAndFillListView(); //refresh listview
-		hideProgressBar();
-		
-		updateSettings();
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putBoolean(SettingsActivity.PREF_SYNC_IN_PROGRESS, false);
-		editor.commit();
 	}
 	
 	public void writeNewNotesToServer(String urlToServer)
@@ -648,11 +665,13 @@ public class NoteListActivity
 	private void removeNoteFromSqlDatabase(String idToDelete)
 	{
 		makeSureSqlDatabaseIsOpen();
+		
 		String whereClause = NotesTable.COLUMN_ID + " = ?";
 		String[] whereArgs = { idToDelete };
 		sqlDatabase.delete(NotesTable.NOTES_TABLE_NAME, 
 							whereClause, 
-							whereArgs);
+							whereArgs
+						   );
 	}
 	
 	
@@ -839,7 +858,10 @@ public class NoteListActivity
 				
 				if( testConnectionResponseCode == 200)
 				{
-					Log.d(TAG, "update connection ok, doing the updating");
+					if(debugOn)
+					{
+						Log.d(TAG, "update connection ok, doing the updating");
+					}
 					urlConnection.connect();
 					
 					outputStream = new BufferedOutputStream(urlConnection.getOutputStream() );
@@ -875,11 +897,6 @@ public class NoteListActivity
 						return "ERROR";
 					}
 				
-				}
-				else if(testConnectionResponseCode == 404)
-				{
-					Log.e(TAG, "failure @ update note. note " + urlString.substring(urlString.lastIndexOf('/')) + " does not exist. ");
-					return "404 " + urlString.substring(urlString.lastIndexOf('/') + 1) ;
 				}
 				else
 				{
@@ -941,10 +958,8 @@ public class NoteListActivity
 					connectionError = true; //this variable is checked before the sql-database is updated.
 					Log.e("UPDATETASK", "onPost: update error");
 				}
-				
 			}
 		}
-		
 	}
 	
 	//----------------------------------
@@ -994,7 +1009,10 @@ public class NoteListActivity
 				
 				if( testConnectionResponseCode == 200)
 				{
-					Log.d(TAG, "upload connection ok, doing the uploading");
+					if(debugOn)
+					{
+						Log.d(TAG, "upload connection ok, doing the uploading");
+					}
 					
 					urlConnection.connect();
 					
@@ -1016,13 +1034,13 @@ public class NoteListActivity
 					else if(connectionCode == 404)
 					{
 						connectionError = true;
-						Log.e(TAG, "failure @ upload note. note " + urlString.substring(urlString.lastIndexOf('/')) + " does not exist");
+						Log.e(TAG, "failure @ upload new note. ");
 						return false;
 					}
 					else if(connectionCode == 403)
 					{
 						connectionError = true;
-						Log.e(TAG, "failure @ upload note. permission problem (error code 403)");
+						Log.e(TAG, "failure @ upload new note. permission problem (error code 403)");
 						return false;
 					}
 					else
@@ -1196,27 +1214,27 @@ public class NoteListActivity
 	    	if(result.equals("ERROR MalformedURLException") )
 	    	{
 	    		Toast.makeText(getApplicationContext(), R.string.toast_url_not_correctly_formed, Toast.LENGTH_LONG).show();
-	    		hideProgressBar();
+	    		setSyncNotInProgress();
 	    	}
 	    	else if(result.equals("ERROR IOException") )
 			{
 	    		Toast.makeText(getApplicationContext(), R.string.toast_url_doesnt_exist, Toast.LENGTH_LONG).show();
-	    		hideProgressBar();
+	    		setSyncNotInProgress();
 			}
 	    	else if(result.equals("ERROR FileNotFoundException" ) )
 	    	{
 	    		Toast.makeText(getApplicationContext(), R.string.toast_connection_error + R.string.toast_check_username_password, Toast.LENGTH_LONG).show();
-	    		hideProgressBar();
+	    		setSyncNotInProgress();
 	    	}
 	    	else if(result.equals("ERROR SSLHandshakeException") )
 	    	{
-	    		hideProgressBar();
+	    		setSyncNotInProgress();
 	    		showSSLAlert();
 	    	}
 	    	else if(result.equals("ERROR connection"))
 	    	{
 	    		Toast.makeText(getApplicationContext(), R.string.toast_connection_error, Toast.LENGTH_LONG).show();
-	    		hideProgressBar();
+	    		setSyncNotInProgress();
 	    	}
 	    	else
 	    	{
@@ -1233,12 +1251,7 @@ public class NoteListActivity
 	    		{
 	    			Log.e(TAG, "list not updated due to connection error");
 	    			Toast.makeText(getApplicationContext(), R.string.toast_connection_error, Toast.LENGTH_LONG).show();
-	    			hideProgressBar();
-	    			
-	    			updateSettings();
-	    			SharedPreferences.Editor editor = settings.edit();
-	    			editor.putBoolean(SettingsActivity.PREF_SYNC_IN_PROGRESS, false);
-	    			editor.commit();
+	    			setSyncNotInProgress();
 	    		}
 	    	}
 	    	
