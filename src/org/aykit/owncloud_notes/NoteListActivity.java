@@ -109,6 +109,7 @@ public class NoteListActivity
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putBoolean("wasCreatedBefore", false);
 		editor.putBoolean("wasPaused", false);
+		editor.putBoolean("isEditable", false);
 		editor.putString("content", "");
 		editor.putLong("id", 0);
 		editor.putString("status", "");
