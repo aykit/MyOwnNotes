@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" 
+    android:layout_height="@dimen/list_item_height"
+    android:background="@android:color/transparent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_padding_bottom"
+    android:paddingLeft="@dimen/activity_horizontal_padding"
+    android:paddingRight="@dimen/activity_horizontal_padding"
+    android:paddingTop="@dimen/activity_vertical_padding_top"
     >
     
     <TextView
         android:id="@+id/textview_note_row_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="2dp"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:maxLines="2"
         android:minLines="2"
-        android:background="#ededed"
+        android:textSize="18sp"
+        android:background="@android:color/transparent"
+        android:ellipsize="end"
+        android:layout_toLeftOf="@+id/textview_note_row_marked"
         />
-    <View 
-        android:id="@+id/grey_line"
-        android:layout_below="@id/textview_note_row_content"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#aaaaaa"
-        />
+
     <TextView 
         android:id="@+id/textview_note_row_marked"
         android:layout_width="wrap_content"
@@ -30,6 +31,12 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:textStyle="italic"
+        android:textSize="14sp"
+        android:background="@android:color/transparent"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="0dp"
         />
     
 
