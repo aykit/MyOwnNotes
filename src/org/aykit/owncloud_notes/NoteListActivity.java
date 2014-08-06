@@ -423,19 +423,19 @@ public class NoteListActivity
 		{
 			if (!connectionError)
 			{
-				//upload new notes
-				writeNewNotesToServer(urlToConnect);
-				
 				//update modified notes
+				writeModifiedNotesToServer(urlToConnect);
+				
 				if(!connectionError)
 				{
-					writeModifiedNotesToServer(urlToConnect);
+					//delete marked notes
+					deleteMarkedNotesFromServer(urlToConnect);
 				}
 				
-				//delete marked notes
 				if(!connectionError)
 				{
-					deleteMarkedNotesFromServer(urlToConnect);
+					//upload new notes
+					writeNewNotesToServer(urlToConnect);
 				}
 				
 				//get all notes
@@ -565,6 +565,13 @@ public class NoteListActivity
 		while(!cursor.isAfterLast() )
 		{
 			String content = cursor.getString(cursor.getColumnIndex(NotesTable.CLOUMN_CONTENT));
+			
+			//check string for "
+			if(content.indexOf('"') != -1)
+			{
+				content = content.replace("\"", "\\\"");
+			}
+			
 			String toPost = "{ content: \"" + content + "\"}";
 			//Log.d(TAG, "to post:" + toPost);
 			
@@ -590,6 +597,13 @@ public class NoteListActivity
 		while ( !cursor.isAfterLast() )
 		{
 			String content = cursor.getString(cursor.getColumnIndex(NotesTable.CLOUMN_CONTENT));
+			
+			//check string for "
+			if(content.indexOf('"') != -1)
+			{
+				content = content.replace("\"", "\\\"");
+			}
+			
 			long id = cursor.getLong( cursor.getColumnIndex(NotesTable.COLUMN_ID) );
 			String urlToServerWithNoteId = urlToServer + "/" + id;
 			String toPost = "{ content: \"" + content + "\"}";
@@ -897,6 +911,11 @@ public class NoteListActivity
 						return "ERROR";
 					}
 				
+				}
+				else if(testConnectionResponseCode == 404)
+				{
+					Log.e(TAG, "failure @ update note. note " + urlString.substring(urlString.lastIndexOf('/')) + " does not exist. ");
+					return "404 " + urlString.substring(urlString.lastIndexOf('/') + 1) ;
 				}
 				else
 				{
