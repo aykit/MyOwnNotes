@@ -167,6 +167,7 @@ public class NoteSingleActivity
 	@Override
 	public void onClick(View v) 
 	{
+		
 		int start = textViewContent.getSelectionStart();
 		setContentView(R.layout.activity_note_single);
 		
@@ -175,8 +176,14 @@ public class NoteSingleActivity
 		
 		editTextContent.setText(content);
 		editTextContent.requestFocus();
-		editTextContent.setSelection(start);
-		
+		if(start >= 0)
+		{
+			editTextContent.setSelection(start);
+		}
+		else
+		{
+			editTextContent.setSelection(0);
+		}
 		InputMethodManager imm = (InputMethodManager)this.getSystemService(Service.INPUT_METHOD_SERVICE);
 	    imm.showSoftInput(editTextContent, InputMethodManager.SHOW_IMPLICIT);
 	}
