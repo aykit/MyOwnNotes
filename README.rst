@@ -54,6 +54,10 @@ I have my own certificate. However, it is not working.
 ------------------------------------------------------
 One of the most common errors is a wrong certificate chain. Please use `SSL Labs`_ to check if your certificate chain is in order. If it isn't look up the manual of your webserver. We also wrote an article for `Setting up owncloud on Speed`_.
 
+I want to move my certificate to a custom folder
+------------------------------------------------
+Moving certificates can be tedious and insecure, depending on your selinux settings. We do not recommend you to move your certificates. If you really must, github user `eephyne`_ documented a way to achieve this: `Moving Certificates`_ 
+
 Building the application
 ------------------------
 Download the official android sdk here: http://developer.android.com/sdk/index.html
@@ -99,11 +103,13 @@ My Own Notes and all contributions are licensed as `GPL3`_
 .. _GPL3: https://github.com/aykit/myownnotes-android/blob/master/LICENSE
 .. _My Own Notes App: https://github.com/aykit/myownnotes-android
 .. _My Own Notes Website: https://aykit.org/sites/myownnotes.html
+.. _Moving Certificates: https://github.com/aykit/myownnotes-android/issues/72
 .. _ownCloud Docs: http://doc.owncloud.org/
 .. _ownCloud Notes App: http://apps.owncloud.com/content/show.php/Notes?content=160567
 .. _SSL Labs: https://www.ssllabs.com/ssltest/
 .. _StartSSL: https://startssl.com
 .. _Setting up owncloud on Speed: https://blog.entwicklerbier.org/2014/06/setting-up-owncloud-on-speed/
+
 
 .. _aykit: https://aykit.org
 .. _flo1: http:// https://github.com/flo1
@@ -112,3 +118,5 @@ My Own Notes and all contributions are licensed as `GPL3`_
 .. _steppenhahn: https://github.com/steppenhahn
 .. _tmelikoff: http://https://github.com/tmelikoff
 .. _wakeup: https://github.com/wakeup
+
+.. _eephyne: https://github.com/eephyne
