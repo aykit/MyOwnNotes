@@ -36,6 +36,10 @@ How do I get ownCloud?
 ----------------------
 There are many resources on the internet, showing you how to run your own copy of ownCloud. The following article provides a quick roundup: https://blog.entwicklerbier.org/2014/06/setting-up-owncloud-on-speed/
 
+I get a JSON error - what do I do?
+----------------------------------
+In ownCloud 7.0.2 the Notes App is not installed by default. You have to install and activate it. Try this and if you still get the error please submit a ticket.
+
 I can't connect. Do I really have to use SSL/TLS?
 -------------------------------------------------
 Short answer: yes. Please read our comment on `Entwicklerbier.org`_ for more information.
