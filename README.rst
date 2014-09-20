@@ -36,6 +36,7 @@ How do I get ownCloud?
 ----------------------
 There are many resources on the internet, showing you how to run your own copy of ownCloud. The following article provides a quick roundup: https://blog.entwicklerbier.org/2014/06/setting-up-owncloud-on-speed/
 
+
 How do I get notes for ownCloud?
 --------------------------------
 My Own Notes depends on the ownCloud notes app. To install,...
@@ -43,6 +44,10 @@ My Own Notes depends on the ownCloud notes app. To install,...
 Installing ownCloud Notes app: No app name specified
 ----------------------------------------------------
 the app name as specified in info.xml of the notes app was not exactly the same as the directory name I was using for the app. This happens a lot when unzipping the file downloaded from github. Just rename notes-x.x to notes.
+
+I get a JSON error - what do I do?
+----------------------------------
+In ownCloud 7.0.2 the Notes App is not installed by default. You have to install and activate it. If you are still getting this error, please submit a ticket.
 
 I can't connect. Do I really have to use SSL/TLS?
 -------------------------------------------------
