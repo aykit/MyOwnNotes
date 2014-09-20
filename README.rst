@@ -36,6 +36,14 @@ How do I get ownCloud?
 ----------------------
 There are many resources on the internet, showing you how to run your own copy of ownCloud. The following article provides a quick roundup: https://blog.entwicklerbier.org/2014/06/setting-up-owncloud-on-speed/
 
+How do I get notes for ownCloud?
+--------------------------------
+My Own Notes depends on the ownCloud notes app. To install,...
+
+Installing ownCloud Notes app: No app name specified
+----------------------------------------------------
+the app name as specified in info.xml of the notes app was not exactly the same as the directory name I was using for the app. This happens a lot when unzipping the file downloaded from github. Just rename notes-x.x to notes.
+
 I can't connect. Do I really have to use SSL/TLS?
 -------------------------------------------------
 Short answer: yes. Please read our comment on `Entwicklerbier.org`_ for more information.
@@ -58,6 +66,11 @@ I want to move my certificate to a custom folder
 ------------------------------------------------
 Moving certificates can be tedious and insecure, depending on your selinux settings. We do not recommend you to move your certificates. If you really must, github user `eephyne`_ documented a way to achieve this: `Moving Certificates`_
 Oh, and by the way: in contrary to others, we think it's really stupid to disable selinux. Only disable if you don't know what you are doing!
+
+I heard you don't support ownCloud's encryption app. Is this true?
+------------------------------------------------------------------
+Unfortunately yes. This has been a hard decision for us. Please look at `our blog entry about ownCloud's encryption app`_ and at `our comment in issue #9392`_ 
+
 
 Building the application
 ------------------------
@@ -105,12 +118,13 @@ My Own Notes and all contributions are licensed as `GPL3`_
 .. _My Own Notes App: https://github.com/aykit/myownnotes-android
 .. _My Own Notes Website: https://aykit.org/sites/myownnotes.html
 .. _Moving Certificates: https://github.com/aykit/myownnotes-android/issues/72
+.. _our blog entry about ownCloud's encryption app: https://blog.entwicklerbier.org/2014/09/misconceptions-of-owncloud-encryption/
+.. _our comment in issue #9392: https://github.com/owncloud/core/issues/9392#issuecomment-56274074
 .. _ownCloud Docs: http://doc.owncloud.org/
 .. _ownCloud Notes App: http://apps.owncloud.com/content/show.php/Notes?content=160567
 .. _SSL Labs: https://www.ssllabs.com/ssltest/
 .. _StartSSL: https://startssl.com
 .. _Setting up owncloud on Speed: https://blog.entwicklerbier.org/2014/06/setting-up-owncloud-on-speed/
-
 
 .. _aykit: https://aykit.org
 .. _flo1: http:// https://github.com/flo1
