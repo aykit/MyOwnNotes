@@ -70,7 +70,7 @@ One of the most common errors is a wrong certificate chain. Please use `SSL Labs
 I want to move my certificate to a custom folder
 ------------------------------------------------
 Moving certificates can be tedious and insecure, depending on your selinux settings. We do not recommend you to move your certificates. If you really must, github user `eephyne`_ documented a way to achieve this: `Moving Certificates`_
-Oh, and by the way: in contrary to others, we think it's really stupid to disable selinux. Only disable if you don't know what you are doing!
+Oh, and by the way: in contrary to others, we think it's really stupid to disable selinux. Only disable for testing purposes.
 
 I heard you don't support ownCloud's encryption app. Is this true?
 ------------------------------------------------------------------
