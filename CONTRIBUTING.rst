@@ -5,6 +5,7 @@ Contributing
 If you want to contribute, you are more than welcome. There is only one thing you should keep in mind:
 
 1. **Always write code in the development branch. The master branch is for package maintainers only. We will not accept pull requests based on the master branch.**
+2. **!!! Your submissions will be GPL3. If you are not ok with this, don't submit your code !!!**
 
 That's it. If you have no idea where to help out:
 
