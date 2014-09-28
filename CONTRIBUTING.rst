@@ -37,6 +37,45 @@ Provide all details concerning the specific issue
 * Or look at /data/anr/traces.txt on your device and submit the crash log
 
 
+How to submit feature requests
+==============================
+New features are great, but feature requests can be annoying as hell. Here is how to write feature requests that may be fulfilled sometimes:
+
+- Ask yourself if you really need this feature.
+- Look into github. Has someone else submitted the same feature request? Please look at the closed issues as well!
+- Ask yourself why you need this feature although no one else asked for it.
+- Look at the app. Maybe the feature is already in there! If it's there but it took you too long to find it, please submit an issue. It means that our UX design is bad.
+- Are you the only person in the world who may need this feature? E.g. "I invented a new format and My Own Notes should support it."
+- We ignore every feature request not provided in Gherkin. See below for how to correctly submit Gherkin style feature requests.
+
+
+Gherkin?
+--------
+Gerkhin is a language for application testing. When you submit your feature request in Gherkin, you make sure that your feature can be automatically tested when it arrives. Big plus for code quality!
+
+Take a look at `Gherkin documentation`_ for how-to write it. Here is an `Real World Gherkin Example`_:
+
+.. code-block:: cucumber
+
+    Feature: Share with My Own Notes
+	  Text in other applications should have a Share-With My Own notes option.
+	  This creates a new note where the content of the new note is the text selected
+	  in the application.
+
+	  Scenario: Showing Share with My Own Notes option
+	   Given that there is text selected in any application not being My Own Notes
+	    When I press on the system wide Share-To Button
+	    Then I see the option "Share with My Own Notes"
+
+	  Scenario: Sharing text with My Own Notes
+	   Given that there is text selected in any application not being My Own Notes
+	     And Share-To has been pressed
+	    When I select Share With My Own Notes
+	    Then the application My Own Notes is opened
+	     And a new note is created
+	     And the selected text is the text of the new note
+
+
 How to submit translations
 ==========================
 
@@ -77,8 +116,10 @@ License
 =======
 One last note: This application is licensed under `GPL 3`_. All code submitted will be released under the same license. For more information, look at the LICENSE file.
 
+.. _Gherkin documentation: https://github.com/cucumber/cucumber/wiki/Gherkin
 .. _GPL 3: http://www.gnu.org/copyleft/gpl.html
 .. _logcat: http://wiki.cyanogenmod.org/w/Doc:_debugging_with_logcat
 .. _network graph: https://github.com/aykit/myownnotes-android/network
 .. _our git repository: https://github.com/aykit/myownnotes-android
+.. _Real World Gherkin Example: https://github.com/aykit/myownnotes-android/issues/89
 .. _Submit: https://help.github.com/categories/63/articles
