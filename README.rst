@@ -2,6 +2,7 @@
 News
 ****
 Dear MyOwnNotes Users,
+
 due to lack of time on my part, the development progress of this app is more slow going than I anticipated. I am sorry about that!
 As I am doing this in my spare time, in between working and studying, and the time and effort I have to put into studying this semester is way higher then I expected, I am not able to do as much work here as I would like to. Again, I'm really sorry about this.
 This does NOT mean, that the app-development is dead. I am still working on it, but just not as much as I used to. 
