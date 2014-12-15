@@ -24,14 +24,14 @@
     <string name="toast_new_note_saved">Neue Notiz gespeichert</string>
     <string name="toast_changes_saved">Änderungen gespeichert</string>
     <string name="toast_note_deleted">Notiz gelöscht</string>
-    <string name="toast_note_marked_to_delete">Notiz als zu löschen markiert</string>
+    <string name="toast_note_marked_to_delete">Notiz zum löschen markiert</string>
 
     <!--  NoteList strings -->
     <string name="action_new">Neue Notiz erstellen</string>
     <string name="action_sync">synchronisieren</string>
     <string name="action_about">Info</string>
     <string name="action_help">Hilfe</string>
-    <string name="notelist_empty_list">Keine gespeicherten Notizen vorhanden. Sie haben entweder noch keine erstellt oder Ihre Notizen noch nicht mit ownCloud synchronisiert.</string>
+    <string name="notelist_empty_list">Keine gespeicherten Notizen vorhanden. Sie haben entweder noch keine Notizen erstellt oder Ihre Notizen noch nicht mit ownCloud synchronisiert.</string>
     <string name="alert_ssl_cert_not_trusted">Anscheinend wollen Sie auf einen Server zugreifen, der ein selbst signiertes Zertifikat verwendet. Um diese Verbindung aufbauen zu können, müssen Sie das Zertifikat des Servers manuell dem Android Schlüsselbund hinzufügen. \n\nMöchten Sie jetzt die Anleitung dazu lesen?</string>
     <string name="alert_answer_yes">Ja</string>
     <string name="alert_answer_no_thanks">Nein</string>
@@ -41,7 +41,7 @@
     <string name="toast_url_doesnt_exist">Die URL, von der Daten abgefragt werden, scheint nicht zu existieren. Bitte Schreibweise und Internet-Verbindung überprüfen.</string>
     <string name="toast_connection_error">Es gab einen Verbindungs-Fehler.</string>
     <string name="toast_check_username_password">Bitte überprüfen Sie Ihren Benutzernamen und Ihr Passwort.</string>
-    <string name="toast_no_internet_connection">Es wurde keine Internet-Verbindung gefunden. Bitte verbinden Sie ihr Gerät mit dem Internet um zu synchronisieren.</string>
+    <string name="toast_no_internet_connection">Es wurde keine Internet-Verbindung gefunden. Bitte verbinden Sie ihr Gerät mit dem Internet, um zu synchronisieren.</string>
     <string name="toast_sync_in_progress">Synchronisation wird durchgeführt</string>
 
     <!--  Settings strings -->
