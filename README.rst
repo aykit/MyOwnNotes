@@ -48,6 +48,10 @@ to use this app you will need:
 FAQ
 ===
 
+What's it with "Installing ownCloud Notes app: No app name specified"?
+----------------------------------------------------------------------
+the app name as specified in info.xml of the notes app was not exactly the same as the directory name I was using for the app. This happens a lot when unzipping the file downloaded from github. Just rename notes-x.x to notes.
+
 How do I get ownCloud?
 ----------------------
 There are many resources on the internet, showing you how to run your own copy of ownCloud. The following article provides a quick roundup: https://blog.entwicklerbier.org/2014/06/setting-up-owncloud-on-speed/
@@ -66,6 +70,10 @@ Use the android Security Settings to add self-signed certificates. Open your Set
 
 If you still need help, feel free to `contact us`_. Please be aware that this mailadress changes as we want to keep spam to a minimum and that it may take a while for us to help out.
 
+I heard you don't support ownCloud's encryption app. Is this true?
+------------------------------------------------------------------
+Since ownCloud 7.0.4, MyOwnNotes is working with the encryption plugin enabled. However, please look at `our blog entry about ownCloud's encryption app`_ and at `our comment in issue #9392`_ 
+
 Do you know any cheap SSL certificates?
 ---------------------------------------
 If you don't want to use self-signed certificates you can get one for free (for non-profit purposes only) at `StartSSL`_. If you can spend money, we suggest you to take a look at `CheapSSLsecurity`_. Please note that we are not affiliated with those companies in any way. We just want to help you finding cheap certificates.
@@ -73,6 +81,11 @@ If you don't want to use self-signed certificates you can get one for free (for 
 I have my own certificate. However, it is not working.
 ------------------------------------------------------
 One of the most common errors is a wrong certificate chain. Please use `SSL Labs`_ to check if your certificate chain is in order. If it isn't look up the manual of your webserver. We also wrote an article for `Setting up owncloud on Speed`_.
+
+I want to move my certificate to a custom folder
+------------------------------------------------
+Moving certificates can be tedious and insecure, depending on your selinux settings. We do not recommend you to move your certificates. If you really must, github user `eephyne`_ documented a way to achieve this: `Moving Certificates`_
+Oh, and by the way: in contrary to others, we think it's really stupid to disable selinux. Only disable for testing purposes.
 
 Building the application
 ------------------------
@@ -111,7 +124,6 @@ License
 =======
 My Own Notes and all contributions are licensed as `GPL3`_ 
 
-
 .. _CheapSSLsecurity: https://cheapsslsecurity.com
 .. _contact us: mailto:z-o48hohw4l9qla@ay.vc
 .. _Entwicklerbier.org: https://blog.entwicklerbier.org/2014/05/securing-the-internet-of-things-how-about-securing-the-internet-first/
@@ -119,6 +131,8 @@ My Own Notes and all contributions are licensed as `GPL3`_
 .. _GPL3: https://github.com/aykit/myownnotes-android/blob/master/LICENSE
 .. _My Own Notes App: https://github.com/aykit/myownnotes-android
 .. _My Own Notes Website: https://aykit.org/sites/myownnotes.html
+.. _our blog entry about ownCloud's encryption app: https://blog.entwicklerbier.org/2014/09/misconceptions-of-owncloud-encryption/
+.. _our comment in issue #9392: https://github.com/owncloud/core/issues/9392#issuecomment-56274074
 .. _ownCloud Docs: http://doc.owncloud.org/
 .. _ownCloud Notes App: https://github.com/owncloud/notes
 .. _SSL Labs: https://www.ssllabs.com/ssltest/
