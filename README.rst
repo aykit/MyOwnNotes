@@ -120,7 +120,7 @@ My Own Notes and all contributions are licensed as `GPL3`_
 .. _My Own Notes App: https://github.com/aykit/myownnotes-android
 .. _My Own Notes Website: https://aykit.org/sites/myownnotes.html
 .. _ownCloud Docs: http://doc.owncloud.org/
-.. _ownCloud Notes App: http://apps.owncloud.com/content/show.php/Notes?content=160567
+.. _ownCloud Notes App: https://github.com/owncloud/notes
 .. _SSL Labs: https://www.ssllabs.com/ssltest/
 .. _StartSSL: https://startssl.com
 .. _Setting up owncloud on Speed: https://blog.entwicklerbier.org/2014/06/setting-up-owncloud-on-speed/
