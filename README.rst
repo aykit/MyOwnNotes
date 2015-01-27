@@ -1,3 +1,19 @@
+****
+News
+****
+Dear MyOwnNotes Users,
+
+due to lack of time on my part, the development progress of this app is more slow going than I anticipated. I am sorry about that!
+As I am doing this in my spare time, in between working and studying, and the time and effort I have to put into studying this semester is way higher then I expected, I am not able to do as much work here as I would like to. Again, I'm really sorry about this.
+This does NOT mean, that the app-development is dead. I am still working on it, but just not as much as I used to. 
+And, as I'm ATM working on a big update that basically means rewriting the app from scratch, there is not much happening for you to see - but don't take this as a "nothing is happening"! 
+When I'm done, many of the issues that have been reported will be fixed. So I have to ask you to be patient. 
+I know, that's not what you want to hear but it's all i can give you right now.
+
+Cheers, steppenhahn
+
+
+
 ******************
 MyOwnNotes-android
 ******************
@@ -36,18 +52,9 @@ How do I get ownCloud?
 ----------------------
 There are many resources on the internet, showing you how to run your own copy of ownCloud. The following article provides a quick roundup: https://blog.entwicklerbier.org/2014/06/setting-up-owncloud-on-speed/
 
-
-How do I get notes for ownCloud?
---------------------------------
-My Own Notes depends on the ownCloud notes app. To install,...
-
-Installing ownCloud Notes app: No app name specified
-----------------------------------------------------
-the app name as specified in info.xml of the notes app was not exactly the same as the directory name I was using for the app. This happens a lot when unzipping the file downloaded from github. Just rename notes-x.x to notes.
-
 I get a JSON error - what do I do?
 ----------------------------------
-In ownCloud 7.0.2 the Notes App is not installed by default. You have to install and activate it. If you are still getting this error, please submit a ticket.
+In ownCloud 7.0.2 the Notes App is not installed by default. You have to install and activate it. Try this and if you still get the error please submit a ticket.
 
 I can't connect. Do I really have to use SSL/TLS?
 -------------------------------------------------
@@ -66,16 +73,6 @@ If you don't want to use self-signed certificates you can get one for free (for 
 I have my own certificate. However, it is not working.
 ------------------------------------------------------
 One of the most common errors is a wrong certificate chain. Please use `SSL Labs`_ to check if your certificate chain is in order. If it isn't look up the manual of your webserver. We also wrote an article for `Setting up owncloud on Speed`_.
-
-I want to move my certificate to a custom folder
-------------------------------------------------
-Moving certificates can be tedious and insecure, depending on your selinux settings. We do not recommend you to move your certificates. If you really must, github user `eephyne`_ documented a way to achieve this: `Moving Certificates`_
-Oh, and by the way: in contrary to others, we think it's really stupid to disable selinux. Only disable for testing purposes.
-
-I heard you don't support ownCloud's encryption app. Is this true?
-------------------------------------------------------------------
-Unfortunately yes. This has been a hard decision for us. Please look at `our blog entry about ownCloud's encryption app`_ and at `our comment in issue #9392`_ 
-
 
 Building the application
 ------------------------
@@ -122,9 +119,6 @@ My Own Notes and all contributions are licensed as `GPL3`_
 .. _GPL3: https://github.com/aykit/myownnotes-android/blob/master/LICENSE
 .. _My Own Notes App: https://github.com/aykit/myownnotes-android
 .. _My Own Notes Website: https://aykit.org/sites/myownnotes.html
-.. _Moving Certificates: https://github.com/aykit/myownnotes-android/issues/72
-.. _our blog entry about ownCloud's encryption app: https://blog.entwicklerbier.org/2014/09/misconceptions-of-owncloud-encryption/
-.. _our comment in issue #9392: https://github.com/owncloud/core/issues/9392#issuecomment-56274074
 .. _ownCloud Docs: http://doc.owncloud.org/
 .. _ownCloud Notes App: http://apps.owncloud.com/content/show.php/Notes?content=160567
 .. _SSL Labs: https://www.ssllabs.com/ssltest/
@@ -138,5 +132,3 @@ My Own Notes and all contributions are licensed as `GPL3`_
 .. _steppenhahn: https://github.com/steppenhahn
 .. _tmelikoff: http://https://github.com/tmelikoff
 .. _wakeup: https://github.com/wakeup
-
-.. _eephyne: https://github.com/eephyne
