@@ -129,6 +129,7 @@ My Own Notes and all contributions are licensed as `GPL3`_
 .. _Entwicklerbier.org: https://blog.entwicklerbier.org/2014/05/securing-the-internet-of-things-how-about-securing-the-internet-first/
 .. _google dev: https://code.google.com/p/android/issues/detail?id=11231#c107
 .. _GPL3: https://github.com/aykit/myownnotes-android/blob/master/LICENSE
+.. _Moving Certificates: https://github.com/aykit/myownnotes-android/issues/72
 .. _My Own Notes App: https://github.com/aykit/myownnotes-android
 .. _My Own Notes Website: https://aykit.org/sites/myownnotes.html
 .. _our blog entry about ownCloud's encryption app: https://blog.entwicklerbier.org/2014/09/misconceptions-of-owncloud-encryption/
@@ -140,6 +141,7 @@ My Own Notes and all contributions are licensed as `GPL3`_
 .. _Setting up owncloud on Speed: https://blog.entwicklerbier.org/2014/06/setting-up-owncloud-on-speed/
 
 .. _aykit: https://aykit.org
+.. _eephyne: https://github.com/eephyne
 .. _flo1: http:// https://github.com/flo1
 .. _gityeti: https://github.com/gityeti
 .. _pejakm: https://github.com/pejakm
