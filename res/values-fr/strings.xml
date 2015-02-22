@@ -18,8 +18,8 @@
     <string name="text_delete">supprimer</string>
     <string name="note_has_been_saved">La note a été enregistrée</string>
     <string name="text_test">Test</string>
-    <string name="action_title_save">enregistrer la note</string>
-    <string name="action_title_delete">supprimer la note</string>
+    <string name="action_title_save">Enregistrer la note</string>
+    <string name="action_title_delete">Supprimer la note</string>
 
     <!-- Toasts -->
     <string name="toast_new_note_saved">Nouvelle note enregistrée</string>
@@ -32,18 +32,18 @@
     <string name="action_sync">Synchroniser</string>
     <string name="action_about">Infos</string>
     <string name="action_help">Aide</string>
-    <string name="notelist_empty_list">Aucune note enregistrée. Vous n\'avez pas non plus créé de notes ou elles ne sont pas encore synchronisées.</string>
+    <string name="notelist_empty_list">Aucune note enregistrée. Vous n\'en avez pas créé ou elles ne sont pas encore synchronisées avec votre ownCloud.</string>
     <string name="alert_ssl_cert_not_trusted">Vous essayez de vous connecter à un serveur qui utilise un certificat auto-signé. Vous devez ajouter manuellement ce certificat aux certificats de confiance d\'Android. \n\n Voulez-vous accéder au tutoriel ?</string>
     <string name="alert_answer_yes">Oui</string>
-    <string name="alert_answer_no_thanks">Non</string>
+    <string name="alert_answer_no_thanks">Non merci</string>
     <!-- Toasts -->
-    <string name="toast_not_correct_json">Le format JSON est invalide. Le serveur est-il OK ?</string>
-    <string name="toast_url_not_correctly_formed">L\'adresse internet est incorrecte.</string>
-    <string name="toast_url_doesnt_exist">L\'adresse internet n\'existe pas. Vérifiez la connection internet et l\'orthographe.</string>
+    <string name="toast_not_correct_json">Pas de JSON correct reçu. Un problème sur le serveur ?</string>
+    <string name="toast_url_not_correctly_formed">L\'URL paramétrée est incorrecte.</string>
+    <string name="toast_url_doesnt_exist">L\'URL paramétrée n\'existe pas. Vérifiez son exactitude ou votre connexion internet.</string>
     <string name="toast_connection_error">Erreur de connexion.</string>
-    <string name="toast_check_username_password">Vérifiez le nom d\'utilisateur et le mot de passe.</string>
-    <string name="toast_no_internet_connection">TO TRANSLATE: No internet-connection has been found. Please connect to the internet to synchronize.</string>
-    <string name="toast_sync_in_progress">TO TRANSLATE: Sync in progress</string>
+    <string name="toast_check_username_password">Vérifiez votre nom d\'utilisateur et votre mot de passe.</string>
+    <string name="toast_no_internet_connection">Aucune connexion à Internet. Connectez-vous à Internet pour pouvoir synchroniser.</string>
+    <string name="toast_sync_in_progress">Synchronisation en cours.</string>
 
     <!--  Settings strings -->
     <string name="settings_text_credentials">Données de connexion :</string>
@@ -54,43 +54,39 @@
     <string name="settings_text_username_hint">le nom d\'utilisateur</string>
     <string name="settings_text_password">Mot de passe :</string>
     <string name="settings_text_password_hint">le mot de passe</string>
-    <string name="settings_text_synchronization">synchronisation</string>
-    <string name="settings_text_sync_automatically">synchronisation automatique</string>
-    <string name="settings_text_defaultnotetitle">titre par défaut de la note</string>
+    <string name="settings_text_synchronization">Synchronisation</string>
+    <string name="settings_text_sync_automatically">Synchronisation automatique</string>
+    <string name="settings_text_defaultnotetitle">Titre par défaut de la note</string>
     <string name="settings_text_defaultnotetitle_datetime">Date et heure</string>
     <string name="settings_text_saved">Paramètres enregistrés</string>
     <string name="settings_text_debug">Debug/Afficher les erreurs</string>
-    <string name="settings_text_extensive_log_output">Activer le journal d\'activité LogCat</string>
+    <string name="settings_text_extensive_log_output">Activer la sortie LogCat verbeuse</string>
 
     <!-- Toasts -->
-    <string name="toast_enter_valid_username">Saisissez votre nom d\'utilisateur, s\'il vous plaît.</string>
-    <string name="toast_enter_password">Saisissez votre mot de passe, s\'il vous plaît.</string>
+    <string name="toast_enter_valid_username">Saisissez votre nom d\'utilisateur ownCloud, s\'il vous plaît.</string>
+    <string name="toast_enter_password">Saisissez votre mot de passe ownCloud, s\'il vous plaît.</string>
     <string name="toast_enter_valid_https">Saisissez l\'adresse du serveur. Elle commence par \"https://\".</string>
     
     <!-- About strings -->
-    <string name="text_aykit_logo">logo de aykit</string>
-    <string name="text_about_text">Cette application vous est présentée par aykit - une association qui soutient l\'art, la culture et la science. \nPlus d\'informations sur notre site: \n\nhttp://aykit.org</string>
+    <string name="text_aykit_logo">Logo de aykit</string>
+    <string name="text_about_text">Cette application vous est présentée par aykit - une association qui soutient l\'art, la culture et la science. \nPlus d\'informations sur notre site : \n\nhttp://aykit.org</string>
     
     <!-- Help strings -->
     <string name="text_help_text">
-       	Quelles URL dois-je entrer ? \n 
-       	Entrez l\'URL à la racine de l\'installation ownCloud - c\'est la même URL que vous utilisez pour vous connecter à votre ownCloud via le navigateur \n (par exemple https://myowncloud.com) 
+       	Quelles URL dois-je entrer ?\n 
+       	Entrez l\'URL de la racine votre installation ownCloud - c\'est la même URL que vous utilisez pour vous connecter à votre ownCloud via le navigateur.\n(par exemple https://myowncloud.com) 
        	\n\n 
-       	Puis-je utiliser cette application pour me connecter à mon ownCloud via http (sans https) ?
-       	\n
-       	Non, ce n\'est pas possible. La Notes-API exige à chaque connexion l\'envoi du nom d\'utilisateur et du mot de passe. Si vous utilisez http, vous envoyez ces informations vitales en clair. Pas vraiment une bonne idée !
-       	\n
-       	(Pourquoi ? Lire ceci : L\'attaque "Man-in-the-middle" http://fr.wikipedia.org/wiki/Attaque_de_l%27homme_du_milieu) 
+       	Puis-je utiliser cette application pour me connecter à mon ownCloud via http (sans https) ?\n
+       	Non, ce n\'est pas possible. L'API Notes exige à chaque connexion l\'envoi du nom d\'utilisateur et du mot de passe. Si vous utilisez http, vous envoyez ces informations vitales en clair. Pas vraiment une bonne idée !\n
+       	(Pourquoi ? Lisez ceci : L\'attaque de "l\'homme du milieu" http://fr.wikipedia.org/wiki/Attaque_de_l%27homme_du_milieu) 
        	\n\n
-       	J\'ai un serveur ownCloud avec un certificat auto-signé. Puis-je utiliser cette application pour mon serveur ?
-       	\n
-       	Oui, c\'est possible - voici comment : Vous devez indiquer expressément à Android d\'accepter votre certificat auto-signé. Ceci est fait en ajoutant manuellement le certificat au gestionnaire de clés d\'Android.
-       	\n
+       	J\'ai un serveur ownCloud avec un certificat auto-signé. Puis-je utiliser cette application avec mon serveur ?\n
+       	Oui, c\'est possible. Voici comment : vous devez indiquer expressément à Android d\'accepter votre certificat auto-signé, en l'ajoutant manuellement au gestionnaire de clés d\'Android.\n
        	Cf. ce tutoriel : http://aykit.org/sites/myownnotes.html
     </string>
     
     <!--  NoteTable -->
-    <string name="to_delete">à supprimer</string>
-    <string name="new_note">nouvelle note</string>
-    <string name="to_update">mettre à jour</string>
+    <string name="to_delete">Supprimer</string>
+    <string name="new_note">Nouvelle note</string>
+    <string name="to_update">Mettre à jour</string>
 </resources>
