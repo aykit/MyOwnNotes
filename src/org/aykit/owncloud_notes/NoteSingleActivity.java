@@ -12,25 +12,37 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Service;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.NavUtils;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.WindowManager;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 @SuppressLint("SimpleDateFormat")
-public class NoteSingleActivity extends Activity {
+public class NoteSingleActivity 
+	extends Activity 
+	implements OnClickListener,	OnLongClickListener
+{
 	
 	public static final String TAG = NoteSingleActivity.class.getSimpleName();
 	
+	private NotesOpenHelper notesOpenHelper;
+	private SQLiteDatabase sqlDatabase;
+	
 	private EditText editTextContent;
-	private EditText editTextTitle;
+	private TextView textViewContent;
 	private String title;
 	private String content;
 	private String status = "";
@@ -39,6 +51,8 @@ public class NoteSingleActivity extends Activity {
 	private boolean noButtonWasPressed;
 	private boolean wasPaused;
 	private boolean wasCreatedBefore;
+	private boolean debugOn;
+	private boolean isEditable;
 	private SharedPreferences settings;
 	
 	@Override
@@ -46,19 +60,13 @@ public class NoteSingleActivity extends Activity {
 	{
 		super.onCreate(savedInstanceState);
 		
-		
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
-		setContentView(R.layout.activity_note_single);
-		//Log.d(TAG, "onCreate called");
-		
 		settings = PreferenceManager.getDefaultSharedPreferences(this);
-		editTextContent = (EditText) findViewById(R.id.edittext_note_content);
-		editTextTitle = (EditText) findViewById(R.id.edittext_note_title);
+		debugOn = settings.getBoolean(SettingsActivity.PREF_EXTENSIVE_LOG, false);
 		id = -1;
 		
 		wasCreatedBefore = settings.getBoolean("wasCreatedBefore", false);
-		
 		
 		if(!wasCreatedBefore)
 		{
@@ -68,18 +76,21 @@ public class NoteSingleActivity extends Activity {
 			isNewNote = intent.getBooleanExtra("isNewNote", false);
 			
 			if(!isNewNote)
-			{
-				//open saved note: load note-data from intent
-
+			{	//opening saved note
+				setContentView(R.layout.activity_note_single_textview);
+				textViewContent = (TextView) findViewById(R.id.textview_note_content);
+				isEditable = false;
+				
+				//load note-data from intent
 				content = intent.getStringExtra("content");
-				title = intent.getStringExtra("title");
+				title = getFirstLineOf(content);
+
+				getActionBar().setTitle(title);
 				id = intent.getLongExtra("id", -1);
 				//Log.d(TAG, "id from intent: " + id);
 				status = intent.getStringExtra("status");
 
-				
-				editTextContent.setText(content);
-				editTextTitle.setText(title);
+				textViewContent.setText(content);
 				
 				if(id == -1)
 				{
@@ -87,12 +98,22 @@ public class NoteSingleActivity extends Activity {
 					Log.e(TAG, "there was a problem with this note:" + title);
 				}
 				
+				
 				//make sure that keyboard is not shown right up
-				getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-
+				//getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+				textViewContent.setClickable(true);
+				textViewContent.setMovementMethod(LinkMovementMethod.getInstance());
+				textViewContent.setLongClickable(true);
+				textViewContent.setOnClickListener(this);
+				textViewContent.setOnLongClickListener(this);
 			}
 			else
 			{
+				//new note
+				setContentView(R.layout.activity_note_single);
+				editTextContent = (EditText) findViewById(R.id.edittext_note_content);
+				isEditable = true;
+				
 				boolean useDateAndTimeAsDefaultTitle = settings.getBoolean(SettingsActivity.PREF_DEFAULT_TITLE, true); 
 				if(useDateAndTimeAsDefaultTitle)
 				{
@@ -102,58 +123,144 @@ public class NoteSingleActivity extends Activity {
 					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
 					String dateAndTime = format.format(date);
 					
-					editTextTitle.setText(dateAndTime);
+					editTextContent.setText(dateAndTime + "\n");
+					editTextContent.setSelection( editTextContent.getText().toString().length() );
 				}
+				
+				getActionBar().setTitle(R.string.new_note);
 			}
 		}
 		else
 		//this note's onCreate()-method has been already called some time ago.
 		{
-			//get saved content and title from preferences
-			editTextContent.setText(settings.getString("content", "") );
-			editTextTitle.setText(settings.getString("title", "") );
+			//get saved content from preferences
+			content = settings.getString("content", "");
+			isEditable = settings.getBoolean("isEditable", false);
+			
+			getActionBar().setTitle( getFirstLineOf(content ) );
+			
+			if(isEditable)
+			{
+				setContentView(R.layout.activity_note_single);
+				editTextContent = (EditText) findViewById(R.id.edittext_note_content);
+				
+				editTextContent.setText( content );
+			}
+			else
+			{
+				setContentView(R.layout.activity_note_single_textview);
+				textViewContent = (TextView) findViewById(R.id.textview_note_content);
+				
+				textViewContent.setClickable(true);
+				textViewContent.setLongClickable(true);
+				textViewContent.setMovementMethod(LinkMovementMethod.getInstance());
+				textViewContent.setOnClickListener(this);
+				textViewContent.setOnLongClickListener(this);
+				
+				textViewContent.setText(content);
+			}
 		}
 		
 		wasPaused = false;
 	}
 	
 	@Override
+	public void onClick(View v) 
+	{
+		
+		int start = textViewContent.getSelectionStart();
+		setContentView(R.layout.activity_note_single);
+		
+		editTextContent = (EditText) findViewById(R.id.edittext_note_content);
+		isEditable = true;
+		
+		editTextContent.setText(content);
+		editTextContent.requestFocus();
+		if(start >= 0)
+		{
+			editTextContent.setSelection(start);
+		}
+		else
+		{
+			editTextContent.setSelection(0);
+		}
+		InputMethodManager imm = (InputMethodManager)this.getSystemService(Service.INPUT_METHOD_SERVICE);
+	    imm.showSoftInput(editTextContent, InputMethodManager.SHOW_IMPLICIT);
+	}
+	
+	@Override
+	public boolean onLongClick(View v) {
+		onClick(v);
+		return false;
+	}
+	
+	@Override
 	protected void onResume()
 	{
 		super.onResume();
-		//Log.d(TAG, "resuming");
+		if(debugOn)
+		{	
+			Log.d(TAG, "resuming note");
+		}
 		noButtonWasPressed = true;
 		wasPaused = settings.getBoolean("wasPaused", false);
 		if (wasPaused)
 		{
-			content = editTextContent.getText().toString();
-			title = editTextTitle.getText().toString();
+			content = settings.getString("content", "");
 			id = settings.getLong("id", -1);
 			status = settings.getString("status", "");
+			isEditable = settings.getBoolean("isEditable", false);
 		}
+		
+		makeSureSqlDatabaseIsOpen();
 	}
 	
 	@Override
 	protected void onPause()
 	{
 		super.onPause();
-		//Log.d(TAG, "pausing");
+		
+		if(debugOn)
+		{
+			Log.d(TAG, "pausing note");
+		}
 		wasPaused = true;
 		SharedPreferences.Editor editor = settings.edit();
-		editor.putBoolean("wasPaused", true);
+		editor.putBoolean("wasPaused", wasPaused);
 		editor.putBoolean("wasCreatedBefore", true);
+		editor.putBoolean("isEditable", isEditable);
 		
 		if (noButtonWasPressed)
 		{
-			saveNote();
+			if(isEditable)
+			{
+				saveNote();
+			}
 			
 			editor.putLong("id", id);
 			editor.putString("status", status);
-			editor.putString("content", editTextContent.getText().toString() );
-			editor.putString("title", editTextTitle.getText().toString() );
-			
+			if(isEditable)
+			{
+				editor.putString("content", editTextContent.getText().toString() );
+			}
+			else
+			{
+				editor.putString("content", textViewContent.getText().toString() );
+			}
 		}
 		editor.commit();
+		
+		if(sqlDatabase != null)
+		{
+			if( sqlDatabase.isOpen() && ! sqlDatabase.inTransaction() )
+			{
+				sqlDatabase.close();
+				if(notesOpenHelper != null)
+				{
+					notesOpenHelper.close();
+				}
+			}
+		}
 	}
 	
 	public void onBackPressed()
@@ -163,9 +270,47 @@ public class NoteSingleActivity extends Activity {
 		super.onBackPressed();
 	}
 	
-	public void setNoteContentView(String textString)
+	/**
+	 * returns the first line of the String contentToParse. looks for the first linebreak (<code>\n</code>)
+	 * 
+	 * @param contentToParse	String containing content.
+	 * @return	String containing the first line of contentToParse - without tailing <code>\n</code> or an empty String if there is no linebreak.
+	 */
+	private String getFirstLineOf(String contentToParse)
 	{
-		this.editTextContent.setText(textString);
+		if(contentToParse.indexOf("\n") != -1)
+		{
+			return contentToParse.substring(0, contentToParse.indexOf("\n") );
+		}
+		else
+		{
+			return contentToParse;
+		}
+	}
+	
+	/**
+	 * checks whether <code>notesOpenHelper</code> is open and
+	 * whether <code>sqlDatabase</code> is open
+	 * and makes sure, that both are.
+	 */
+	public void makeSureSqlDatabaseIsOpen ()
+	{
+		if(notesOpenHelper == null)
+		{
+			notesOpenHelper = new NotesOpenHelper(this);
+		}
+		
+		if(sqlDatabase == null)
+		{
+			sqlDatabase = notesOpenHelper.getWritableDatabase();
+		}
+		else
+		{
+			if( ! sqlDatabase.isOpen() )
+			{
+				sqlDatabase = notesOpenHelper.getWritableDatabase();
+			}
+		}
 	}
 	
 	@Override
@@ -211,25 +356,35 @@ public class NoteSingleActivity extends Activity {
 	{
 		//save or update currently opened note
 		Log.d(TAG, "saving note");
-		NotesOpenHelper notesOpenHelper = new NotesOpenHelper(this);
-		SQLiteDatabase sqlDatabase = notesOpenHelper.getWritableDatabase();
 		
-		String newTitle = editTextTitle.getText().toString();
-		String newContent = editTextContent.getText().toString();
+		String newContent = "";
 		
+		if(isEditable)
+		{
+			newContent = editTextContent.getText().toString();
+		}
+		else
+		{
+			newContent = textViewContent.getText().toString();
+		}
+		
+		makeSureSqlDatabaseIsOpen();
 		
 		if(isNewNote)
 		{
 			//no row in table NoteTable to update exists. create new.
-			//Log.d(TAG, "isNewNote");
-			if( newContent.equals("") && newTitle.equals("") )
+			if(debugOn)
+			{
+				Log.d(TAG, "isNewNote");
+			}
+			
+			if( newContent.equals("") )
 			{
 				//empty note will not be saved
 			}
 			else
 			{
 				ContentValues values = new ContentValues();
-				values.put(NotesTable.COLUMN_TITLE, newTitle);
 				values.put(NotesTable.CLOUMN_CONTENT, newContent );
 				values.put(NotesTable.COLUMN_STATUS, NotesTable.NEW_NOTE); //mark note as new note
 				id = sqlDatabase.insert(NotesTable.NOTES_TABLE_NAME, null, values);
@@ -241,8 +396,12 @@ public class NoteSingleActivity extends Activity {
 		else if(status.equals(NotesTable.NEW_NOTE))
 		{
 			//check whether this new note has been changed before first upload
-			//Log.d(TAG, "status = new note");
-			if (! newContent.equals(content)  || ! newTitle.equals(title) )
+			if(debugOn)
+			{
+				Log.d(TAG, "status = new note");
+			}
+			
+			if (! newContent.equals(content) )
 			{
 				//note is new but was changed before first upload
 				//must update existing note in NoteTable
@@ -250,7 +409,6 @@ public class NoteSingleActivity extends Activity {
 				String[] selectionArgs = { Long.toString(id) };
 				
 				ContentValues values = new ContentValues();
-				values.put(NotesTable.COLUMN_TITLE, newTitle );
 				values.put(NotesTable.CLOUMN_CONTENT, newContent);
 				values.put(NotesTable.COLUMN_STATUS, NotesTable.NEW_NOTE); //mark note as new note
 				
@@ -260,18 +418,27 @@ public class NoteSingleActivity extends Activity {
 			else
 			{
 				//nothing to do here. note has not been changed.
-				//Log.d(TAG, "do nothing, new note");
+				if(debugOn)
+				{
+					Log.d(TAG, "do nothing, new note");
+				}
 			}
 		}
 		else
 		{
 			//check whether existing note has been changed
-			//Log.d(TAG, "existing note");
+			if(debugOn)
+			{
+				Log.d(TAG, "existing note");
+			}
 			
-			if (! newContent.equals(content)  || ! newTitle.equals(title) ) 
+			if (! newContent.equals(content) ) 
 			{
 				//must update existing NoteTable
-				//Log.d(TAG, "existing note was changed, do save");
+				if(debugOn)
+				{
+					Log.d(TAG, "existing note was changed, do save");
+				}
 				//Log.d(TAG, "content: " + content + "; newContent: " + newContent);
 				//Log.d(TAG, "title: " + title + "; newtitle: " + newTitle);
 				//Log.d(TAG, "id: " + id);
@@ -280,7 +447,6 @@ public class NoteSingleActivity extends Activity {
 				String[] selectionArgs = { Long.toString(id) };
 				
 				ContentValues values = new ContentValues();
-				values.put(NotesTable.COLUMN_TITLE, newTitle );
 				values.put(NotesTable.CLOUMN_CONTENT, newContent);
 				values.put(NotesTable.COLUMN_STATUS, NotesTable.TO_UPDATE); //mark note for update
 				
@@ -290,13 +456,14 @@ public class NoteSingleActivity extends Activity {
 			else
 			{
 				//nothing to do here. note has not been changed.
-				//Log.d(TAG, "do nothing");
+				if(debugOn)
+				{
+					Log.d(TAG, "do nothing");
+				}
 			}
 		}
-		Log.d(TAG, "note saved successfully");
 		
-		sqlDatabase.close();
-		notesOpenHelper.close();
+		Log.d(TAG, "note saved successfully");
 	}
 	
 	private void deleteNote()
@@ -309,9 +476,7 @@ public class NoteSingleActivity extends Activity {
 		}
 		else
 		{
-			
-			NotesOpenHelper notesOpenHelper = new NotesOpenHelper(this);
-			SQLiteDatabase sqlDatabase = notesOpenHelper.getWritableDatabase();
+			makeSureSqlDatabaseIsOpen();
 			
 			String selection = NotesTable.COLUMN_ID + " = ?";
 			String[] selectionArgs = { Long.toString(id) };
@@ -331,9 +496,6 @@ public class NoteSingleActivity extends Activity {
 				sqlDatabase.delete(NotesTable.NOTES_TABLE_NAME, whereClause, whereArgs);
 				Toast.makeText(this, R.string.toast_note_deleted, Toast.LENGTH_SHORT).show();
 			}
-			
-			sqlDatabase.close();
-			notesOpenHelper.close();
 		}
 	}
 }//END:class

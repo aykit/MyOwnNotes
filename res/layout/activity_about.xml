@@ -5,12 +5,25 @@
     android:orientation="vertical" 
     >
 
+    <TextView 
+        android:id="@+id/textview_version_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:paddingTop="20dp"
+        android:paddingBottom="10dp"
+        android:text=""
+        />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:drawableTop="@drawable/aykit_logo"
-        android:padding="20dp"
+        android:drawablePadding="20dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="20dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
         android:autoLink="web"
         android:text="@string/text_about_text"
         />

@@ -20,6 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -59,6 +60,17 @@ public class NoteListActivity
 	private LoaderManager loaderManager;
 	private SharedPreferences settings;
 	private Menu theMenu;
+	private boolean connectionError;
+	
+	private final String apiPath = "/index.php/apps/notes/api/v0.2/notes";
+	
+	/**
+	 * used to turn extensive logcat messages on or off. 
+	 * debugOn == true -> show more log messages
+	 * debugOn == false -> show only essential messages
+	 * edited in SettingsActivity
+	 */
+	private boolean debugOn;
 	
 	
 	@Override
@@ -67,8 +79,11 @@ public class NoteListActivity
 		setContentView(R.layout.activity_note_list);
 		
 		updateSettings();
+		debugOn = settings.getBoolean(SettingsActivity.PREF_EXTENSIVE_LOG, false); 
+		
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putBoolean(SettingsActivity.PREF_MENU_INFLATED, false); //this is done to save the fact that menus are not inflated yet.
+		editor.putBoolean(SettingsActivity.PREF_SYNC_IN_PROGRESS, false);
 		editor.commit();
 		
 		loaderManager = getLoaderManager();
@@ -84,18 +99,24 @@ public class NoteListActivity
 				settings.getBoolean(SettingsActivity.PREF_INITIALIZED, false) &&	//the settings (serveraddress, username, password) must be entered
 				settings.getBoolean(SettingsActivity.PREF_MENU_INFLATED, false) ) 	//because we need to check whether the menu has been inflated or not
 		{																		  	//synchronizeNotes() accesses the menu. if menu is not inflated and access is tried -> NullPointerException
-			synchronizeNotes();
+			if ( ! settings.getBoolean(SettingsActivity.PREF_SYNC_IN_PROGRESS, false) ) //only start sync if there is no sync already in progress. set by synchronizeNotes() and updateDatabase()
+			{
+				synchronizeNotes();
+			}
 		}
 		
 		//tell settings, that a single note was not created yet.
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putBoolean("wasCreatedBefore", false);
 		editor.putBoolean("wasPaused", false);
+		editor.putBoolean("isEditable", false);
 		editor.putString("content", "");
-		editor.putString("title", "");
 		editor.putLong("id", 0);
 		editor.putString("status", "");
 		editor.commit();
+		
+		makeSureSqlDatabaseIsOpen();
+		
 		showAndFillListView();
 	}
 	
@@ -116,16 +137,30 @@ public class NoteListActivity
 		super.onPause();
 		if(sqlDatabase != null)
 		{
-			if(sqlDatabase.isOpen() )
+			if(sqlDatabase.isOpen() && ! sqlDatabase.inTransaction() )
 			{
 				sqlDatabase.close();
+				
+				if(notesOpenHelper != null)
+				{
+					notesOpenHelper.close();
+				}
 			}
 		}
 	}
 	
-	@SuppressWarnings("deprecation")
-	private void showAndFillListView()
+	/**
+	 * checks whether <code>notesOpenHelper</code> is open and
+	 * whether <code>sqlDatabase</code> is open
+	 * and makes sure, that both are.
+	 */
+	public void makeSureSqlDatabaseIsOpen ()
 	{
+		if(notesOpenHelper == null)
+		{
+			notesOpenHelper = new NotesOpenHelper(this);
+		}
+		
 		if(sqlDatabase == null)
 		{
 			sqlDatabase = notesOpenHelper.getWritableDatabase();
@@ -137,10 +172,15 @@ public class NoteListActivity
 				sqlDatabase = notesOpenHelper.getWritableDatabase();
 			}
 		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	private void showAndFillListView()
+	{
+		makeSureSqlDatabaseIsOpen();
 		
-		
-		String[] from = { NotesTable.COLUMN_TITLE, NotesTable.CLOUMN_CONTENT, NotesTable.COLUMN_STATUS };
-		int[] to = {R.id.textview_note_row_title, R.id.textview_note_row_content, R.id.textview_note_row_marked };
+		String[] from = { NotesTable.CLOUMN_CONTENT, NotesTable.COLUMN_STATUS };
+		int[] to = {R.id.textview_note_row_content, R.id.textview_note_row_marked };
 		simpleCursorAdapter = new SimpleCursorAdapter(this, R.layout.note_listview_row, null, from, to);
 		
 		if(loaderManager.getLoader(1) != null) 
@@ -159,7 +199,7 @@ public class NoteListActivity
 		getMenuInflater().inflate(R.menu.note_list, menu);
 		this.theMenu = menu;
 		
-		//save, that Menu has been inflated
+		//save the fact that the Menu has been inflated
 		updateSettings();
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putBoolean(SettingsActivity.PREF_MENU_INFLATED, true);
@@ -168,7 +208,10 @@ public class NoteListActivity
 		if(settings.getBoolean(SettingsActivity.PREF_AUTOSYNC, true) &&				//autosync must be on
 				settings.getBoolean(SettingsActivity.PREF_INITIALIZED, false)  ) 	//because we need to check whether the menu has been inflated or not
 		{
-			synchronizeNotes();
+			if( ! settings.getBoolean(SettingsActivity.PREF_SYNC_IN_PROGRESS, false) )
+			{
+				synchronizeNotes();
+			}
 		}
 		
 		return true;
@@ -178,11 +221,15 @@ public class NoteListActivity
 	public boolean onOptionsItemSelected( MenuItem item ) {
 	    // Handle presses on the action bar items
 		Intent intent = null;
+		
 	    switch (item.getItemId() ) 
 	    {
 	        case R.id.action_new:
 	            //make new note
-	        	//Log.d(TAG, "menu: create new noten");
+	        	if (debugOn)
+	        	{
+	        		Log.d(TAG, "menu: create new noten");
+	        	}
 	        	intent = new Intent(this, NoteSingleActivity.class);
 	        	intent.putExtra("isNewNote", true);
 	        	startActivity(intent);
@@ -190,13 +237,27 @@ public class NoteListActivity
 	            
 	        case R.id.action_sync:
 	        	//start synchronizing
-	        	//Log.d(TAG, "menu: start sync");
-	        	synchronizeNotes();
+	        	if(debugOn) 
+	        	{
+	        		Log.d(TAG, "menu: start sync");
+	        	}
+	        	
+	        	if( ! settings.getBoolean(SettingsActivity.PREF_SYNC_IN_PROGRESS, false) )
+	        	{
+	        		synchronizeNotes();
+	        	}
+	        	else
+	        	{
+	        		Toast.makeText(this, R.string.toast_sync_in_progress, Toast.LENGTH_SHORT).show();
+	        	}
 	        	return true;
 	        	
 	        case R.id.action_settings:
 	            //go to settings
-	        	//Log.d(TAG, "menu: open settings");
+	        	if(debugOn)
+	        	{
+	        		Log.d(TAG, "menu: open settings");
+	        	}
 	        	intent = new Intent(this, SettingsActivity.class);
 	        	startActivity(intent);
 	            return true;
@@ -223,11 +284,9 @@ public class NoteListActivity
 		Intent intent = new Intent(this, NoteSingleActivity.class);
 		intent.putExtra("isNewNote", false); //tell intent that no new note must be created
 		
-		String title = ((TextView) v.findViewById(R.id.textview_note_row_title)).getText().toString();
-		String content = ((TextView) v.findViewById(R.id.textview_note_row_content)).getText().toString();
-		String status = ( (TextView) v.findViewById(R.id.textview_note_row_marked)).getText().toString();
+		String content = 	((TextView) v.findViewById(R.id.textview_note_row_content)).getText().toString();
+		String status = 	((TextView) v.findViewById(R.id.textview_note_row_marked)).getText().toString();
 		
-		intent.putExtra("title", title);
 		intent.putExtra("content", content);
 		intent.putExtra("id", id);
 		intent.putExtra("status", status);
@@ -241,7 +300,64 @@ public class NoteListActivity
 	}
 	
 	/**
-	 * initiates synchronization with owncloud server.
+	 * <li>shows the progress-bar (calls <code>showProgressBar()</code> )</li>
+	 * <li>updates settings (calls <code>updateSettings()</code> )</li>
+	 * <li>saves to settings that a sync is in progress (saves boolean to settings)</li>
+	 */
+	private void setSyncInProgress()
+	{
+		showProgressBar();
+		updateSettings();
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putBoolean(SettingsActivity.PREF_SYNC_IN_PROGRESS, true);
+		editor.commit();
+	}
+	
+	/**
+	 * <li>hides the progress-bar (calls <code>hideProgressBar()</code> )</li>
+	 * <li>updates settings (calls <code>updateSettings()</code>)</li>
+	 * <li>saves to settings that no sync is in progress (saves boolean to settings)</li>
+	 */
+	private void setSyncNotInProgress()
+	{
+		updateSettings();
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putBoolean(SettingsActivity.PREF_SYNC_IN_PROGRESS, false);
+		editor.commit();
+		hideProgressBar();
+	}
+	
+	/**
+	 * checks if there is an active internet connection available.
+	 * <br \>
+	 * uses <code>ConnectivityManager</code> to check
+	 * 
+	 * @return	true, iff connected to the internet
+	 */
+	private boolean hasInternetConnection()
+	{
+		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(NoteListActivity.CONNECTIVITY_SERVICE);
+		if (connectivityManager.getActiveNetworkInfo() != null )
+		{
+			if( connectivityManager.getActiveNetworkInfo().isAvailable() && 
+				connectivityManager.getActiveNetworkInfo().isConnected()  )
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+			
+		} 
+		else 
+		{
+			return false;
+		}
+	}
+	
+	/**
+	 * initiates synchronization with ownCloud server.
 	 * follows this order:
 	 * <li>upload all new notes (marked <code>NEW_NOTE</code>)</li>
 	 * <li>update all modified notes (marked <code>TO_UPDATE</code>)</li>
@@ -251,42 +367,97 @@ public class NoteListActivity
 	public void synchronizeNotes()
 	{
 		//push new notes
+		//push notes changes
+		//push delete notes
 		//get all notes
-		updateSettings(); //get newest login-data in case it has changed
 		Log.d(TAG, "starting note synchonization");
-		showProgressBar();
+		setSyncInProgress();
 		
-		String username = settings.getString(SettingsActivity.PREF_USERNAME, "username"); 			//defaultvalue = "username"
-		String password = settings.getString(SettingsActivity.PREF_PASSWOORD, "password"); 			//defaultvalue = "password"
+		connectionError = false;
+		
 		String serverUrl = settings.getString(SettingsActivity.PREF_ADDRESS, "https://www.example.com");	//defaultvalue = "https://www.example.com"
 		String urlToConnect = "";
+		String basePath = "";
 		
 		try
 		{
+			//create basePath
 			URL tempUrl = new URL(serverUrl);
 			//must be like: https://user:password@yourowncloud.com/index.php/apps/notes/api/v0.2/notes
-			String basePath = tempUrl.getHost() + tempUrl.getPath() + "/index.php/apps/notes/api/v0.2/notes";
-			urlToConnect = "https://" + username + ":" + password + "@" + basePath;
+			
+			if(tempUrl.getPort() == -1) //no port was given
+			{
+				basePath = tempUrl.getHost() + tempUrl.getPath() + apiPath;
+				if(debugOn)
+				{
+					Log.d(TAG, "basePath no port: " + basePath);
+				}
+			}
+			else //port was given
+			{ 	
+				basePath = tempUrl.getHost() + ":" + tempUrl.getPort() + tempUrl.getPath() + apiPath;
+				if(debugOn)
+				{
+					Log.d(TAG, "basePath with port: " + basePath);
+				}
+			}
+			
+			urlToConnect = "https://" + basePath;  //this string will be passed to the async tasks
+			
+			if(debugOn)
+			{
+				Log.d(TAG, "urlToConnect:" + urlToConnect);
+			}
 		}
 		catch(MalformedURLException e)
 		{
+			connectionError = true;
 			e.printStackTrace();
-			Log.e(TAG, "tempUrl malforemd: String=" + serverUrl);
+			if(debugOn)
+        	{
+				Log.e(TAG, "tempUrl malforemd: serverUrl=" + serverUrl);
+        	}
 		}
 		
-		//upload new notes
-		writeNewNotesToServer(urlToConnect);
-		
-		//update modified notes
-		writeModifiedNotesToServer(urlToConnect);
-		
-		//delete marked notes
-		deleteMarkedNotesFromServer(urlToConnect);
-		
-		
-		//get all notes
-		new DownloadNotesTask().execute(urlToConnect);
-		//rest done in updateDatabase(), which is called when download is finished.
+		//only proceed if no problems occurred
+		if(hasInternetConnection() )
+		{
+			if (!connectionError)
+			{
+				//update modified notes
+				writeModifiedNotesToServer(urlToConnect);
+				
+				if(!connectionError)
+				{
+					//delete marked notes
+					deleteMarkedNotesFromServer(urlToConnect);
+				}
+				
+				if(!connectionError)
+				{
+					//upload new notes
+					writeNewNotesToServer(urlToConnect);
+				}
+				
+				//get all notes
+				if(!connectionError)
+				{
+					Log.d(TAG, "getting notes from server");
+					new DownloadNotesTask().execute(urlToConnect);
+					//rest done in updateDatabase(), which is called when download is finished.
+				}
+			}
+			else
+			{
+				Toast.makeText(this, R.string.toast_connection_error, Toast.LENGTH_LONG).show();
+				setSyncNotInProgress();
+			}
+		}
+		else
+		{
+			Toast.makeText(this, R.string.toast_no_internet_connection, Toast.LENGTH_LONG).show();
+			setSyncNotInProgress();
+		}
 	}
 	
 	private void showProgressBar()
@@ -333,18 +504,7 @@ public class NoteListActivity
 	{
 		//update the database with "result" (= a json with _all_ notes)
 		//Toast.makeText(this, result, Toast.LENGTH_LONG).show();
-		if(sqlDatabase == null)
-		{
-			sqlDatabase = notesOpenHelper.getWritableDatabase();
-		}
-		else
-		{
-			if( ! sqlDatabase.isOpen() )
-			{
-				sqlDatabase = notesOpenHelper.getWritableDatabase();
-			}
-		}
-		
+		makeSureSqlDatabaseIsOpen();
 		
 		notesOpenHelper.emptyTheDatabase(sqlDatabase);
 		
@@ -359,37 +519,24 @@ public class NoteListActivity
 				ContentValues values = new ContentValues();
 				
 				long id = jsonObject.getLong("id");
-				String title = "";
-				if(jsonObject.has("title") && !jsonObject.getString("title").isEmpty() )
-				{
-					title = jsonObject.getString("title");
-				}
-				else
-				{
-					title = "";
-				}
-				//Log.d(TAG, "TITLE:" + title);
 				String content = "";
-				if(jsonObject.has("content") && 
-						!jsonObject.getString("content").isEmpty() && 
-						( jsonObject.getString("content").length() >= ( title.length() + 1) )   )
+				if(	jsonObject.has("content") && 
+					! jsonObject.getString("content").isEmpty()  
+					)
 				{
-					content = jsonObject.getString("content").substring(title.length() + 1 );
-					//substring because notes-api sends the "title" again in first line of "content". annoying but we have to accept it for now.
+					content = jsonObject.getString("content");
 				}
 				else
 				{
 					content = "";
 				}
+				
 				//Log.d(TAG, "CONTENT:" + content);
 				
-				
 				values.put(NotesTable.COLUMN_ID, id);
-				values.put(NotesTable.COLUMN_TITLE, title );
 				values.put(NotesTable.CLOUMN_CONTENT, content);
 				
 				sqlDatabase.insert(NotesTable.NOTES_TABLE_NAME, null, values);
-				
 			}
 		}
 		catch(JSONException jsonE)
@@ -397,15 +544,11 @@ public class NoteListActivity
 			//something went wrong with json
 			Toast.makeText(this, R.string.toast_not_correct_json, Toast.LENGTH_LONG).show();
 			jsonE.printStackTrace();
-			Log.e(TAG, "no correct JSON data returned from server. first 30 chars from server:" + result.substring(0, 29));
+			Log.e(TAG, "no correct JSON data returned from server. result from server:" + result);
 		}
 		
-		
-		
-		
+		setSyncNotInProgress();
 		showAndFillListView(); //refresh listview
-		hideProgressBar();
-		
 	}
 	
 	public void writeNewNotesToServer(String urlToServer)
@@ -414,13 +557,23 @@ public class NoteListActivity
 		//upload all notes with COLUMN_STATUS = NEW_NOTE
 		Cursor cursor = getCursor(NotesTable.NEW_NOTE);
 		
-		//int rows = cursor.getCount();
-		//Log.d(TAG, "cursor rows new notes:" + rows);
+		if(debugOn)
+    	{
+			int rows = cursor.getCount();
+			Log.d(TAG, "cursor rows new notes:" + rows);
+    	}
+		
 		while(!cursor.isAfterLast() )
 		{
 			String content = cursor.getString(cursor.getColumnIndex(NotesTable.CLOUMN_CONTENT));
-			String title = cursor.getString( cursor.getColumnIndex(NotesTable.COLUMN_TITLE) );
-			String toPost = "{ content: \"" + title + "\n" + content + "\"}";
+			
+			//check string for "
+			if(content.indexOf('"') != -1)
+			{
+				content = content.replace("\"", "\\\"");
+			}
+			
+			String toPost = "{ content: \"" + content + "\"}";
 			//Log.d(TAG, "to post:" + toPost);
 			
 			new UploadNotesTask().execute(urlToServer, toPost);
@@ -435,16 +588,26 @@ public class NoteListActivity
 		Log.d(TAG, "writing modified notes to server");
 		//upload changes to existing notes marked COLUMN_STATUS = TO_UPDATE
 		Cursor cursor = getCursor(NotesTable.TO_UPDATE);
-		//int rows = cursor.getCount();
-		//Log.d(TAG, "cursor rows modified notes:" + rows);
+		
+		if(debugOn)
+    	{
+			int rows = cursor.getCount();
+			Log.d(TAG, "cursor rows modified notes:" + rows);
+    	}
 		
 		while ( !cursor.isAfterLast() )
 		{
 			String content = cursor.getString(cursor.getColumnIndex(NotesTable.CLOUMN_CONTENT));
-			String title = cursor.getString( cursor.getColumnIndex(NotesTable.COLUMN_TITLE) );
+			
+			//check string for "
+			if(content.indexOf('"') != -1)
+			{
+				content = content.replace("\"", "\\\"");
+			}
+			
 			long id = cursor.getLong( cursor.getColumnIndex(NotesTable.COLUMN_ID) );
 			String urlToServerWithNoteId = urlToServer + "/" + id;
-			String toPost = "{ content: \"" + title + "\n" + content + "\"}";
+			String toPost = "{ content: \"" + content + "\"}";
 			
 			new UpdateNotesTask().execute(urlToServerWithNoteId, toPost);
 			cursor.moveToNext();
@@ -457,8 +620,12 @@ public class NoteListActivity
 		Log.d(TAG, "deleting notes from server");
 		//delete all notes with COLUM_STATUS = TO_DELETE
 		Cursor cursor = getCursor(NotesTable.TO_DELETE);
-		//int rows = cursor.getCount();
-		//Log.d(TAG, "cursor rows to delete:" + rows);
+		
+		if(debugOn)
+    	{
+			int rows = cursor.getCount();
+			Log.d(TAG, "cursor rows to delete:" + rows);
+    	}
 		
 		while( !cursor.isAfterLast() )
 		{
@@ -473,17 +640,7 @@ public class NoteListActivity
 	
 	private Cursor getCursor(String status)
 	{
-		if (sqlDatabase == null)
-		{
-			sqlDatabase = notesOpenHelper.getWritableDatabase();
-		}
-		else
-		{
-			if( ! sqlDatabase.isOpen() )
-			{
-				sqlDatabase = notesOpenHelper.getWritableDatabase();
-			}
-		}
+		makeSureSqlDatabaseIsOpen();
 		
 		String selection = NotesTable.COLUMN_STATUS + " = ?";
 		String[] selectionArgs = new String[1];
@@ -514,6 +671,24 @@ public class NoteListActivity
 		return cursor;
 	}
 	
+	/**
+	 * deletes a note identified by an id from the sql database.
+	 * usually called after a connection error occurred and the server says that a certain note does no longer exist.
+	 * 
+	 * @param idToDelete	String containing the id of the note that has to be deleted
+	 */
+	private void removeNoteFromSqlDatabase(String idToDelete)
+	{
+		makeSureSqlDatabaseIsOpen();
+		
+		String whereClause = NotesTable.COLUMN_ID + " = ?";
+		String[] whereArgs = { idToDelete };
+		sqlDatabase.delete(NotesTable.NOTES_TABLE_NAME, 
+							whereClause, 
+							whereArgs
+						   );
+	}
+	
 	
 	
 	//----------------------------------
@@ -524,17 +699,7 @@ public class NoteListActivity
 		MySimpleCursorLoader mySimpleCursorLoader;
 		String[] projection = NotesTable.COLUMNNAMES;
 		
-		if(sqlDatabase == null)
-		{
-			sqlDatabase = notesOpenHelper.getWritableDatabase();
-		}
-		else
-		{
-			if( ! sqlDatabase.isOpen() )
-			{
-				sqlDatabase = notesOpenHelper.getWritableDatabase();
-			}
-		}
+		makeSureSqlDatabaseIsOpen();
 		
 		mySimpleCursorLoader = new MySimpleCursorLoader(this, sqlDatabase, projection);
 		
@@ -556,9 +721,9 @@ public class NoteListActivity
 	//----------------------------------
 	//AsyncTask for doing the deleting
 	//----------------------------------
-	private class DeleteNotesTask extends AsyncTask<String, Void, Boolean> 
+	private class DeleteNotesTask extends AsyncTask<String, Void, String> 
 	{
-		protected Boolean doInBackground(String... strings) 
+		protected String doInBackground(String... strings) 
 		{
 			URL url = null;
 			HttpsURLConnection urlConnection = null;
@@ -571,13 +736,15 @@ public class NoteListActivity
 
 				urlConnection.setRequestMethod("DELETE");
 				urlConnection.setUseCaches(false);
-				String auth = url.getUserInfo();
+				
+				String auth = settings.getString(SettingsActivity.PREF_USERNAME, "username") + ":" + settings.getString(SettingsActivity.PREF_PASSWOORD, "password");
 				String basicAuth = "Basic " + new String(Base64.encode(auth.getBytes(), Base64.DEFAULT));
 				urlConnection.setRequestProperty("Authorization", basicAuth);
 				
+				
 				if (Build.VERSION.SDK_INT > 13) 
 				{
-						urlConnection.setRequestProperty("Connection", "close");
+					urlConnection.setRequestProperty("Connection", "close");
 				}
 				
 				urlConnection.connect();
@@ -586,32 +753,43 @@ public class NoteListActivity
 				
 				if(connectionCode == 200)
 				{
-					//Log.d(TAG, "success @ delete Note");
-					return true;
+					if(debugOn)
+					{
+						Log.d(TAG, "success @ delete Note");
+					}
+					return "DONE";
 				}
 				else if(connectionCode == 404)
 				{
 					Log.e(TAG, "failure @ delete note. note " + urlString.substring(urlString.lastIndexOf('/')) + " does not exist");
-					return false;
+					return "404 " + urlString.substring(urlString.lastIndexOf('/') + 1);
+				}
+				else if(connectionCode == 403)
+				{
+					connectionError = true;
+					Log.e(TAG, "failure @ delete note. permission problem (error code 403)");
+					return "ERROR";
 				}
 				else
 				{
-					Log.e(TAG, "failure @ delete new Note");
-					return false;
+					connectionError = true;
+					Log.e(TAG, "failure @ delete new Note. response code:" + connectionCode);
+					return "ERROR";
 				}
-				
 			}
 			catch(MalformedURLException e)
 			{
+				connectionError = true;
 				e.printStackTrace();
 				Log.e(TAG, "malformed url in UpdateNotesTask:" + e.toString());
-				return false;
+				return "ERROR";
 			}
 			catch(IOException e)
 			{
+				connectionError = true;
 				e.printStackTrace();
 				Log.e(TAG, "ioException in UpdateNotesTask:" + e.toString());
-				return false;
+				return "ERROR";
 			}
 			finally
 			{
@@ -620,25 +798,45 @@ public class NoteListActivity
 					urlConnection.disconnect();
 				}
 			}
-			
 		}
-		/*
-		protected void onPostExecute(boolean result)
+		
+		protected void onPostExecute(String result)
 		{
-			Toast.makeText(getApplicationContext(), "delete finished with boolean:" + result, Toast.LENGTH_LONG).show();
+			if(result.equals("DONE") )
+			{
+				//everything fine. nothing to do
+			}
+			else
+			{
+				//there was a delete-error. 
+				if(result.startsWith("404") )
+				{
+					//note to delete does not exist on server. must be deleted from sql database
+					String idToDelete = result.substring("404 ".length() );
+					Log.i("DELETETASK", "onPost: delete error: note not found. removing note with id=" + idToDelete + " from sqldatabase");
+					
+					removeNoteFromSqlDatabase(idToDelete);
+				}
+				else
+				{
+					//no connection could be made.
+					connectionError = true; //this variable is checked before the sql-database is updated.
+					Log.e("DELETENOTES", "onPost: delete error");
+				}
+			}
 		}
-		*/
 	}
 		
 	//----------------------------------
 	//AsyncTask for doing the updating
 	//----------------------------------
-	private class UpdateNotesTask extends AsyncTask<String, Void, Boolean> 
+	private class UpdateNotesTask extends AsyncTask<String, Void, String> 
 	{
-		protected Boolean doInBackground(String... strings) 
+		protected String doInBackground(String... strings) 
 		{
 			URL url = null;
 			HttpsURLConnection urlConnection = null;
+			HttpsURLConnection urlTestConnection = null;
 			OutputStream outputStream = null;
 			String urlString = strings[0];
 			String toPost = strings[1];
@@ -647,65 +845,106 @@ public class NoteListActivity
 			{
 				JSONObject json = new JSONObject(toPost);
 				url = new URL(urlString);
+				
+				urlTestConnection = (HttpsURLConnection) url.openConnection();
+				
 				urlConnection = (HttpsURLConnection) url.openConnection();
 				urlConnection.setDoOutput(true);
 				urlConnection.setRequestMethod("PUT");
 				urlConnection.setUseCaches(false);
-				String auth = url.getUserInfo();
+				
+				String auth = settings.getString(SettingsActivity.PREF_USERNAME, "username") + ":" + settings.getString(SettingsActivity.PREF_PASSWOORD, "password");
 				String basicAuth = "Basic " + new String(Base64.encode(auth.getBytes(), Base64.DEFAULT));
 				urlConnection.setRequestProperty("Authorization", basicAuth);
-				urlConnection.setFixedLengthStreamingMode(json.toString().getBytes().length);
+				urlTestConnection.setRequestProperty("Authorization", basicAuth);
 				
+				urlConnection.setFixedLengthStreamingMode(json.toString().getBytes().length);
 				urlConnection.setRequestProperty("Content-Type", "application/json");
 				
 				if (Build.VERSION.SDK_INT > 13) 
 				{
 						urlConnection.setRequestProperty("Connection", "close");
+						urlTestConnection.setRequestProperty("Connection", "close");
 				}
 
-				urlConnection.connect();
+				urlTestConnection.connect();
 				
-				outputStream = new BufferedOutputStream(urlConnection.getOutputStream() );
-				outputStream.write(json.toString().getBytes());
-				outputStream.flush();
-				outputStream.close();
+				int testConnectionResponseCode = urlTestConnection.getResponseCode();
 				
-				int connectionCode = urlConnection.getResponseCode();
-				
-				if(connectionCode == 200)
+				if( testConnectionResponseCode == 200)
 				{
-					//Log.d(TAG, "success @ update new Note");
-					return true;
+					if(debugOn)
+					{
+						Log.d(TAG, "update connection ok, doing the updating");
+					}
+					urlConnection.connect();
+					
+					outputStream = new BufferedOutputStream(urlConnection.getOutputStream() );
+					outputStream.write(json.toString().getBytes());
+					outputStream.flush();
+					outputStream.close();
+					
+					int connectionCode = urlConnection.getResponseCode();
+				
+					if(connectionCode == 200)
+					{
+						if(debugOn)
+						{
+							Log.d(TAG, "success @ update new Note");
+						}
+						return "DONE";
+					}
+					else if(connectionCode == 404)
+					{
+						Log.e(TAG, "failure @ update note. note " + urlString.substring(urlString.lastIndexOf('/')) + " does not exist. ");
+						return "404 " + urlString.substring(urlString.lastIndexOf('/') + 1) ;
+					}
+					else if(connectionCode == 403)
+					{
+						connectionError = true;
+						Log.e(TAG, "failure @ update note. permission problem (error code 403)");
+						return "ERROR";
+					}				
+					else
+					{
+						connectionError = true;
+						Log.e(TAG, "failure @ update new Note. response code:" + connectionCode);
+						return "ERROR";
+					}
+				
 				}
-				else if(connectionCode == 404)
+				else if(testConnectionResponseCode == 404)
 				{
-					Log.e(TAG, "failure @ update note. note " + urlString.substring(urlString.lastIndexOf('/')) + " does not exist");
-					return false;
+					Log.e(TAG, "failure @ update note. note " + urlString.substring(urlString.lastIndexOf('/')) + " does not exist. ");
+					return "404 " + urlString.substring(urlString.lastIndexOf('/') + 1) ;
 				}
 				else
 				{
-					Log.e(TAG, "failure @ update new Note");
-					return false;
+					connectionError = true;
+					Log.e(TAG, "No update connection could be established. Response code: " + testConnectionResponseCode );
+					return "ERROR";
 				}
-				
 			}
 			catch(MalformedURLException e)
 			{
+				connectionError = true;
 				e.printStackTrace();
 				Log.e(TAG, "malformed url in UpdateNotesTask:" + e.toString());
-				return false;
+				return "ERROR";
 			}
 			catch(IOException e)
 			{
+				connectionError = true;
 				e.printStackTrace();
 				Log.e(TAG, "ioException in UpdateNotesTask:" + e.toString());
-				return false;
+				return "ERROR";
 			}
 			catch(JSONException jsonE)
 			{
+				connectionError = true;
 				jsonE.printStackTrace();
 				Log.e(TAG, "jasonException in UpdateNotesTask:" + jsonE.toString());
-				return false;
+				return "ERROR";
 			}
 			finally
 			{
@@ -714,14 +953,33 @@ public class NoteListActivity
 					urlConnection.disconnect();
 				}
 			}
-			
 		}
-		/*
-		protected void onPostExecute(boolean result)
+		
+		protected void onPostExecute(String result)
 		{
-			Toast.makeText(getApplicationContext(), "update finished with boolean:" + result, Toast.LENGTH_LONG).show();
+			if(result.equals("DONE") )
+			{
+				//everything fine. nothing to do.
+			}
+			else
+			{
+				//there was an update-error. 
+				if(result.startsWith("404") )
+				{
+					//note to update not found on server. delete the note from database.
+					String idToDelete = result.substring("404 ".length() );
+					Log.i("UPDATETASK", "onPost: update error: note not found. removing note with id=" + idToDelete + " from sqldatabase");
+					
+					removeNoteFromSqlDatabase(idToDelete);
+				}
+				else
+				{
+					//seems that no connection could be made.
+					connectionError = true; //this variable is checked before the sql-database is updated.
+					Log.e("UPDATETASK", "onPost: update error");
+				}
+			}
 		}
-		*/
 	}
 	
 	//----------------------------------
@@ -733,6 +991,7 @@ public class NoteListActivity
 		{
 			URL url = null;
 			HttpsURLConnection urlConnection = null;
+			HttpsURLConnection urlTestConnection = null;
 			OutputStream outputStream = null;
 			String urlString = strings[0];
 			String toPost = strings[1];
@@ -740,68 +999,101 @@ public class NoteListActivity
 			try
 			{
 				JSONObject json = new JSONObject(toPost);
+				//Log.d(TAG, "json= " + json.toString() );
 				url = new URL(urlString);
+				
+				urlTestConnection = (HttpsURLConnection) url.openConnection();
+				
 				urlConnection = (HttpsURLConnection) url.openConnection();
 				urlConnection.setDoOutput(true);
 				urlConnection.setRequestMethod("POST");
 				urlConnection.setUseCaches(false);
-				String auth = url.getUserInfo();
+				
+				String auth = settings.getString(SettingsActivity.PREF_USERNAME, "username") + ":" + settings.getString(SettingsActivity.PREF_PASSWOORD, "password");
 				String basicAuth = "Basic " + new String(Base64.encode(auth.getBytes(), Base64.DEFAULT));
 				urlConnection.setRequestProperty("Authorization", basicAuth);
+				urlTestConnection.setRequestProperty("Authorization", basicAuth);
 				
 				if (Build.VERSION.SDK_INT > 13) 
 				{
 						urlConnection.setRequestProperty("Connection", "close");
+						urlTestConnection.setRequestProperty("Connection", "close");
 				}
 				
 				urlConnection.setFixedLengthStreamingMode(json.toString().getBytes().length);
-				
 				urlConnection.setRequestProperty("Content-Type", "application/json");
 
-				urlConnection.connect();
+				urlTestConnection.connect();
 				
-				outputStream = new BufferedOutputStream(urlConnection.getOutputStream() );
-				outputStream.write(json.toString().getBytes());
-				outputStream.flush();
-				outputStream.close();
+				int testConnectionResponseCode = urlTestConnection.getResponseCode();
 				
-				int connectionCode = urlConnection.getResponseCode();
-				
-				
-				
-				if(connectionCode == 200)
+				if( testConnectionResponseCode == 200)
 				{
-					//Log.d(TAG, "success @ upload new Note");
-					return true;
-				}
-				else if(connectionCode == 404)
-				{
-					Log.e(TAG, "failure @ update note. note " + urlString.substring(urlString.lastIndexOf('/')) + " does not exist");
-					return false;
+					if(debugOn)
+					{
+						Log.d(TAG, "upload connection ok, doing the uploading");
+					}
+					
+					urlConnection.connect();
+					
+					outputStream = new BufferedOutputStream(urlConnection.getOutputStream() );
+					outputStream.write(json.toString().getBytes());
+					outputStream.flush();
+					outputStream.close();
+				
+					int connectionCode = urlConnection.getResponseCode();
+					
+					if(connectionCode == 200)
+					{
+						if(debugOn)
+						{
+							Log.d(TAG, "success @ upload new Note");
+						}
+						return true;
+					}
+					else if(connectionCode == 404)
+					{
+						connectionError = true;
+						Log.e(TAG, "failure @ upload new note. ");
+						return false;
+					}
+					else if(connectionCode == 403)
+					{
+						connectionError = true;
+						Log.e(TAG, "failure @ upload new note. permission problem (error code 403)");
+						return false;
+					}
+					else
+					{
+						connectionError = true;
+						Log.e(TAG, "failure @ upload new Note. response code:" + connectionCode);
+						return false;
+					}
 				}
 				else
 				{
-					Log.e(TAG, "failure @ upload new Note");
+					Log.e(TAG, "No upload connection could be established. Response code: " + testConnectionResponseCode );
 					return false;
 				}
-				
-				
-				
 			}
+			
 			catch(MalformedURLException e)
 			{
+				connectionError = true;
 				e.printStackTrace();
 				Log.e(TAG, "malformed url in UploadNotesTask:" + e.toString());
 				return false;
 			}
 			catch(IOException e)
 			{
+				connectionError = true;
 				e.printStackTrace();
 				Log.e(TAG, "ioException in UploadNotesTask:" + e.toString());
 				return false;
 			}
 			catch(JSONException jsonE)
 			{
+				connectionError = true;
 				jsonE.printStackTrace();
 				Log.e(TAG, "jasonException in UplaodNotesTask:" + jsonE.toString());
 				return false;
@@ -813,14 +1105,18 @@ public class NoteListActivity
 					urlConnection.disconnect();
 				}
 			}
-			
 		}
-		/*
-		protected void onPostExecute(boolean result)
+		
+		protected void onPostExecute(Boolean result)
 		{
-			Toast.makeText(getApplicationContext(), "upload finished with boolean:" + result, Toast.LENGTH_LONG).show();
+			if(result == false)
+			{
+				//there was an upload-error. seems that no connection could be made.
+				connectionError = true; //this variable is checked before the sql-database is updated.
+				Log.e("UPLOADTASK", "onPost: upload error");
+			}
 		}
-		*/
+		
 	}
 	
 	//----------------------------------
@@ -842,11 +1138,20 @@ public class NoteListActivity
 	    	
 			try {
 				url = new URL(anUrl[0]);
-				urlConnection = (HttpsURLConnection) url.openConnection();
+
+				if(debugOn)
+				{
+					Log.d("DOWNLOADTASK", "url:" + url.toString() );
+				}
 				
+				urlConnection = (HttpsURLConnection) url.openConnection();
 				urlConnection.setDoInput(true);
 				urlConnection.setRequestMethod("GET");
-				String auth = url.getUserInfo(); 
+				
+				String auth = settings.getString(SettingsActivity.PREF_USERNAME, "username") + ":" + settings.getString(SettingsActivity.PREF_PASSWOORD, "password");
+				
+				//Log.d("DOWNLOADTASK", "auth=" + auth);
+				
 				String basicAuth = "Basic " + new String(Base64.encode(auth.getBytes(), Base64.DEFAULT));
 				urlConnection.setRequestProperty("Authorization", basicAuth);
 				
@@ -855,40 +1160,62 @@ public class NoteListActivity
 						urlConnection.setRequestProperty("Connection", "close");
 				}
 				
-				BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+				urlConnection.connect();
+				int connectionCode = urlConnection.getResponseCode();
 				
-				String line;
-				while( (line = reader.readLine() ) != null)
+				if(connectionCode == 200)
 				{
-					stringBuilder.append(line);
-					//Log.d(TAG, "line:" + line);
+					Log.d(TAG, "download connection ok, doing the downloading");
+					BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+					
+					String line;
+					while( (line = reader.readLine() ) != null)
+					{
+						stringBuilder.append(line);
+						//Log.d(TAG, "line:" + line);
+					}
+				}
+				else
+				{
+					connectionError = true;
+					Log.e(TAG, "error @ downloading notes. response code: " + connectionCode);
+					return "ERROR connection";
 				}
 			} 
 			catch (MalformedURLException e) 
 			{
-				//e.printStackTrace();
-				//Log.e(TAG, e.toString());
+				connectionError = true;
+				e.printStackTrace();
+				Log.e(TAG, e.toString());
 				
 				return "ERROR MalformedURLException";
 			}
 			catch(FileNotFoundException e)
 			{
-				//e.printStackTrace();
-				//Log.e(TAG, e.toString());
+				connectionError = true;
+				e.printStackTrace();				
+				Log.e(TAG, e.toString() );
 				
 				return "ERROR FileNotFoundException";
 			}
 			catch(SSLHandshakeException e)
 			{
-				//e.printStackTrace();
-				//Log.e(TAG, e.toString());
+				connectionError = true;
+				if(debugOn)
+				{
+					e.printStackTrace();
+					Log.e(TAG, e.toString());
+				}
 				
 				return "ERROR SSLHandshakeException";
 			}
-	    	catch (IOException e) {
-				//e.printStackTrace();
-				//Log.e(TAG, e.toString() );
-				return "ERROR IOException";
+	    	catch (IOException e) 
+	    	{
+	    		connectionError = true;
+	    		e.printStackTrace();
+	    		Log.e(TAG, e.toString() );
+	    		
+	    		return "ERROR IOException";
 			}
 			finally
 			{
@@ -898,7 +1225,6 @@ public class NoteListActivity
 				}
 			}
 			
-	    	
 	    	return stringBuilder.toString();
 	    }
 	    
@@ -908,27 +1234,45 @@ public class NoteListActivity
 	    	if(result.equals("ERROR MalformedURLException") )
 	    	{
 	    		Toast.makeText(getApplicationContext(), R.string.toast_url_not_correctly_formed, Toast.LENGTH_LONG).show();
-	    		hideProgressBar();
+	    		setSyncNotInProgress();
 	    	}
 	    	else if(result.equals("ERROR IOException") )
 			{
 	    		Toast.makeText(getApplicationContext(), R.string.toast_url_doesnt_exist, Toast.LENGTH_LONG).show();
-	    		hideProgressBar();
+	    		setSyncNotInProgress();
 			}
 	    	else if(result.equals("ERROR FileNotFoundException" ) )
 	    	{
-	    		Toast.makeText(getApplicationContext(), R.string.toast_connection_error, Toast.LENGTH_LONG).show();
-	    		hideProgressBar();
+	    		Toast.makeText(getApplicationContext(), R.string.toast_connection_error + R.string.toast_check_username_password, Toast.LENGTH_LONG).show();
+	    		setSyncNotInProgress();
 	    	}
 	    	else if(result.equals("ERROR SSLHandshakeException") )
 	    	{
-	    		hideProgressBar();
+	    		setSyncNotInProgress();
 	    		showSSLAlert();
+	    	}
+	    	else if(result.equals("ERROR connection"))
+	    	{
+	    		Toast.makeText(getApplicationContext(), R.string.toast_connection_error, Toast.LENGTH_LONG).show();
+	    		setSyncNotInProgress();
 	    	}
 	    	else
 	    	{
 	    		//"result" contains a JSON with _all_ notes from owncloud server.
-	    		updateDatabase(result);
+	    		if( ! connectionError) //only update database if upload/update/delete cycle was successful
+	    		{
+	    			updateDatabase(result);
+	    			if(debugOn)
+	    			{
+	    				Log.d(TAG, "updateDatabase() executed" );
+	    			}
+	    		}
+	    		else
+	    		{
+	    			Log.e(TAG, "list not updated due to connection error");
+	    			Toast.makeText(getApplicationContext(), R.string.toast_connection_error, Toast.LENGTH_LONG).show();
+	    			setSyncNotInProgress();
+	    		}
 	    	}
 	    	
 	    }

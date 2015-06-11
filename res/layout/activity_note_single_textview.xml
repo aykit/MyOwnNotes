@@ -15,15 +15,16 @@
 	    android:orientation="vertical" 
 	    >
 	
-	    <EditText
-		     android:id="@+id/edittext_note_content"
-		     android:layout_width="match_parent"
-		     android:layout_height="match_parent"
-		     android:hint="@string/note_content"
-		     android:inputType="textMultiLine"
-		     android:autoLink="all"
-		     android:linksClickable="true"
-		     android:textSize="18sp"
-		     />
+	    <TextView
+	        android:id="@+id/textview_note_content"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:autoLink="all"
+	        android:paddingLeft="12dp"
+	        android:paddingTop="7dp"
+	        android:textSize="18sp"
+	        android:textIsSelectable="true"
+	        />
+
 	</LinearLayout>
 </ScrollView>

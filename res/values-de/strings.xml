@@ -29,7 +29,7 @@
     <!--  NoteList strings -->
     <string name="action_new">Neue Notiz erstellen</string>
     <string name="action_sync">synchronisieren</string>
-        <string name="action_about">Info</string>
+    <string name="action_about">Info</string>
     <string name="action_help">Hilfe</string>
     <string name="notelist_empty_list">Keine gespeicherten Notizen vorhanden. Sie haben entweder noch keine erstellt oder Ihre Notizen noch nicht mit ownCloud synchronisiert.</string>
     <string name="alert_ssl_cert_not_trusted">Anscheinend wollen Sie auf einen Server zugreifen, der ein selbst signiertes Zertifikat verwendet. Um diese Verbindung aufbauen zu können, müssen Sie das Zertifikat des Servers manuell dem Android Schlüsselbund hinzufügen. \n\nMöchten Sie jetzt die Anleitung dazu lesen?</string>
@@ -39,12 +39,15 @@
     <string name="toast_not_correct_json">Kein gültiges JSON Format vom Server bekommen. Server OK?</string>
     <string name="toast_url_not_correctly_formed">Die URL, von der Daten abgefragt werden, ist nicht formgerecht</string>
     <string name="toast_url_doesnt_exist">Die URL, von der Daten abgefragt werden, scheint nicht zu existieren. Bitte Schreibweise und Internet-Verbindung überprüfen.</string>
-    <string name="toast_connection_error">Es gab einen Verbindungs-Fehler. Bitte überprüfen Sie Ihren Benutzernamen und Ihr Passwort.</string>
+    <string name="toast_connection_error">Es gab einen Verbindungs-Fehler.</string>
+    <string name="toast_check_username_password">Bitte überprüfen Sie Ihren Benutzernamen und Ihr Passwort.</string>
+    <string name="toast_no_internet_connection">Es wurde keine Internet-Verbindung gefunden. Bitte verbinden Sie ihr Gerät mit dem Internet um zu synchronisieren.</string>
+    <string name="toast_sync_in_progress">Synchronisation wird durchgeführt</string>
 
     <!--  Settings strings -->
     <string name="settings_text_credentials">Berechtigungsdaten:</string>
     <string name="settings_text_server_address">Server-Adresse:</string>
-    <string name="settings_text_server_address_hint">www.meinowncloudserver.com</string>
+    <string name="settings_text_server_address_hint">https://www.server.com[:port]</string>
     <string name="settings_text_https">https://</string>
     <string name="settings_text_username">Benutzername:</string>
     <string name="settings_text_username_hint">Benutzername</string>
@@ -55,6 +58,9 @@
     <string name="settings_text_defaultnotetitle">Standard Notiztitel</string>
     <string name="settings_text_defaultnotetitle_datetime">Datum und Uhrzeit</string>
     <string name="settings_text_saved">Einstellungen gespeichert</string>
+    <string name="settings_text_debug">Fehlersuche</string>
+    <string name="settings_text_extensive_log_output">Umfangreiche LogCat Nachrichten aktivieren</string>
+    
     <!-- Toasts -->
     <string name="toast_enter_valid_username">Bitte geben Sie Ihren Benutzernamen ein</string>
     <string name="toast_enter_password">Bitte geben Sie Ihr Passwort ein</string>

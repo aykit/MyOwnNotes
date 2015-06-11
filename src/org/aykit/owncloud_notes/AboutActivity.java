@@ -3,10 +3,12 @@ package org.aykit.owncloud_notes;
 import org.aykit.MyOwnNotes.R;
 
 import android.app.Activity;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 public class AboutActivity extends Activity
 {
@@ -17,6 +19,17 @@ public class AboutActivity extends Activity
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		setContentView(R.layout.activity_about);
+		TextView versionNumber = (TextView) findViewById(R.id.textview_version_number);
+		
+		try
+		{
+			String number =	this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName.toString();
+			versionNumber.setText("MyOwnNotes " + number);
+		}
+		catch (NameNotFoundException e)
+		{
+			versionNumber.setText("");
+		}
 	}
 	
 	@Override
