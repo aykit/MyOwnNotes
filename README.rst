@@ -1,16 +1,7 @@
 ****
 News
 ****
-Dear MyOwnNotes Users,
-
-due to lack of time on my part, the development progress of this app is more slow going than I anticipated. I am sorry about that!
-As I am doing this in my spare time, in between working and studying, and the time and effort I have to put into studying this semester is way higher then I expected, I am not able to do as much work here as I would like to. Again, I'm really sorry about this.
-This does NOT mean, that the app-development is dead. I am still working on it, but just not as much as I used to. 
-And, as I'm ATM working on a big update that basically means rewriting the app from scratch, there is not much happening for you to see - but don't take this as a "nothing is happening"! 
-When I'm done, many of the issues that have been reported will be fixed. So I have to ask you to be patient. 
-I know, that's not what you want to hear but it's all i can give you right now.
-
-Cheers, steppenhahn
+We are having a hackathon around My Own Notes 12. and 13. June, at OSCEdays Vienna 2015. So yes, there will be updates very very soon: http://oscedays.org/vienna/
 
 
 
