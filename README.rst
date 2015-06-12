@@ -1,10 +1,3 @@
-****
-News
-****
-We are having a hackathon around My Own Notes 12. and 13. June, at OSCEdays Vienna 2015. So yes, there will be updates very very soon: http://oscedays.org/vienna/
-
-
-
 ******************
 MyOwnNotes-android
 ******************
