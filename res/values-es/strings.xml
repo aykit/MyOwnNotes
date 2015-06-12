@@ -40,6 +40,9 @@
     <string name="toast_url_not_correctly_formed">La URL insertada no es correcta</string>
     <string name="toast_url_doesnt_exist">La URL que especificaste no parece existir. Asegurarte de haberla escrito bien o comprueba tu conexión</string>
     <string name="toast_connection_error">Hubo un error de conexión. Por favor comprueba tu usuario y contraseña</string>
+    <string name="toast_check_username_password">Please check your username and password.</string>
+    <string name="toast_no_internet_connection">No internet-connection has been found. Please connect to the internet to synchronize.</string>
+    <string name="toast_sync_in_progress">Sync in progress</string>
 
     <!-- Settings strings -->
     <string name="settings_text_credentials">Credenciales:</string>
@@ -55,6 +58,9 @@
     <string name="settings_text_defaultnotetitle">Título de la nota por defecto</string>
     <string name="settings_text_defaultnotetitle_datetime">Fecha y hora</string>
     <string name="settings_text_saved">Ajustes guardados</string>
+    <string name="settings_text_debug">Debug</string>
+    <string name="settings_text_extensive_log_output">Enable extensive LogCat output</string>
+
     <!-- Toasts -->
     <string name="toast_enter_valid_username">Por favor, introduce el usuario de tu cuenta ownCloud</string>
     <string name="toast_enter_password">Por favor, introduce la contraseña de tu cuenta ownCloud</string>
@@ -62,19 +68,21 @@
     
     <!-- About strings -->
     <string name="text_aykit_logo">Logo de aykit</string>
-    <string name="text_about_text">aykit es el proveedor de esta aplicación - una asociación que da soporta al arte, la cultura y la ciencia.\nMás información en la pagina: \n\nhttp://aykit.org</string>
+    <string name="text_about_text">
+        aykit es el proveedor de esta aplicación - una asociación que da soporta al arte, la cultura y la ciencia.\nMás información en la pagina: \n\nhttp://aykit.org
+    </string>
     
     <!-- Help strings -->
     <string name="text_help_text">
-¿Qué URL tengo que poner?\n
-Pon la URL raíz de tu instalación de ownCloud. Es decir, la misma URL que usas para conectarte a tu ownCloud con el navegador.\n(ej: https://miowncloud.com)
-\n\n
-¿Puedo usar esta app para conectarme a mi ownCloud por http y no por https?\n
-No, no es posible. La Notes-API requiere enviar usuario y contraseña en cada conexión. Si usaras http, enviarías información vital en claro. ¡No es una buena idea!\n(¿Que por qué? Lee esto: "Ataque Man-in-the-middle" http://es.wikipedia.org/wiki/Ataque_Man-in-the-middle)
-\n\n
-Tengo un servidor ownCloud con un certificado autofirmado. ¿Puedo usar esta app con mi servidor?\n
-Sí, puedes, tras añadir el certificado a tu dispositivo. Tienes que configurar Android para aceptar certificados autofirmados añadendo manualmente el certificado en el Administrador de Credenciales de Android.
-\nSigue este tutorial para conseguirlo: http://aykit.org/sites/myownnotes.html
+        ¿Qué URL tengo que poner?\n
+        Pon la URL raíz de tu instalación de ownCloud. Es decir, la misma URL que usas para conectarte a tu ownCloud con el navegador.\n(ej: https://miowncloud.com)
+        \n\n
+        ¿Puedo usar esta app para conectarme a mi ownCloud por http y no por https?\n
+        No, no es posible. La Notes-API requiere enviar usuario y contraseña en cada conexión. Si usaras http, enviarías información vital en claro. ¡No es una buena idea!\n(¿Que por qué? Lee esto: "Ataque Man-in-the-middle" http://es.wikipedia.org/wiki/Ataque_Man-in-the-middle)
+        \n\n
+        Tengo un servidor ownCloud con un certificado autofirmado. ¿Puedo usar esta app con mi servidor?\n
+        Sí, puedes, tras añadir el certificado a tu dispositivo. Tienes que configurar Android para aceptar certificados autofirmados añadendo manualmente el certificado en el Administrador de Credenciales de Android.
+        \nSigue este tutorial para conseguirlo: http://aykit.org/sites/myownnotes.html
     </string>
 
     <!-- NoteTable -->
