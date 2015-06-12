@@ -33,7 +33,7 @@
     <string name="action_about">A propos de</string>
     <string name="action_help">Aide</string>
     <string name="notelist_empty_list">Aucune note enregistrée. Vous n\'en avez pas créé ou elles ne sont pas encore synchronisées avec votre ownCloud.</string>
-    <string name="alert_ssl_cert_not_trusted">Vous essayez de vous connecter à un serveur qui utilise un certificat auto-signé. Vous devez ajouter manuellement ce certificat aux certificats de confiance d'Android. \n\n Voulez-vous accéder au didacticiel ?</string>
+    <string name="alert_ssl_cert_not_trusted">Vous essayez de vous connecter à un serveur qui utilise un certificat auto-signé. Vous devez ajouter manuellement ce certificat aux certificats de confiance d\'Android. \n\n Voulez-vous accéder au didacticiel ?</string>
     <string name="alert_answer_yes">Oui</string>
     <string name="alert_answer_no_thanks">Non merci</string>
     <!-- Toasts -->
@@ -79,7 +79,7 @@
        	\n\n 
        	Puis-je utiliser cette application pour me connecter à mon ownCloud via http (sans https) ?
        	\n
-       	Non, ce n\'est pas possible. La Notes-API exige à chaque connexion l'envoi du nom d\'utilisateur et du mot de passe. Si vous utilisez http, vous envoyez ces informations vitales en clair. Ce n'est pas vraiment une bonne idée !
+       	Non, ce n\'est pas possible. La Notes-API exige à chaque connexion l\'envoi du nom d\'utilisateur et du mot de passe. Si vous utilisez http, vous envoyez ces informations vitales en clair. Ce n\'est pas vraiment une bonne idée !
        	\n
        	(Pourquoi ? Lire ceci : L\'attaque "Man-in-the-middle" http://fr.wikipedia.org/wiki/Attaque_de_l%27homme_du_milieu) 
        	\n\n
