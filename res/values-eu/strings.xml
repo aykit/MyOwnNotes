@@ -74,14 +74,14 @@
     <!-- Help strings -->
     <string name="text_help_text">
         ¿Que URL tengo que poner?\n
-Poner la URL raíz de tu instalación de ownCloud - es decir: la misma URL que usas para conectarte a tu ownCloud con el navegador.\n(ej: https://miowncloud.com)
-\n\n
-¿Puedo usar esta aplicación para conectarme a mi ownCloud por http y no por https?\n
-No, no es posible. La Notes-API requiere enviar usuario y contraseña en cada conexión. Si usaras http, enviarías información vital en claro. No es una buena idea! \n(¿Por qué? Lee eso: "Ataque Man-in-the-middle" http://es.wikipedia.org/wiki/Ataque_Man-in-the-middle)
-\n\n
-Tengo un servidor ownCloud con un certificado auto-firmado. ¿Puedo usar esta app para mi servidor?\n
-Si, puedes - tras añadir el certificado a tu dispositivo. Tienes que configurar Android para aceptar certificados autofirmados añadendo manualmente el certificado en el Administrador de Credenciales de Android.
-\nMira esta tutoría para conseguirlo: http://aykit.org/sites/myownnotes.html
+        Poner la URL raíz de tu instalación de ownCloud - es decir: la misma URL que usas para conectarte a tu ownCloud con el navegador.\n(ej: https://miowncloud.com)
+        \n\n
+        ¿Puedo usar esta aplicación para conectarme a mi ownCloud por http y no por https?\n
+        No, no es posible. La Notes-API requiere enviar usuario y contraseña en cada conexión. Si usaras http, enviarías información vital en claro. No es una buena idea! \n(¿Por qué? Lee eso: "Ataque Man-in-the-middle" http://es.wikipedia.org/wiki/Ataque_Man-in-the-middle)
+        \n\n
+        Tengo un servidor ownCloud con un certificado auto-firmado. ¿Puedo usar esta app para mi servidor?\n
+        Si, puedes - tras añadir el certificado a tu dispositivo. Tienes que configurar Android para aceptar certificados autofirmados añadendo manualmente el certificado en el Administrador de Credenciales de Android.
+        \nMira esta tutoría para conseguirlo: http://aykit.org/sites/myownnotes.html
     </string>
 
     <!-- NoteTable -->
