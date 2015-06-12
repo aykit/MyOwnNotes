@@ -18,8 +18,8 @@
     <string name="text_delete">Supprimer</string>
     <string name="note_has_been_saved">La note a été enregistrée</string>
     <string name="text_test">Test</string>
-    <string name="action_title_save">enregistrer la note</string>
-    <string name="action_title_delete">supprimer la note</string>
+    <string name="action_title_save">Enregistrer la note</string>
+    <string name="action_title_delete">Supprimer la note</string>
 
     <!-- Toasts -->
     <string name="toast_new_note_saved">Nouvelle note enregistrée</string>
@@ -32,18 +32,18 @@
     <string name="action_sync">Synchroniser</string>
     <string name="action_about">A propos de</string>
     <string name="action_help">Aide</string>
-    <string name="notelist_empty_list">Aucune note enregistrée. Vous n\'avez pas encore créé de notes ou elles ne sont pas encore synchronisées.</string>
+    <string name="notelist_empty_list">Aucune note enregistrée. Vous n\'en avez pas créé ou elles ne sont pas encore synchronisées avec votre ownCloud.</string>
     <string name="alert_ssl_cert_not_trusted">Vous essayez de vous connecter à un serveur qui utilise un certificat auto-signé. Vous devez ajouter manuellement ce certificat aux certificats de confiance d'Android. \n\n Voulez-vous accéder au didacticiel ?</string>
     <string name="alert_answer_yes">Oui</string>
     <string name="alert_answer_no_thanks">Non merci</string>
     <!-- Toasts -->
-    <string name="toast_not_correct_json">Le format JSON est invalide. Le serveur est-il OK ?</string>
-    <string name="toast_url_not_correctly_formed">L\'adresse internet est incorrecte.</string>
-    <string name="toast_url_doesnt_exist">L\'adresse internet n\'existe pas. Vérifiez la connection internet et l\'orthographe.</string>
+    <string name="toast_not_correct_json">Pas de JSON correct reçu. Un problème sur le serveur ?</string>
+    <string name="toast_url_not_correctly_formed">L\'URL paramétrée est incorrecte.</string>
+    <string name="toast_url_doesnt_exist">L\'URL paramétrée n\'existe pas. Vérifiez son exactitude ou votre connexion internet.</string>
     <string name="toast_connection_error">Erreur de connexion.</string>
-    <string name="toast_check_username_password">Vérifiez le nom d\'utilisateur et le mot de passe.</string>
-    <string name="toast_no_internet_connection">Aucune connection internet n\'a été trouvée. Veuillez vous connecter à internet pour lancer la synchronisation.</string>
-    <string name="toast_sync_in_progress">Synchronisation en cours</string>
+    <string name="toast_check_username_password">Vérifiez votre nom d\'utilisateur et votre mot de passe.</string>
+    <string name="toast_no_internet_connection">Aucune connexion à Internet. Connectez-vous à Internet pour pouvoir synchroniser.</string>
+    <string name="toast_sync_in_progress">Synchronisation en cours.</string>
 
     <!--  Settings strings -->
     <string name="settings_text_credentials">Données de connexion :</string>
@@ -60,16 +60,17 @@
     <string name="settings_text_defaultnotetitle_datetime">Date et heure</string>
     <string name="settings_text_saved">Paramètres enregistrés</string>
     <string name="settings_text_debug">Debug/Afficher les erreurs</string>
-    <string name="settings_text_extensive_log_output">Activer le journal d\'activité LogCat</string>
+    <string name="settings_text_extensive_log_output">Activer la sortie LogCat verbeuse</string>
 
     <!-- Toasts -->
-    <string name="toast_enter_valid_username">Veuillez saisir votre nom d\'utilisateur.</string>
-    <string name="toast_enter_password">Veuillez saisir votre mot de passe.</string>
+    <string name="toast_enter_valid_username">Saisissez votre nom d\'utilisateur ownCloud, s\'il vous plaît.</string>
+    <string name="toast_enter_password">Saisissez votre mot de passe ownCloud, s\'il vous plaît.</string>
     <string name="toast_enter_valid_https">Saisissez l\'adresse du serveur. Elle doit commencer par \"https://\".</string>
     
     <!-- About strings -->
-    <string name="text_aykit_logo">logo de aykit</string>
-    <string name="text_about_text">Cette application vous est présentée par aykit - une association qui soutient l\'art, la culture et la science. \nPlus d\'informations sur notre site: \n\nhttp://aykit.org</string>
+    <string name="text_aykit_logo">Logo de aykit</string>
+    <string name="text_about_text">Cette application vous est présentée par aykit - une association qui soutient l\'art, la culture et la science. \nPlus d\'informations sur notre site : \n\nhttp://aykit.org</string>
+   
     
     <!-- Help strings -->
     <string name="text_help_text">
@@ -90,7 +91,7 @@
     </string>
     
     <!--  NoteTable -->
-    <string name="to_delete">A supprimer</string>
+    <string name="to_delete">Supprimer</string>
     <string name="new_note">Nouvelle note</string>
     <string name="to_update">Mettre à jour</string>
 </resources>
