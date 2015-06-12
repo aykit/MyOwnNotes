@@ -43,7 +43,6 @@
     <string name="toast_check_username_password">Проверите ваше корисничко име и лозинку.</string>
     <string name="toast_no_internet_connection">Нема везе са интернетом. Повежите се на интернет да бисте синхронизовали.</string>
     <string name="toast_sync_in_progress">Синхронизација у току</string>
-    
 
     <!-- Settings strings -->
     <string name="settings_text_credentials">Подаци за пријаву:</string>
@@ -61,6 +60,7 @@
     <string name="settings_text_saved">Поставке су сачуване</string>
     <string name="settings_text_debug">Отклањање грешака</string>
     <string name="settings_text_extensive_log_output">Омогући исцрпан излаз за LogCat</string>
+
     <!-- Toasts -->
     <string name="toast_enter_valid_username">Унесите корисничко име за ваш ownCloud сервер</string>
     <string name="toast_enter_password">Унесите лозинку за ваш ownCloud сервер</string>
@@ -68,7 +68,9 @@
     
     <!-- About strings -->
     <string name="text_aykit_logo">„aykit“ лого</string>
-    <string name="text_about_text">Ову апликацију вам доноси „aykit“ — удружење које подржава уметност, културу и науку. \nВише података на нашем вебсајту: \n\nhttp://aykit.org</string>
+    <string name="text_about_text">
+        Ову апликацију вам доноси „aykit“ — удружење које подржава уметност, културу и науку. \nВише података на нашем вебсајту: \n\nhttp://aykit.org
+    </string>
     
     <!-- Help strings -->
     <string name="text_help_text">
