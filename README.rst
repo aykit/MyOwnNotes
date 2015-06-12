@@ -94,10 +94,18 @@ Developers
 
 Translators
 -----------
-* French: `flo1`_ , `gityeti`_ 
-* Serbian: `pejakm`_ 
-* Spanish: `tmelikoff`_ 
-* Turkish: `wakeup`_ 
+* Basque: `natxooy`_
+* English: `aykit`_
+* German: `aykit`_ , `kriztan`_
+* French: `flo1`_ , `gityeti`_ , `Bonbadil`_ , `dyze`_
+* Italian: `valerio-bozzolan`_
+* Serbian: `pejakm`_
+* Spanish: `tmelikoff`_ , `Roboe`_
+* Turkish: `wakeup`_
+
+3rd Party Code
+--------------
+* `rigrig`_: `PR #108`_
 
 Testers
 -------
@@ -124,11 +132,22 @@ My Own Notes and all contributions are licensed as `GPL3`_
 .. _StartSSL: https://startssl.com
 .. _Setting up owncloud on Speed: https://blog.entwicklerbier.org/2014/06/setting-up-owncloud-on-speed/
 
+.. People
 .. _aykit: https://aykit.org
+.. _Bonbadil: https://github.com/bonbadil
+.. _dyze: https://github.com/dyze
 .. _eephyne: https://github.com/eephyne
 .. _flo1: http:// https://github.com/flo1
 .. _gityeti: https://github.com/gityeti
+.. _kriztan: https://github.com/kriztan
+.. _natxooy: https://github.com/natxooy
 .. _pejakm: https://github.com/pejakm
+.. _rigrig: 
+.. _Roboe: https://github.com/roboe
 .. _steppenhahn: https://github.com/steppenhahn
 .. _tmelikoff: http://https://github.com/tmelikoff
+.. _valerio-bozzolan: https://github.com/valerio-bozzolan
 .. _wakeup: https://github.com/wakeup
+
+.. PRs
+.. _PR #108: https://github.com/aykit/MyOwnNotes/pull/108
