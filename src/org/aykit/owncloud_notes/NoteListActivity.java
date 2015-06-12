@@ -738,7 +738,7 @@ public class NoteListActivity
 				urlConnection.setUseCaches(false);
 				
 				String auth = settings.getString(SettingsActivity.PREF_USERNAME, "username") + ":" + settings.getString(SettingsActivity.PREF_PASSWOORD, "password");
-				String basicAuth = "Basic " + new String(Base64.encode(auth.getBytes(), Base64.DEFAULT));
+				String basicAuth = "Basic " + new String(Base64.encode(auth.getBytes(), Base64.NO_WRAP));
 				urlConnection.setRequestProperty("Authorization", basicAuth);
 				
 				
@@ -854,7 +854,7 @@ public class NoteListActivity
 				urlConnection.setUseCaches(false);
 				
 				String auth = settings.getString(SettingsActivity.PREF_USERNAME, "username") + ":" + settings.getString(SettingsActivity.PREF_PASSWOORD, "password");
-				String basicAuth = "Basic " + new String(Base64.encode(auth.getBytes(), Base64.DEFAULT));
+				String basicAuth = "Basic " + new String(Base64.encode(auth.getBytes(), Base64.NO_WRAP));
 				urlConnection.setRequestProperty("Authorization", basicAuth);
 				urlTestConnection.setRequestProperty("Authorization", basicAuth);
 				
@@ -1010,7 +1010,7 @@ public class NoteListActivity
 				urlConnection.setUseCaches(false);
 				
 				String auth = settings.getString(SettingsActivity.PREF_USERNAME, "username") + ":" + settings.getString(SettingsActivity.PREF_PASSWOORD, "password");
-				String basicAuth = "Basic " + new String(Base64.encode(auth.getBytes(), Base64.DEFAULT));
+				String basicAuth = "Basic " + new String(Base64.encode(auth.getBytes(), Base64.NO_WRAP));
 				urlConnection.setRequestProperty("Authorization", basicAuth);
 				urlTestConnection.setRequestProperty("Authorization", basicAuth);
 				
@@ -1152,7 +1152,7 @@ public class NoteListActivity
 				
 				//Log.d("DOWNLOADTASK", "auth=" + auth);
 				
-				String basicAuth = "Basic " + new String(Base64.encode(auth.getBytes(), Base64.DEFAULT));
+				String basicAuth = "Basic " + new String(Base64.encode(auth.getBytes(), Base64.NO_WRAP));
 				urlConnection.setRequestProperty("Authorization", basicAuth);
 				
 				if (Build.VERSION.SDK_INT > 13) 
