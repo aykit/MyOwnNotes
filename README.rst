@@ -42,7 +42,7 @@ There are many resources on the internet, showing you how to run your own copy o
 
 I get a JSON error - what do I do?
 ----------------------------------
-In ownCloud 7.0.2 the Notes App is not installed by default. You have to install and activate it. Try this and if you still get the error please submit a ticket.
+Please make sure you installed `ownCloud Notes App Version 1.0`_.
 
 I can't connect. Do I really have to use SSL/TLS?
 -------------------------------------------------
@@ -123,6 +123,7 @@ My Own Notes and all contributions are licensed as `GPL3`_
 .. _GPL3: https://github.com/aykit/myownnotes-android/blob/master/LICENSE
 .. _Moving Certificates: https://github.com/aykit/myownnotes-android/issues/72
 .. _My Own Notes App: https://github.com/aykit/myownnotes-android
+.. _ownCloud Notes App Version 1.0: https://github.com/owncloud/notes/releases/tag/1.0.0
 .. _My Own Notes Website: https://aykit.org/sites/myownnotes.html
 .. _our blog entry about ownCloud's encryption app: https://blog.entwicklerbier.org/2014/09/misconceptions-of-owncloud-encryption/
 .. _our comment in issue #9392: https://github.com/owncloud/core/issues/9392#issuecomment-56274074
