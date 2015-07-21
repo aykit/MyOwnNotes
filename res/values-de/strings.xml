@@ -69,6 +69,16 @@
     <!-- About strings -->
     <string name="text_aykit_logo">Das aykit Logo</string>
     <string name="text_about_text">Diese App wurde von Aykit - Verein zur Förderung von Kunst, Kultur und Wissenschaft – erstellt. \nMehr Informationen auf unserer Website: \n\nhttp://aykit.org</string>
+    <string name="text_requirements">
+        App für ownCloud Notes. Beachten Sie bitte, dass:\n - ownCloud notes auf Ihrem Server installiert sein muss: https://github.com/owncloud/notes\n - Sie ein SSL Zertifikat auf Ihrem Server benötigen. Siehe auch: https://ay.vc/5g
+        \n\n
+        Verwenden Sie "My Own Notes" um Notizen mit ihrer ownCloud Instanz zu erstellen, editieren, löschen und synchronisieren.
+        \n\n
+        Um selbstsignierte Zertifikate zu erlauben, fügen Sie diese unter Einstellungen -> Sicherheit hinzu.
+    </string>
+    <string name="text_revenue">
+        Alle Einnahmen kommen der Weiterentwicklung der App zu Gute wie auch anderen Projekten des Non-Profit Vereins aykit. Sollten Sie Verbesserungsvorschläge haben oder die App selbst kompilieren wollen, besuchen Sie unseren github Account: https://github.com/aykit/myownnotes-android.
+    </string>    
     
     <!-- Help strings -->
     <string name="text_help_text">
@@ -82,7 +92,7 @@
         Ja, können Sie – aber nicht einfach so. Sie müssen Android vorher zuerst explizit mitteilen, dass es Ihr selbst signiertes Zertifikat akzeptieren soll. Das geschieht, in dem man das Zertifikat manuell zu Androids Schlüsselbund hinzufügt.
         \nFolgen Sie dieser Anleitung, wie man das macht: http://aykit.org/sites/myownnotes.html
     </string>
-    
+
     <!--  NoteTable -->
     <string name="to_delete">zu löschen</string>
     <string name="new_note">neue Notiz</string>
