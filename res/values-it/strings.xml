@@ -69,7 +69,13 @@
     <!-- About strings -->
     <string name="text_aykit_logo">Logo aykit</string>
     <string name="text_about_text">Questa applicazione è stata realizzata per te da aykit - un\'associazione che supporta arte, cultura e scienza. \nMaggiori informazioni sul nostro sito: \n\nhttp://aykit.org</string>
-    
+    <string name="text_requirements">
+        App for ownCloud notes. Please be aware you need:\n - ownCloud notes installed server wise: https://github.com/owncloud/notes\n - a SSL certificate installed on your server: See https://ay.vc/5g \nUse "My Own Notes" to create, edit, delete and sync your notes with your ownCloud.\n\nTo allow the app connecting to servers with self-signed certificates open your Settings -> Security to add them.
+    </string>
+    <string name="text_revenue">
+        All revenue will be spent to improve this app and do other great things to support internet freedom. If you have any suggestions or want to build this application yourself, visit us at https://github.com/aykit/myownnotes-android.
+    </string>
+
     <!-- Help strings -->
     <string name="text_help_text">
         Quale URL dovrei inserire?\n
