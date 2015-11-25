@@ -15,11 +15,13 @@ public class Note implements Parcelable {
     public long id;
     public String title;
     public String content;
+    public int creationDate;
     String status;
 
     public Note(){
         this.title = "new";
         this.status = NoteColumns.STATUS_NEW;
+        this.creationDate = (int)(System.currentTimeMillis()/1000L);
     }
 
     public Note(Cursor cursor){
@@ -34,6 +36,7 @@ public class Note implements Parcelable {
         title = in.readString();
         content = in.readString();
         status = in.readString();
+        creationDate = in.readInt();
     }
 
     public static final Creator<Note> CREATOR = new Creator<Note>() {
@@ -59,6 +62,7 @@ public class Note implements Parcelable {
         dest.writeString(title);
         dest.writeString(content);
         dest.writeString(status);
+        dest.writeInt(creationDate);
     }
 
     public ContentValues getContentValues() {
@@ -71,6 +75,7 @@ public class Note implements Parcelable {
         if (!TextUtils.isEmpty(content)) {
             cv.put(NoteColumns.CONTENT, content);
         }
+        cv.put(NoteColumns.CREATION_DATE, creationDate);
         return cv;
     }
 

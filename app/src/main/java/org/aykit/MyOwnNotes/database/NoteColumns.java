@@ -30,4 +30,7 @@ public interface NoteColumns {
             + NoteColumns.STATUS_DELETE + "', '"
             + NoteColumns.STATUS_DONE + "')")
     String STATUS = "status";
+
+    @DataType(INTEGER)
+    String CREATION_DATE = "creation_date";
 }

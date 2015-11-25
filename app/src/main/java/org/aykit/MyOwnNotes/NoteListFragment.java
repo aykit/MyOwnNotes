@@ -165,7 +165,8 @@ public class NoteListFragment extends Fragment implements LoaderManager.LoaderCa
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String select = NoteColumns.STATUS + "<>?";
         String[] selectArgs = new String[]{NoteColumns.STATUS_DELETE};
-        return new CursorLoader(getActivity(), NotesProvider.NOTES.CONTENT_URI, null, select, selectArgs, null);
+        String sortOrder = NoteColumns.CREATION_DATE+" ASC";
+        return new CursorLoader(getActivity(), NotesProvider.NOTES.CONTENT_URI, null, select, selectArgs, sortOrder);
     }
 
     @Override
