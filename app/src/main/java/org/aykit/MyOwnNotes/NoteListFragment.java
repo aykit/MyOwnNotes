@@ -1,6 +1,7 @@
 package org.aykit.MyOwnNotes;
 
 import android.app.Activity;
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -108,7 +110,7 @@ public class NoteListFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
         if (adapter != null) {
@@ -122,6 +124,36 @@ public class NoteListFragment extends Fragment implements LoaderManager.LoaderCa
 
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setColorSchemeResources(R.color.accent, R.color.primary);
+
+        ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
+                ItemTouchHelper.START | ItemTouchHelper.END) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
+                final Context appContext = getActivity().getApplicationContext();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Note note = adapter.getItem(viewHolder.getAdapterPosition());
+                        note.setDeleted();
+                        appContext.getContentResolver().update(NotesProvider.NOTES.withId(note.id), note.getContentValues(), null, null);
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+                            }
+                        });
+                    }
+                }).start();
+            }
+        });
+        helper.attachToRecyclerView(recyclerView);
 
         getLoaderManager().initLoader(LOADER_NOTES, null, this);
     }

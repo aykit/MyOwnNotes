@@ -57,8 +57,21 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.View
         return mCursor!=null?mCursor.getCount():0;
     }
 
-    public void changeCursor(Cursor newCursor) {
-        this.mCursor = newCursor;
+    public void changeCursor(Cursor cursor) {
+        Cursor old = swapCursor(cursor);
+        if (old != null) {
+            old.close();
+        }
+    }
+
+    public Cursor swapCursor(Cursor newCursor) {
+        if (newCursor == mCursor) {
+            return null;
+        }
+        final Cursor oldCursor = mCursor;
+        mCursor = newCursor;
+        notifyDataSetChanged();
+        return oldCursor;
     }
 
     public Note getItem(int position) {
