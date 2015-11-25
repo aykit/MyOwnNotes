@@ -26,6 +26,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".NoteListActivity" />
         </activity>
+
+        <provider
+            android:authorities="org.aykit.MyOwnNotes.NotesProvider"
+            android:name=".database.generated.NotesProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>

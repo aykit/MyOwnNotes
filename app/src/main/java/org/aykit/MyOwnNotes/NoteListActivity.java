@@ -1,6 +1,9 @@
 package org.aykit.MyOwnNotes;
 
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -9,6 +12,8 @@ import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.Button;
 
+import org.aykit.MyOwnNotes.database.NotesDatabase;
+import org.aykit.MyOwnNotes.database.NotesProvider;
 import org.aykit.MyOwnNotes.database.model.Note;
 
 import butterknife.OnClick;
@@ -51,7 +56,18 @@ public class NoteListActivity extends AppCompatActivity
         findViewById(R.id.button_add).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onNoteSelected(new Note());
+                final Context appContext = getApplicationContext();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Note newNote = new Note();
+                        Uri uri = appContext.getContentResolver().insert(NotesProvider.NOTES.CONTENT_URI, newNote.getContentValues());
+                        Cursor result = appContext.getContentResolver().query(uri, null, null, null, null);
+                        result.moveToFirst();
+                        newNote = new Note(result);
+                        onNoteSelected(newNote);
+                    }
+                }).start();
             }
         });
 

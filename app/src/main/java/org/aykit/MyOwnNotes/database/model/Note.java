@@ -1,8 +1,10 @@
 package org.aykit.MyOwnNotes.database.model;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import org.aykit.MyOwnNotes.database.NoteColumns;
 
@@ -10,13 +12,14 @@ import org.aykit.MyOwnNotes.database.NoteColumns;
  * Created by mklepp on 22/11/15.
  */
 public class Note implements Parcelable {
-    long id;
+    public long id;
     public String title;
     public String content;
     String status;
 
     public Note(){
-
+        this.title = "new";
+        this.status = NoteColumns.STATUS_NEW;
     }
 
     public Note(Cursor cursor){
@@ -56,5 +59,18 @@ public class Note implements Parcelable {
         dest.writeString(title);
         dest.writeString(content);
         dest.writeString(status);
+    }
+
+    public ContentValues getContentValues() {
+        ContentValues cv = new ContentValues();
+        if (id > 0) {
+            cv.put(NoteColumns._ID, id);
+        }
+        cv.put(NoteColumns.STATUS, status);
+        cv.put(NoteColumns.TITLE, title);
+        if (!TextUtils.isEmpty(content)) {
+            cv.put(NoteColumns.CONTENT, content);
+        }
+        return cv;
     }
 }

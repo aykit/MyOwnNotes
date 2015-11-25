@@ -1,15 +1,21 @@
 package org.aykit.MyOwnNotes;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import org.aykit.MyOwnNotes.database.NotesProvider;
 import org.aykit.MyOwnNotes.database.model.Note;
 
 import butterknife.Bind;
@@ -57,6 +63,8 @@ public class NoteDetailFragment extends Fragment {
                 appBarLayout.setTitle(mNote.title);
             }
         }
+
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -72,4 +80,28 @@ public class NoteDetailFragment extends Fragment {
 
         return rootView;
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.note_detail, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.delete_note) {
+            final Context appContext = getActivity().getApplicationContext();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    appContext.getContentResolver().delete(NotesProvider.NOTES.withId(mNote.id), null, null);
+                }
+            }).start();
+            getActivity().navigateUpTo(new Intent(getActivity(), NoteListActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 }

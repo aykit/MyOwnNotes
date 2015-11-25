@@ -11,6 +11,9 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.MenuItem;
 
+import org.aykit.MyOwnNotes.database.NotesProvider;
+import org.aykit.MyOwnNotes.database.model.Note;
+
 /**
  * An activity representing a single Note detail screen. This
  * activity is only used on handset devices. On tablet-size devices,
@@ -45,8 +48,7 @@ public class NoteDetailActivity extends AppCompatActivity {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putParcelable(NoteDetailFragment.ARG_NOTE,
-                    getIntent().getParcelableExtra(NoteDetailFragment.ARG_NOTE));
+            arguments.putParcelable(NoteDetailFragment.ARG_NOTE, getIntent().getParcelableExtra(NoteDetailFragment.ARG_NOTE));
             NoteDetailFragment fragment = new NoteDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
@@ -56,19 +58,9 @@ public class NoteDetailActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.note_detail, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            navigateUpTo(new Intent(this, NoteListActivity.class));
-            return true;
-        } else if (id == R.id.delete_note) {
             navigateUpTo(new Intent(this, NoteListActivity.class));
             return true;
         }

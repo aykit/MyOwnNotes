@@ -21,7 +21,7 @@ public interface NoteColumns {
     @DataType(INTEGER) @PrimaryKey @AutoIncrement String _ID = "_id";
 
     @DataType(TEXT) @NotNull String TITLE = "title";
-    @DataType(TEXT) @NotNull String CONTENT = "content";
+    @DataType(TEXT) String CONTENT = "content";
 
     @DataType(TEXT)
     @Check(NoteColumns.STATUS + " in ('" + NoteColumns.STATUS_NEW + "', '"
