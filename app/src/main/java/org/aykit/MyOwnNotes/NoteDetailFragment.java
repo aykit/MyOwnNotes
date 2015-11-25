@@ -87,6 +87,12 @@ public class NoteDetailFragment extends Fragment implements TextWatcher {
     }
 
     @Override
+    public void onDestroyView() {
+        ButterKnife.unbind(this);
+        super.onDestroyView();
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.note_detail, menu);
         super.onCreateOptionsMenu(menu, inflater);
