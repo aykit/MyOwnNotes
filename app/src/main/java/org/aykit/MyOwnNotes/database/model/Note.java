@@ -74,7 +74,13 @@ public class Note implements Parcelable {
         return cv;
     }
 
-    public void delete() {
+    public void setEdited(){
+        if (NoteColumns.STATUS_DONE.equals(status)){
+            status = NoteColumns.STATUS_UPDATE;
+        }
+    }
+
+    public void setDeleted() {
         status = NoteColumns.STATUS_DELETE;
     }
 }

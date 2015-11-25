@@ -3,10 +3,11 @@ package org.aykit.MyOwnNotes;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,7 +28,7 @@ import butterknife.ButterKnife;
  * in two-pane mode (on tablets) or a {@link NoteDetailActivity}
  * on handsets.
  */
-public class NoteDetailFragment extends Fragment {
+public class NoteDetailFragment extends Fragment implements TextWatcher {
     /**
      * The fragment argument representing the item ID that this fragment
      * represents.
@@ -80,7 +81,9 @@ public class NoteDetailFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         titleView.setText(mNote.title);
+        titleView.addTextChangedListener(this);
         contentView.setText(mNote.content);
+        contentView.addTextChangedListener(this);
     }
 
     @Override
@@ -97,7 +100,7 @@ public class NoteDetailFragment extends Fragment {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    mNote.delete();
+                    mNote.setDeleted();
                     appContext.getContentResolver().update(NotesProvider.NOTES.withId(mNote.id), mNote.getContentValues(), null, null);
                 }
             }).start();
@@ -107,4 +110,27 @@ public class NoteDetailFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+        mNote.title = titleView.getText().toString();
+        mNote.content = contentView.getText().toString();
+        final Context appContext = getActivity().getApplicationContext();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mNote.setEdited();
+                appContext.getContentResolver().update(NotesProvider.NOTES.withId(mNote.id), mNote.getContentValues(), null, null);
+            }
+        }).start();
+    }
 }
