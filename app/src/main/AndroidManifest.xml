@@ -20,7 +20,6 @@
         </activity>
         <activity
             android:name=".NoteDetailActivity"
-            android:label="@string/title_note_detail"
             android:parentActivityName=".NoteListActivity"
             android:theme="@style/AppTheme.NoActionBar" >
             <meta-data

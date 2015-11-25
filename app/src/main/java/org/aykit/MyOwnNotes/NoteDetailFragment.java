@@ -4,12 +4,15 @@ import android.app.Activity;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.EditText;
 
-import org.aykit.MyOwnNotes.dummy.DummyContent;
+import org.aykit.MyOwnNotes.database.model.Note;
+
+import butterknife.Bind;
 
 /**
  * A fragment representing a single Note detail screen.
@@ -22,12 +25,15 @@ public class NoteDetailFragment extends Fragment {
      * The fragment argument representing the item ID that this fragment
      * represents.
      */
-    public static final String ARG_ITEM_ID = "item_id";
+    public static final String ARG_NOTE = "note";
 
-    /**
-     * The dummy content this fragment is presenting.
-     */
-    private DummyContent.DummyItem mItem;
+    private Note mNote;
+
+    @Bind(R.id.title)
+    EditText titleView;
+
+    @Bind(R.id.content)
+    EditText contentView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -40,16 +46,15 @@ public class NoteDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
-            // Load the dummy content specified by the fragment
-            // arguments. In a real-world scenario, use a Loader
-            // to load content from a content provider.
-            mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
+        Bundle args = getArguments();
+        if (args.containsKey(ARG_NOTE)) {
+
+            mNote = args.getParcelable(ARG_NOTE);
 
             Activity activity = this.getActivity();
-            CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
+            Toolbar appBarLayout = (Toolbar) activity.findViewById(R.id.toolbar);
             if (appBarLayout != null) {
-                appBarLayout.setTitle(mItem.content);
+                appBarLayout.setTitle(mNote.title);
             }
         }
     }
@@ -60,8 +65,9 @@ public class NoteDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_note_detail, container, false);
 
         // Show the dummy content as text in a TextView.
-        if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.note_detail)).setText(mItem.details);
+        if (mNote != null) {
+            ((EditText) rootView.findViewById(R.id.title)).setText(mNote.title);
+            ((EditText) rootView.findViewById(R.id.content)).setText(mNote.content);
         }
 
         return rootView;
