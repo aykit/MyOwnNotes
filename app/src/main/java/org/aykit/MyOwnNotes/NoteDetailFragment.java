@@ -19,6 +19,7 @@ import org.aykit.MyOwnNotes.database.NotesProvider;
 import org.aykit.MyOwnNotes.database.model.Note;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 
 /**
  * A fragment representing a single Note detail screen.
@@ -70,15 +71,16 @@ public class NoteDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_note_detail, container, false);
+        return inflater.inflate(R.layout.fragment_note_detail, container, false);
+    }
 
-        // Show the dummy content as text in a TextView.
-        if (mNote != null) {
-            ((EditText) rootView.findViewById(R.id.title)).setText(mNote.title);
-            ((EditText) rootView.findViewById(R.id.content)).setText(mNote.content);
-        }
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
 
-        return rootView;
+        titleView.setText(mNote.title);
+        contentView.setText(mNote.content);
     }
 
     @Override
