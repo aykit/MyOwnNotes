@@ -7,12 +7,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import org.aykit.MyOwnNotes.adapter.DividerItemDecoration;
 import org.aykit.MyOwnNotes.adapter.NotesListAdapter;
@@ -32,7 +35,7 @@ import butterknife.OnItemClick;
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-public class NoteListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
+public class NoteListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     private NotesListAdapter adapter;
 
@@ -40,6 +43,15 @@ public class NoteListFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Bind(android.R.id.list)
     RecyclerView recyclerView;
+
+    @Bind(android.R.id.empty)
+    TextView emptyView;
+
+    @Bind(android.R.id.progress)
+    ProgressBar progressBar;
+
+    @Bind(R.id.swipeContainer)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -52,6 +64,11 @@ public class NoteListFragment extends Fragment implements LoaderManager.LoaderCa
      * clicks.
      */
     private Callbacks mCallbacks = sDummyCallbacks;
+
+    @Override
+    public void onRefresh() {
+        emptyView.animate().alpha(0);
+    }
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -101,6 +118,9 @@ public class NoteListFragment extends Fragment implements LoaderManager.LoaderCa
         RecyclerView.ItemDecoration itemDecoration = new
                 DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST);
         recyclerView.addItemDecoration(itemDecoration);
+
+        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.setColorSchemeResources(R.color.accent, R.color.primary);
 
         getLoaderManager().initLoader(LOADER_NOTES, null, this);
     }
@@ -154,6 +174,13 @@ public class NoteListFragment extends Fragment implements LoaderManager.LoaderCa
         } else {
             adapter.changeCursor(data);
         }
+
+        if (data != null && data.getCount() > 0){
+            emptyView.animate().alpha(0);
+        } else {
+            emptyView.animate().alpha(1);
+        }
+        progressBar.animate().alpha(0);
 
 //        // Restore the previously serialized activated item position.
 //        if (savedInstanceState != null
