@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import org.aykit.MyOwnNotes.adapter.DividerItemDecoration;
 import org.aykit.MyOwnNotes.adapter.NotesListAdapter;
+import org.aykit.MyOwnNotes.database.NoteColumns;
 import org.aykit.MyOwnNotes.database.NotesProvider;
 import org.aykit.MyOwnNotes.database.model.Note;
 
@@ -162,7 +163,9 @@ public class NoteListFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getActivity(), NotesProvider.NOTES.CONTENT_URI, null, null, null, null);
+        String select = NoteColumns.STATUS + "<>?";
+        String[] selectArgs = new String[]{NoteColumns.STATUS_DELETE};
+        return new CursorLoader(getActivity(), NotesProvider.NOTES.CONTENT_URI, null, select, selectArgs, null);
     }
 
     @Override
@@ -175,7 +178,7 @@ public class NoteListFragment extends Fragment implements LoaderManager.LoaderCa
             adapter.changeCursor(data);
         }
 
-        if (data != null && data.getCount() > 0){
+        if (data != null && data.getCount() > 0) {
             emptyView.animate().alpha(0);
         } else {
             emptyView.animate().alpha(1);

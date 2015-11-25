@@ -95,7 +95,8 @@ public class NoteDetailFragment extends Fragment {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    appContext.getContentResolver().delete(NotesProvider.NOTES.withId(mNote.id), null, null);
+                    mNote.delete();
+                    appContext.getContentResolver().update(NotesProvider.NOTES.withId(mNote.id), mNote.getContentValues(), null, null);
                 }
             }).start();
             getActivity().navigateUpTo(new Intent(getActivity(), NoteListActivity.class));

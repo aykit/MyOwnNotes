@@ -73,4 +73,8 @@ public class Note implements Parcelable {
         }
         return cv;
     }
+
+    public void delete() {
+        status = NoteColumns.STATUS_DELETE;
+    }
 }

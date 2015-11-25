@@ -17,6 +17,7 @@ public interface NoteColumns {
     String STATUS_NEW = "new";
     String STATUS_DELETE = "delete";
     String STATUS_UPDATE = "update";
+    String STATUS_DONE = "done";
 
     @DataType(INTEGER) @PrimaryKey @AutoIncrement String _ID = "_id";
 
@@ -26,6 +27,7 @@ public interface NoteColumns {
     @DataType(TEXT)
     @Check(NoteColumns.STATUS + " in ('" + NoteColumns.STATUS_NEW + "', '"
             + NoteColumns.STATUS_UPDATE + "', '"
-            + NoteColumns.STATUS_DELETE + "')")
+            + NoteColumns.STATUS_DELETE + "', '"
+            + NoteColumns.STATUS_DONE + "')")
     String STATUS = "status";
 }
