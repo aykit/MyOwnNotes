@@ -3,7 +3,7 @@
     android:layout_height="match_parent" android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp" android:baselineAligned="false"
     android:divider="?android:attr/dividerHorizontal" android:orientation="horizontal"
-    android:showDividers="middle" tools:context=".NoteListActivity">
+    android:showDividers="middle" tools:context=".activities.NoteListActivity">
 
     <!--
     This layout is a two-pane layout for the Notes
@@ -11,7 +11,7 @@
     
     -->
 
-    <fragment android:id="@+id/note_list" android:name="org.aykit.MyOwnNotes.NoteListFragment"
+    <fragment android:id="@+id/note_list" android:name="org.aykit.MyOwnNotes.fragments.NoteListFragment"
         android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
         tools:layout="@android:layout/list_content" />
 

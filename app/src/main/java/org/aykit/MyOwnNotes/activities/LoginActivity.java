@@ -1,4 +1,4 @@
-package org.aykit.MyOwnNotes;
+package org.aykit.MyOwnNotes.activities;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -29,6 +29,7 @@ import com.owncloud.android.lib.resources.files.CreateRemoteFolderOperation;
 import com.owncloud.android.lib.resources.files.FileUtils;
 import com.owncloud.android.lib.resources.files.ReadRemoteFolderOperation;
 
+import org.aykit.MyOwnNotes.R;
 import org.aykit.MyOwnNotes.helpers.Settings;
 
 import java.util.ArrayList;

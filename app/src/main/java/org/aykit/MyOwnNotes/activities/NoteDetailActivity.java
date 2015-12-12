@@ -1,18 +1,13 @@
-package org.aykit.MyOwnNotes;
+package org.aykit.MyOwnNotes.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.View;
 import android.view.MenuItem;
 
-import org.aykit.MyOwnNotes.database.NotesProvider;
-import org.aykit.MyOwnNotes.database.model.Note;
+import org.aykit.MyOwnNotes.fragments.NoteDetailFragment;
+import org.aykit.MyOwnNotes.R;
 
 /**
  * An activity representing a single Note detail screen. This

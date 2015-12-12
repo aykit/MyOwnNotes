@@ -1,4 +1,4 @@
-package org.aykit.MyOwnNotes;
+package org.aykit.MyOwnNotes.fragments;
 
 import android.app.Activity;
 import android.content.Context;
@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.aykit.MyOwnNotes.R;
 import org.aykit.MyOwnNotes.adapter.DividerItemDecoration;
 import org.aykit.MyOwnNotes.adapter.NotesListAdapter;
 import org.aykit.MyOwnNotes.database.NoteColumns;
@@ -27,7 +28,6 @@ import org.aykit.MyOwnNotes.database.model.Note;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnItemClick;
 
 /**
  * A list fragment representing a list of Notes. This fragment

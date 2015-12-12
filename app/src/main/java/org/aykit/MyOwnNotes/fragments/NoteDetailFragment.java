@@ -1,4 +1,4 @@
-package org.aykit.MyOwnNotes;
+package org.aykit.MyOwnNotes.fragments;
 
 import android.app.Activity;
 import android.content.Context;
@@ -16,6 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import org.aykit.MyOwnNotes.R;
+import org.aykit.MyOwnNotes.activities.NoteDetailActivity;
+import org.aykit.MyOwnNotes.activities.NoteListActivity;
 import org.aykit.MyOwnNotes.database.NotesProvider;
 import org.aykit.MyOwnNotes.database.model.Note;
 

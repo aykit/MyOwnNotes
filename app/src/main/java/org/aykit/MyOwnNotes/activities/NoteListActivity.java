@@ -1,4 +1,4 @@
-package org.aykit.MyOwnNotes;
+package org.aykit.MyOwnNotes.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,16 +7,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.view.View;
-import android.widget.Button;
 
-import org.aykit.MyOwnNotes.database.NotesDatabase;
+import org.aykit.MyOwnNotes.fragments.NoteDetailFragment;
+import org.aykit.MyOwnNotes.fragments.NoteListFragment;
+import org.aykit.MyOwnNotes.R;
 import org.aykit.MyOwnNotes.database.NotesProvider;
 import org.aykit.MyOwnNotes.database.model.Note;
-
-import butterknife.OnClick;
 
 
 /**

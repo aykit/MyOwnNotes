@@ -4,7 +4,7 @@
     style="?android:attr/textAppearanceLarge"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NoteDetailFragment">
+    tools:context=".fragments.NoteDetailFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

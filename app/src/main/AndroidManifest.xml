@@ -12,10 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".LoginActivity" />
+        <activity android:name=".activities.LoginActivity" />
 
         <activity
-            android:name=".NoteListActivity"
+            android:name=".activities.NoteListActivity"
             android:label="@string/app_name">
 
             <intent-filter>
@@ -25,12 +25,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".NoteDetailActivity"
-            android:parentActivityName=".NoteListActivity"
+            android:name=".activities.NoteDetailActivity"
+            android:parentActivityName=".activities.NoteListActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".NoteListActivity" />
+                android:value=".activities.NoteListActivity" />
         </activity>
 
         <provider
