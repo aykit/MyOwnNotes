@@ -72,6 +72,7 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
 
         new MaterialDialog.Builder(this)
                 .title(R.string.settings_text_password)
+                .content(account.name)
                 .inputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)
                 .input(R.string.settings_text_password_hint, 0, new MaterialDialog.InputCallback() {
                     @Override
