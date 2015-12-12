@@ -18,7 +18,6 @@ import org.aykit.MyOwnNotes.database.model.Note;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.ViewHolder> {
 

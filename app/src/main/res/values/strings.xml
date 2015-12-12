@@ -60,6 +60,8 @@
     <string name="settings_text_debug">Debug</string>
     <string name="settings_text_extensive_log_output">Enable extensive LogCat output</string>
 
+    <string name="login_in_owncloudapp_required">Login Required</string>
+
     <!-- Toasts -->
     <string name="toast_enter_valid_username">Please enter your ownCloud-server username</string>
     <string name="toast_enter_password">Please enter your ownCloud-server password</string>

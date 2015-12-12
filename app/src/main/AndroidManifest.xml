@@ -1,36 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.aykit.MyOwnNotes" >
+    package="org.aykit.MyOwnNotes">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
-        <activity
-            android:name=".NoteListActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" >
+        android:theme="@style/AppTheme">
+
+        <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".NoteListActivity"
+            android:label="@string/app_name" />
         <activity
             android:name=".NoteDetailActivity"
             android:parentActivityName=".NoteListActivity"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".NoteListActivity" />
         </activity>
 
         <provider
-            android:authorities="org.aykit.MyOwnNotes.NotesProvider"
             android:name=".database.generated.NotesProvider"
-            android:exported="false"/>
+            android:authorities="org.aykit.MyOwnNotes.NotesProvider"
+            android:exported="false" />
+
     </application>
 
 </manifest>

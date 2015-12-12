@@ -21,6 +21,12 @@ android {
         local {
             applicationId 'org.aykit.MyOwnNotes.local'
         }
+        store {
+            applicationId 'org.aykit.MyOwnNotes.store'
+        }
+    }
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
     }
 }
 
@@ -34,4 +40,9 @@ dependencies {
     apt 'net.simonvt.schematic:schematic-compiler:0.6.3'
     compile 'net.simonvt.schematic:schematic:0.6.3'
     compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'com.github.owncloud:android-library:oc-android-library-0.9.8'
+
+    compile('com.afollestad.material-dialogs:core:0.8.1.0@aar') {
+        transitive = true
+    }
 }
