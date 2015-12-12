@@ -215,8 +215,9 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
             if (result != null) {
                 String accountName = result.name;
                 Snackbar.make(coordinatorLayout, accountName, Snackbar.LENGTH_LONG).show();
-//
-//                startActivity(new Intent(LoginActivity.this, NoteListActivity.class));
+
+                startActivity(new Intent(LoginActivity.this, NoteListActivity.class));
+                finish();
 
             } else {
                 PreferenceManager.getDefaultSharedPreferences(LoginActivity.this).edit().remove(Settings.PREF_ACCOUNT_PASSWORD).apply();
