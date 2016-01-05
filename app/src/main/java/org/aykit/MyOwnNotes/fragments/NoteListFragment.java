@@ -1,13 +1,17 @@
 package org.aykit.MyOwnNotes.fragments;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,10 +22,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.aykit.MyOwnNotes.R;
 import org.aykit.MyOwnNotes.adapter.DividerItemDecoration;
 import org.aykit.MyOwnNotes.adapter.NotesListAdapter;
+import org.aykit.MyOwnNotes.asynctasks.SyncNotesAsyncTask;
 import org.aykit.MyOwnNotes.database.NoteColumns;
 import org.aykit.MyOwnNotes.database.NotesProvider;
 import org.aykit.MyOwnNotes.database.model.Note;
@@ -56,6 +62,21 @@ public class NoteListFragment extends Fragment implements LoaderManager.LoaderCa
     @Bind(R.id.swipeContainer)
     SwipeRefreshLayout swipeRefreshLayout;
 
+    private BroadcastReceiver syncBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case SyncNotesAsyncTask.SYNC_FINISHED:
+                    swipeRefreshLayout.setRefreshing(false);
+                    break;
+                case SyncNotesAsyncTask.SYNC_PROGRESS:
+                    int progress = intent.getIntExtra(SyncNotesAsyncTask.SYNC_PROGRESS, 0);
+                    Toast.makeText(getActivity(), "progress: "+progress, Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
+
     /**
      * The serialization (saved instance state) Bundle key representing the
      * activated item position. Only used on tablets.
@@ -70,7 +91,7 @@ public class NoteListFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onRefresh() {
-        emptyView.animate().alpha(0);
+        SyncNotesAsyncTask.start(getActivity());
     }
 
     /**
@@ -142,6 +163,7 @@ public class NoteListFragment extends Fragment implements LoaderManager.LoaderCa
                         Note note = adapter.getItem(viewHolder.getAdapterPosition());
                         note.setDeleted();
                         appContext.getContentResolver().update(NotesProvider.NOTES.withId(note.id), note.getContentValues(), null, null);
+                        SyncNotesAsyncTask.start(getActivity());
 
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
@@ -236,5 +258,24 @@ public class NoteListFragment extends Fragment implements LoaderManager.LoaderCa
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Note note = adapter.getItem(position);
         mCallbacks.onNoteSelected(note);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(SyncNotesAsyncTask.SYNC_PROGRESS);
+        filter.addAction(SyncNotesAsyncTask.SYNC_FINISHED);
+
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(syncBroadcastReceiver, filter);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(syncBroadcastReceiver);
+
     }
 }

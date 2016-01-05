@@ -185,12 +185,8 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
         protected Account doInBackground(Account... selectedAccounts) {
 
             Account selectedAccount = selectedAccounts[0];
-            String[] credentials = selectedAccount.name.split("@");
-            if (credentials.length != 2) {
-                return null;
-            }
-            Uri baseUrl = Uri.parse("https://"+credentials[1]);
-            String username = credentials[0];
+            Uri baseUrl = Settings.getAccountURL(selectedAccount.name);
+            String username = Settings.getAccountUsername(selectedAccount.name);
             String password = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this).getString(Settings.PREF_ACCOUNT_PASSWORD, null);
             if (password == null) {
                 return null;
@@ -200,11 +196,11 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
 
             client.setCredentials(OwnCloudCredentialsFactory.newBasicCredentials(username, password));
 
-            if (!checkRemoteAccess(client)) {
+            if (!Settings.checkRemoteAccess(client)) {
                 return null;
             }
 
-            if (!checkRemoteFolder(client)) {
+            if (!Settings.checkRemoteAccess(client)) {
                 return null;
             }
 
@@ -228,31 +224,5 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
             }
             progressBar.animate().alpha(0);
         }
-    }
-
-    private boolean checkRemoteAccess(OwnCloudClient client) {
-        ReadRemoteFolderOperation refreshOperation = new ReadRemoteFolderOperation(FileUtils.PATH_SEPARATOR);
-        RemoteOperationResult result = refreshOperation.execute(client);
-
-        return result.isSuccess();
-    }
-
-    //    if notes folder does'nt exist, create him
-    private boolean checkRemoteFolder(OwnCloudClient client) {
-
-        ReadRemoteFolderOperation refreshOperation = new ReadRemoteFolderOperation(Settings.NOTE_PATH_DEFAULT);
-        RemoteOperationResult result = refreshOperation.execute(client);
-
-        if (!result.isSuccess()) {
-            CreateRemoteFolderOperation createOperation = new CreateRemoteFolderOperation(Settings.NOTE_PATH_DEFAULT, true);
-            RemoteOperationResult createResult = createOperation.execute(client);
-            if (createResult.isSuccess()) {
-                return true;
-            }
-        } else {
-            return true;
-        }
-
-        return false;
     }
 }

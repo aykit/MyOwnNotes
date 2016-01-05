@@ -33,4 +33,7 @@ public interface NoteColumns {
 
     @DataType(INTEGER)
     String CREATION_DATE = "creation_date";
+
+    @DataType(TEXT)
+    String FILENAME = "filename";
 }

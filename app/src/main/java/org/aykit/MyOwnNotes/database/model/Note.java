@@ -2,9 +2,12 @@ package org.aykit.MyOwnNotes.database.model;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
+
+import com.owncloud.android.lib.resources.files.RemoteFile;
 
 import org.aykit.MyOwnNotes.database.NoteColumns;
 
@@ -17,6 +20,7 @@ public class Note implements Parcelable {
     public String content;
     public int creationDate;
     String status;
+    public String filename;
 
     public Note(){
         this.title = "new";
@@ -29,6 +33,11 @@ public class Note implements Parcelable {
         title = cursor.getString(cursor.getColumnIndex(NoteColumns.TITLE));
         content = cursor.getString(cursor.getColumnIndex(NoteColumns.CONTENT));
         status = cursor.getString(cursor.getColumnIndex(NoteColumns.STATUS));
+        filename = cursor.getString(cursor.getColumnIndex(NoteColumns.FILENAME));
+        if (TextUtils.isEmpty(filename) || status.equals(NoteColumns.STATUS_NEW)){
+            // Allow ascii-only filename and remove slashes
+            filename = title.replaceAll("[^\\x00-\\x7F]", "").replaceAll("[/\\\\]", "")+".txt";
+        }
     }
 
     protected Note(Parcel in) {
@@ -37,6 +46,17 @@ public class Note implements Parcelable {
         content = in.readString();
         status = in.readString();
         creationDate = in.readInt();
+        filename = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(title);
+        dest.writeString(content);
+        dest.writeString(status);
+        dest.writeInt(creationDate);
+        dest.writeString(filename);
     }
 
     public static final Creator<Note> CREATOR = new Creator<Note>() {
@@ -56,15 +76,6 @@ public class Note implements Parcelable {
         return 0;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(id);
-        dest.writeString(title);
-        dest.writeString(content);
-        dest.writeString(status);
-        dest.writeInt(creationDate);
-    }
-
     public ContentValues getContentValues() {
         ContentValues cv = new ContentValues();
         if (id > 0) {
@@ -76,6 +87,7 @@ public class Note implements Parcelable {
             cv.put(NoteColumns.CONTENT, content);
         }
         cv.put(NoteColumns.CREATION_DATE, creationDate);
+        cv.put(NoteColumns.FILENAME, filename);
         return cv;
     }
 
@@ -87,5 +99,17 @@ public class Note implements Parcelable {
 
     public void setDeleted() {
         status = NoteColumns.STATUS_DELETE;
+    }
+
+    public void setUploaded() {
+        status = NoteColumns.STATUS_DONE;
+    }
+
+    public boolean isEdited() {
+        return status.equals(NoteColumns.STATUS_UPDATE);
+    }
+
+    public boolean isDone() {
+        return status.equals(NoteColumns.STATUS_DONE);
     }
 }

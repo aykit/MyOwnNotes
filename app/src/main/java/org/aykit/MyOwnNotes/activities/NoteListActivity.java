@@ -1,14 +1,20 @@
 package org.aykit.MyOwnNotes.activities;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Toast;
 
+import org.aykit.MyOwnNotes.asynctasks.SyncNotesAsyncTask;
 import org.aykit.MyOwnNotes.fragments.NoteDetailFragment;
 import org.aykit.MyOwnNotes.fragments.NoteListFragment;
 import org.aykit.MyOwnNotes.R;
@@ -40,6 +46,18 @@ public class NoteListActivity extends AppCompatActivity
      * device.
      */
     private boolean mTwoPane;
+
+    private BroadcastReceiver syncBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case SyncNotesAsyncTask.SYNC_FAILED:
+                    int message = intent.getIntExtra(Intent.EXTRA_TEXT, R.string.toast_connection_error);
+                    Toast.makeText(NoteListActivity.this, message, Toast.LENGTH_LONG).show();
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +93,27 @@ public class NoteListActivity extends AppCompatActivity
             // activity should be in two-pane mode.
             mTwoPane = true;
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(SyncNotesAsyncTask.SYNC_FAILED);
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(syncBroadcastReceiver, filter);
+
+//        start sync after registering receiver
+        SyncNotesAsyncTask.start(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(syncBroadcastReceiver);
+
     }
 
     /**

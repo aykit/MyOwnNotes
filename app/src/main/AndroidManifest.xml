@@ -12,7 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".activities.LoginActivity" />
+        <activity android:name=".activities.LoginActivity"
+            android:launchMode="singleInstance"
+            android:clearTaskOnLaunch="true"/>
 
         <activity
             android:name=".activities.NoteListActivity"
