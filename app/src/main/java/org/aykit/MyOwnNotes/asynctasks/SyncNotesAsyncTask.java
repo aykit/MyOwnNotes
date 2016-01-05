@@ -349,8 +349,14 @@ public class SyncNotesAsyncTask extends AsyncTask<Void, Integer, Boolean> {
 
         RemoteOperationResult result = remoteFolderOperation.execute(mClient);
 
+
         if (result.isSuccess()) {
             ArrayList<Object> files = result.getData();
+
+
+            int count = files.size()-1; // Lists current folder
+            int current = 0;
+
             for (Object fileObject : files) {
                 RemoteFile remoteFile = (RemoteFile) fileObject;
 
@@ -401,6 +407,9 @@ public class SyncNotesAsyncTask extends AsyncTask<Void, Integer, Boolean> {
                         mContext.getContentResolver().insert(NotesProvider.NOTES.CONTENT_URI, note.getContentValues());
                     }
                 }
+
+                current += 1;
+                publishDownloadProgress(current, count);
             }
             return true;
         }
