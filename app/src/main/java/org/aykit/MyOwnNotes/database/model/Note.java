@@ -22,8 +22,10 @@ public class Note implements Parcelable {
     String status;
     public String filename;
 
+    public static final String NEW_TITLE = "new";
+
     public Note(){
-        this.title = "new";
+        this.title = NEW_TITLE;
         this.status = NoteColumns.STATUS_NEW;
         this.creationDate = (int)(System.currentTimeMillis()/1000L);
     }

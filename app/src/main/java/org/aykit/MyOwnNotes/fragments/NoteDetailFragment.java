@@ -84,6 +84,11 @@ public class NoteDetailFragment extends Fragment implements TextWatcher {
         ButterKnife.bind(this, view);
 
         titleView.setText(mNote.title);
+        if (mNote.title.equals(Note.NEW_TITLE)){
+            titleView.setSelection(0, mNote.title.length());
+        } else {
+            titleView.setSelection(mNote.title.length());
+        }
         titleView.addTextChangedListener(this);
         contentView.setText(mNote.content);
         contentView.addTextChangedListener(this);
