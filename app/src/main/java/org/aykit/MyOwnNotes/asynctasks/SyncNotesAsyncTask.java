@@ -22,6 +22,7 @@ import com.owncloud.android.lib.resources.files.RemoteFile;
 import com.owncloud.android.lib.resources.files.RemoveRemoteFileOperation;
 import com.owncloud.android.lib.resources.files.UploadRemoteFileOperation;
 
+import org.apache.commons.io.FilenameUtils;
 import org.aykit.MyOwnNotes.R;
 import org.aykit.MyOwnNotes.activities.LoginActivity;
 import org.aykit.MyOwnNotes.database.NoteColumns;
@@ -232,8 +233,11 @@ public class SyncNotesAsyncTask extends AsyncTask<Void, Integer, Boolean> {
     }
 
     private String generateNewFileName(String name) {
+        String nameWithoutExtension = FilenameUtils.removeExtension(name);
+        String extension = FilenameUtils.getExtension(name);
+
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-        return name + " " + sdf.format(new Date());
+        return nameWithoutExtension + "_" + sdf.format(new Date()) + "." + extension;
     }
 
     private boolean pushEditedNotes() {
