@@ -169,6 +169,9 @@ public class NoteListFragment extends Fragment implements LoaderManager.LoaderCa
             public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
                 Note note = adapter.getItem(viewHolder.getAdapterPosition());
                 mCallbacks.onNoteSwiped(note);
+
+                // reset state
+                adapter.notifyItemChanged(viewHolder.getAdapterPosition());
             }
 
             @Override
@@ -193,9 +196,9 @@ public class NoteListFragment extends Fragment implements LoaderManager.LoaderCa
                     float width = (float) viewHolder.itemView.getWidth();
                     float alpha = 1.0f - Math.abs(dX) / width;
                     viewHolder.itemView.setAlpha(alpha);
+                    viewHolder.itemView.setTranslationX(dX);
                 }
 
-                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
             }
         });
         helper.attachToRecyclerView(recyclerView);
