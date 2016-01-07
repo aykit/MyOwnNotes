@@ -1,5 +1,6 @@
 package org.aykit.MyOwnNotes.activities;
 
+import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Intent;
@@ -10,6 +11,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
@@ -36,6 +39,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class LoginActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+
+    private static final int PERMISSIONS_REQUEST_GET_ACCOUNTS = 1;
 
     @Bind(R.id.coordinatorlayout)
     CoordinatorLayout coordinatorLayout;
@@ -68,7 +73,7 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
     protected void onResume() {
         super.onResume();
 
-        showAccounts();
+        checkGetAccountPermission();
     }
 
     private void queryPassword(final Account account) {
@@ -137,6 +142,54 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
             useAccount(storedAccount);
         } else {
             showAccounts();
+        }
+    }
+
+    private void checkGetAccountPermission(){
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.GET_ACCOUNTS)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.GET_ACCOUNTS)) {
+
+                new MaterialDialog.Builder(this)
+                        .title(R.string.dialog_permission_title)
+                        .content(R.string.dialog_permission_content)
+                        .positiveText(android.R.string.yes)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
+                                checkGetAccountPermission();
+                            }
+                        })
+                        .show();
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.GET_ACCOUNTS},
+                        PERMISSIONS_REQUEST_GET_ACCOUNTS);
+            }
+        } else {
+            showAccounts();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_GET_ACCOUNTS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    showAccounts();
+                } else {
+                    Snackbar.make(coordinatorLayout, R.string.dialog_permission_denied, Snackbar.LENGTH_LONG).show();
+                }
+                return;
+            }
         }
     }
 

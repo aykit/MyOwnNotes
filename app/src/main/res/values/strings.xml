@@ -103,4 +103,8 @@
 
     <string name="dialog_delete_title">Confirm delete</string>
 
+    <string name="dialog_permission_title">List Owncloud accounts</string>
+    <string name="dialog_permission_content">We need your permission to access your Owncloud account</string>
+    <string name="dialog_permission_denied">You need to grant this permission to use this app</string>
+
 </resources>
