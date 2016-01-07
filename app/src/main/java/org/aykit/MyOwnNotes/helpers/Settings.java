@@ -1,6 +1,9 @@
 package org.aykit.MyOwnNotes.helpers;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 
 import com.owncloud.android.lib.common.OwnCloudAccount;
 import com.owncloud.android.lib.common.OwnCloudClient;
@@ -8,6 +11,8 @@ import com.owncloud.android.lib.common.operations.RemoteOperationResult;
 import com.owncloud.android.lib.resources.files.CreateRemoteFolderOperation;
 import com.owncloud.android.lib.resources.files.FileUtils;
 import com.owncloud.android.lib.resources.files.ReadRemoteFolderOperation;
+
+import org.aykit.MyOwnNotes.database.generated.NotesDatabase;
 
 /**
  * Created by mklepp on 26/11/15.
@@ -26,8 +31,8 @@ public class Settings {
         return Uri.parse("https://"+credentials[1]);
     }
 
-    public static String getAccountUsername(String accountname){
-        String[] credentials = accountname.split("@");
+    public static String getAccountUsername(String accountName){
+        String[] credentials = accountName.split("@");
         if (credentials.length != 2) {
             return null;
         }
@@ -58,5 +63,21 @@ public class Settings {
         }
 
         return false;
+    }
+
+    public static void clearApp(Context context) {
+        // delete stored preferences - username/password
+        PreferenceManager.getDefaultSharedPreferences(context).edit().clear().apply();
+
+        // delete database
+        clearDatabase(context);
+    }
+
+    public static void clearDatabase(Context context){
+        NotesDatabase db = NotesDatabase.getInstance(context);
+        // close before deleting
+        db.close();
+        // remove database file
+        context.deleteDatabase(db.getDatabaseName());
     }
 }

@@ -97,4 +97,8 @@
     <string name="new_note">new Note</string>
     <string name="to_update">to Update</string>
 
+
+    <string name="action_logout">logout</string>
+    <string name="dialog_logout_title">Really logout?</string>
+
 </resources>

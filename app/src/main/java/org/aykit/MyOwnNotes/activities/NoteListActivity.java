@@ -11,8 +11,14 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.aykit.MyOwnNotes.asynctasks.SyncNotesAsyncTask;
 import org.aykit.MyOwnNotes.fragments.NoteDetailFragment;
@@ -20,6 +26,7 @@ import org.aykit.MyOwnNotes.fragments.NoteListFragment;
 import org.aykit.MyOwnNotes.R;
 import org.aykit.MyOwnNotes.database.NotesProvider;
 import org.aykit.MyOwnNotes.database.model.Note;
+import org.aykit.MyOwnNotes.helpers.Settings;
 
 
 /**
@@ -141,5 +148,36 @@ public class NoteListActivity extends AppCompatActivity
             detailIntent.putExtras(arguments);
             startActivity(detailIntent);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.note_list, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_logout) {
+            // do logout stuff
+
+            new MaterialDialog.Builder(this)
+                    .title(R.string.dialog_logout_title)
+                    .positiveText(android.R.string.yes)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
+                            Settings.clearApp(NoteListActivity.this);
+                            finish();
+                            startActivity(new Intent(NoteListActivity.this, LoginActivity.class));
+                        }
+                    })
+                    .negativeText(android.R.string.no)
+                    .show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
