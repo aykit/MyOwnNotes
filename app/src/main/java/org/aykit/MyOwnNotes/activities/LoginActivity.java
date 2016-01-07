@@ -162,12 +162,14 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-                                checkGetAccountPermission();
+                                ActivityCompat.requestPermissions(LoginActivity.this,
+                                        new String[]{Manifest.permission.GET_ACCOUNTS},
+                                        PERMISSIONS_REQUEST_GET_ACCOUNTS);
                             }
                         })
                         .show();
-
-                ActivityCompat.requestPermissions(this,
+            } else {
+                ActivityCompat.requestPermissions(LoginActivity.this,
                         new String[]{Manifest.permission.GET_ACCOUNTS},
                         PERMISSIONS_REQUEST_GET_ACCOUNTS);
             }
