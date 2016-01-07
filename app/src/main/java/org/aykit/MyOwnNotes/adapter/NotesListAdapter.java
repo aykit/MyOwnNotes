@@ -45,10 +45,19 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.View
     public void onBindViewHolder(ViewHolder holder, int position) {
         mCursor.moveToPosition(position);
         String title = mCursor.getString(mCursor.getColumnIndex(NoteColumns.TITLE));
-        String mode = mCursor.getString(mCursor.getColumnIndex(NoteColumns.STATUS));
+        String status = mCursor.getString(mCursor.getColumnIndex(NoteColumns.STATUS));
+
+        int statusIcon = 0;
+        switch (status){
+            case NoteColumns.STATUS_DELETE:
+            case NoteColumns.STATUS_NEW:
+            case NoteColumns.STATUS_UPDATE:
+                statusIcon = R.drawable.ic_cloud_upload_24dp;
+                break;
+        }
 
         holder.note.setText(title);
-        holder.status.setText(mode);
+        holder.note.setCompoundDrawablesWithIntrinsicBounds(0, 0, statusIcon, 0);
     }
 
     @Override
@@ -92,8 +101,6 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.View
     static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         @Bind(R.id.note)
         TextView note;
-        @Bind(R.id.statusText)
-        TextView status;
 
         private NotesListAdapter mAdapter;
 

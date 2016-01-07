@@ -6,6 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -57,6 +64,8 @@ public class NoteListFragment extends Fragment implements LoaderManager.LoaderCa
     @Bind(R.id.swipeContainer)
     SwipeRefreshLayout swipeRefreshLayout;
 
+    Bitmap trashIcon;
+
     private BroadcastReceiver syncBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -96,7 +105,8 @@ public class NoteListFragment extends Fragment implements LoaderManager.LoaderCa
         /**
          * Callback for when an item has been selected.
          */
-        public void onNoteSelected(Note note);
+        void onNoteSelected(Note note);
+        void onNoteSwiped(Note note);
     }
 
     /**
@@ -107,6 +117,11 @@ public class NoteListFragment extends Fragment implements LoaderManager.LoaderCa
 
         @Override
         public void onNoteSelected(Note note) {
+        }
+
+        @Override
+        public void onNoteSwiped(Note note) {
+
         }
     };
 
@@ -127,6 +142,9 @@ public class NoteListFragment extends Fragment implements LoaderManager.LoaderCa
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+
+        trashIcon = drawableToBitmap(getResources().getDrawable(R.drawable.ic_delete_24dp));
+
         if (adapter != null) {
             recyclerView.setAdapter(adapter);
         }
@@ -140,7 +158,7 @@ public class NoteListFragment extends Fragment implements LoaderManager.LoaderCa
         swipeRefreshLayout.setColorSchemeResources(R.color.accent, R.color.primary);
 
         ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
-                ItemTouchHelper.START | ItemTouchHelper.END) {
+                ItemTouchHelper.START) {
 
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
@@ -149,23 +167,35 @@ public class NoteListFragment extends Fragment implements LoaderManager.LoaderCa
 
             @Override
             public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
-                final Context appContext = getActivity().getApplicationContext();
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Note note = adapter.getItem(viewHolder.getAdapterPosition());
-                        note.setDeleted();
-                        appContext.getContentResolver().update(NotesProvider.NOTES.withId(note.id), note.getContentValues(), null, null);
-                        SyncNotesAsyncTask.start(getActivity());
+                Note note = adapter.getItem(viewHolder.getAdapterPosition());
+                mCallbacks.onNoteSwiped(note);
+            }
 
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
-                            }
-                        });
-                    }
-                }).start();
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    // Get RecyclerView item from the ViewHolder
+                    View itemView = viewHolder.itemView;
+
+                    Paint p = new Paint();
+
+                    p.setColor(getResources().getColor(R.color.colorAccent));
+
+                    c.drawRect((float) itemView.getRight() + dX, (float) itemView.getTop(),
+                            (float) itemView.getRight(), (float) itemView.getBottom(), p);
+
+                    c.drawBitmap(trashIcon,
+                            Math.max((float) itemView.getRight() - itemView.getPaddingRight() - trashIcon.getWidth(), itemView.getRight() + dX),
+                            (float) itemView.getTop() + ((float) itemView.getBottom() - (float) itemView.getTop() - trashIcon.getHeight()) / 2,
+                            new Paint());
+
+
+                    float width = (float) viewHolder.itemView.getWidth();
+                    float alpha = 1.0f - Math.abs(dX) / width;
+                    viewHolder.itemView.setAlpha(alpha);
+                }
+
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
             }
         });
         helper.attachToRecyclerView(recyclerView);
@@ -263,5 +293,27 @@ public class NoteListFragment extends Fragment implements LoaderManager.LoaderCa
 
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(syncBroadcastReceiver);
 
+    }
+
+    public static Bitmap drawableToBitmap (Drawable drawable) {
+        Bitmap bitmap = null;
+
+        if (drawable instanceof BitmapDrawable) {
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+            if(bitmapDrawable.getBitmap() != null) {
+                return bitmapDrawable.getBitmap();
+            }
+        }
+
+        if(drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
+        } else {
+            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        }
+
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+        return bitmap;
     }
 }

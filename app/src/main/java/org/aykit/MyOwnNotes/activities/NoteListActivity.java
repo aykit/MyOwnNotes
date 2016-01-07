@@ -150,6 +150,18 @@ public class NoteListActivity extends AppCompatActivity
     }
 
     @Override
+    public void onNoteSwiped(final Note note) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                note.setDeleted();
+                getContentResolver().update(NotesProvider.NOTES.withId(note.id), note.getContentValues(), null, null);
+                SyncNotesAsyncTask.start(NoteListActivity.this);
+            }
+        }).start();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.note_list, menu);
