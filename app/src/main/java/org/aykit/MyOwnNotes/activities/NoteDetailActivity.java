@@ -1,13 +1,13 @@
 package org.aykit.MyOwnNotes.activities;
 
-import android.support.v7.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import org.aykit.MyOwnNotes.fragments.NoteDetailFragment;
 import org.aykit.MyOwnNotes.R;
+import org.aykit.MyOwnNotes.fragments.NoteDetailFragment;
 
 /**
  * An activity representing a single Note detail screen. This

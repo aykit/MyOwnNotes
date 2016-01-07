@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,12 +19,12 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
-import org.aykit.MyOwnNotes.asynctasks.SyncNotesAsyncTask;
-import org.aykit.MyOwnNotes.fragments.NoteDetailFragment;
-import org.aykit.MyOwnNotes.fragments.NoteListFragment;
 import org.aykit.MyOwnNotes.R;
+import org.aykit.MyOwnNotes.asynctasks.SyncNotesAsyncTask;
 import org.aykit.MyOwnNotes.database.NotesProvider;
 import org.aykit.MyOwnNotes.database.model.Note;
+import org.aykit.MyOwnNotes.fragments.NoteDetailFragment;
+import org.aykit.MyOwnNotes.fragments.NoteListFragment;
 import org.aykit.MyOwnNotes.helpers.Settings;
 
 

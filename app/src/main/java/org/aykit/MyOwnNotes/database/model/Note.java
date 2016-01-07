@@ -2,12 +2,9 @@ package org.aykit.MyOwnNotes.database.model;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
-
-import com.owncloud.android.lib.resources.files.RemoteFile;
 
 import org.aykit.MyOwnNotes.database.NoteColumns;
 
