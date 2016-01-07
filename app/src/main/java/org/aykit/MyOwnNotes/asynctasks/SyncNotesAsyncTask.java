@@ -215,7 +215,8 @@ public class SyncNotesAsyncTask extends AsyncTask<Void, Integer, Boolean> {
                 } else {
                     handleError(result);
                 }
-            } else {
+            } else if (checkRemoteResult.getCode().equals(RemoteOperationResult.ResultCode.FILE_NOT_FOUND)) {
+                // if file already exists
                 note.filename = generateNewFileName(note.filename);
                 createNote(note);
             }
