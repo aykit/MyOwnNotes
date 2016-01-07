@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.owncloud.android.lib.common.OwnCloudClient;
@@ -67,7 +68,8 @@ public class SyncNotesAsyncTask extends AsyncTask<Void, Integer, Boolean> {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
 
         String accountName = prefs.getString(Settings.PREF_ACCOUNT_NAME, null);
-        if (accountName == null) {
+        String password = prefs.getString(Settings.PREF_ACCOUNT_PASSWORD, null);
+        if (TextUtils.isEmpty(accountName) || TextUtils.isEmpty(password)) {
 //            start LoginActivity
             showLoginActivity();
             return null;
@@ -75,7 +77,6 @@ public class SyncNotesAsyncTask extends AsyncTask<Void, Integer, Boolean> {
 
         Uri baseUrl = Settings.getAccountURL(accountName);
         String username = Settings.getAccountUsername(accountName);
-        String password = prefs.getString(Settings.PREF_ACCOUNT_PASSWORD, null);
 
         OwnCloudClient client = OwnCloudClientFactory.createOwnCloudClient(baseUrl, mContext, false);
         client.setCredentials(OwnCloudCredentialsFactory.newBasicCredentials(username, password));
