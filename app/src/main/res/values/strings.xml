@@ -99,6 +99,8 @@
 
 
     <string name="action_logout">logout</string>
-    <string name="dialog_logout_title">Really logout?</string>
+    <string name="dialog_logout_title">Confirm logout</string>
+
+    <string name="dialog_delete_title">Confirm delete</string>
 
 </resources>

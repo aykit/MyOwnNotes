@@ -151,14 +151,25 @@ public class NoteListActivity extends AppCompatActivity
 
     @Override
     public void onNoteSwiped(final Note note) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                note.setDeleted();
-                getContentResolver().update(NotesProvider.NOTES.withId(note.id), note.getContentValues(), null, null);
-                SyncNotesAsyncTask.start(NoteListActivity.this);
-            }
-        }).start();
+        new MaterialDialog.Builder(this)
+                .title(R.string.dialog_delete_title)
+                .content(note.title)
+                .positiveText(android.R.string.yes)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                note.setDeleted();
+                                getContentResolver().update(NotesProvider.NOTES.withId(note.id), note.getContentValues(), null, null);
+                                SyncNotesAsyncTask.start(NoteListActivity.this);
+                            }
+                        }).start();
+                    }
+                })
+                .negativeText(android.R.string.no)
+                .show();
     }
 
     @Override
