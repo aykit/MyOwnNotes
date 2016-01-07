@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.view.View;
 import android.widget.AdapterView;
@@ -39,6 +40,9 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
     @Bind(R.id.coordinatorlayout)
     CoordinatorLayout coordinatorLayout;
 
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+
     @Bind(android.R.id.list)
     ListView listView;
 
@@ -53,6 +57,8 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+
+        toolbar.setTitle(getTitle());
 
         listView.setEmptyView(emptyButton);
         listView.setOnItemClickListener(this);
