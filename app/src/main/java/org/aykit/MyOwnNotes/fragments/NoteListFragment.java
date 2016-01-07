@@ -16,13 +16,13 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.aykit.MyOwnNotes.R;
 import org.aykit.MyOwnNotes.adapter.DividerItemDecoration;
@@ -56,9 +56,6 @@ public class NoteListFragment extends Fragment implements LoaderManager.LoaderCa
     @Bind(android.R.id.empty)
     TextView emptyView;
 
-    @Bind(android.R.id.progress)
-    ProgressBar progressBar;
-
     @Bind(R.id.swipeContainer)
     SwipeRefreshLayout swipeRefreshLayout;
 
@@ -70,8 +67,6 @@ public class NoteListFragment extends Fragment implements LoaderManager.LoaderCa
                     swipeRefreshLayout.setRefreshing(false);
                     break;
                 case SyncNotesAsyncTask.SYNC_PROGRESS:
-                    int progress = intent.getIntExtra(SyncNotesAsyncTask.SYNC_PROGRESS, 0);
-                    Toast.makeText(getActivity(), "progress: "+progress, Toast.LENGTH_SHORT).show();
                     break;
             }
         }
@@ -238,13 +233,6 @@ public class NoteListFragment extends Fragment implements LoaderManager.LoaderCa
         } else {
             emptyView.animate().alpha(1);
         }
-        progressBar.animate().alpha(0);
-
-//        // Restore the previously serialized activated item position.
-//        if (savedInstanceState != null
-//                && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
-//            setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
-//        }
     }
 
     @Override
