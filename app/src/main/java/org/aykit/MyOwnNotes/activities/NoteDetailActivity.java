@@ -56,9 +56,16 @@ public class NoteDetailActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            navigateUpTo(new Intent(this, NoteListActivity.class));
+            onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this, NoteListActivity.class));
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+        finish();
     }
 }

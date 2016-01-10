@@ -151,6 +151,8 @@ public class NoteListActivity extends AppCompatActivity
             Intent detailIntent = new Intent(this, NoteDetailActivity.class);
             detailIntent.putExtras(arguments);
             startActivity(detailIntent);
+
+            overridePendingTransition(R.anim.slide_in_right, android.R.anim.fade_out);
         }
     }
 
