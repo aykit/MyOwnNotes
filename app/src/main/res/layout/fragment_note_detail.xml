@@ -31,6 +31,6 @@
             android:inputType="textMultiLine"
             android:padding="@dimen/edit_text_padding"
             android:scrollbars="vertical"
-            android:textAppearance="@style/TextAppearance.AppCompat" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
     </LinearLayout>
 </ScrollView>
