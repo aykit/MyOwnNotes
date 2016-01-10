@@ -50,7 +50,7 @@
                 android:alpha="0"
                 android:gravity="center"
                 android:onClick="openOwncloud"
-                android:text="@string/login_in_owncloudapp_required" />
+                android:text="@string/account_list_empty" />
 
             <ProgressBar
                 android:id="@android:id/progress"
@@ -62,6 +62,15 @@
         </RelativeLayout>
 
     </FrameLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/button_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_add_24dp"
+        android:tint="@android:color/white" />
 
 </android.support.design.widget.CoordinatorLayout>
 

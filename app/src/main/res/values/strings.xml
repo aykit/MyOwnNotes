@@ -59,8 +59,6 @@
     <string name="settings_text_debug">Debug</string>
     <string name="settings_text_extensive_log_output">Enable extensive LogCat output</string>
 
-    <string name="login_in_owncloudapp_required">Login Required</string>
-
     <!-- Toasts -->
     <string name="toast_enter_valid_username">Please enter your ownCloud-server username</string>
     <string name="toast_enter_password">Please enter your ownCloud-server password</string>
@@ -106,7 +104,13 @@
     <string name="dialog_permission_content">We need your permission to access your Owncloud account</string>
     <string name="dialog_permission_denied">You need to grant this permission to use this app</string>
 
+    <string name="dialog_add_account_title">Add Account</string>
+    <string name="dialog_add_account_message">We use the accounts of the Owncloud app. After adding the account to the Owncloud app you will see it in this app.</string>
+    <string name="dialog_add_account_positive">Open Owncloud</string>
+
     <string name="drawer_open">Navigation opened</string>
     <string name="drawer_closed">Navigation closed</string>
+
+    <string name="account_list_empty">No accounts found. Please add an account using the Owncloud App.</string>
 
 </resources>

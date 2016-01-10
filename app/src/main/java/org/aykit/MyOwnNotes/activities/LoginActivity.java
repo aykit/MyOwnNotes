@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -57,6 +58,9 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
     @Bind(android.R.id.progress)
     ProgressBar progressBar;
 
+    @Bind(R.id.button_add)
+    FloatingActionButton addButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +71,26 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
 
         listView.setEmptyView(emptyButton);
         listView.setOnItemClickListener(this);
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                new MaterialDialog.Builder(LoginActivity.this)
+                        .title(R.string.dialog_add_account_title)
+                        .content(R.string.dialog_add_account_message)
+                        .positiveText(R.string.dialog_add_account_positive)
+                        .negativeText(android.R.string.cancel)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
+                                openOwncloud(null);
+                            }
+                        })
+                        .show();
+
+            }
+        });
     }
 
     @Override
