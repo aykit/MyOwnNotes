@@ -20,9 +20,11 @@ android {
     productFlavors {
         local {
             applicationId 'org.aykit.MyOwnNotes.local'
+            resValue "string", "app_name", "MyOwnNotes[Local]"
         }
         store {
             applicationId 'org.aykit.MyOwnNotes.store'
+            resValue "string", "app_name", "MyOwnNotes"
         }
     }
     packagingOptions {
