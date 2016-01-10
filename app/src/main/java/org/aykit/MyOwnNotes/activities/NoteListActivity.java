@@ -7,13 +7,19 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -26,6 +32,9 @@ import org.aykit.MyOwnNotes.database.model.Note;
 import org.aykit.MyOwnNotes.fragments.NoteDetailFragment;
 import org.aykit.MyOwnNotes.fragments.NoteListFragment;
 import org.aykit.MyOwnNotes.helpers.Settings;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 
 /**
@@ -53,6 +62,18 @@ public class NoteListActivity extends AppCompatActivity
      */
     private boolean mTwoPane;
 
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+
+    @Bind(R.id.navigation)
+    NavigationView navigationView;
+
+    @Bind(R.id.drawer_layout)
+    DrawerLayout drawerLayout;
+
+    @Bind(R.id.button_add)
+    FloatingActionButton addButton;
+
     private BroadcastReceiver syncBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -69,12 +90,12 @@ public class NoteListActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_app_bar);
+        ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
 
-        findViewById(R.id.button_add).setOnClickListener(new View.OnClickListener() {
+        addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final Context appContext = getApplicationContext();
@@ -104,6 +125,59 @@ public class NoteListActivity extends AppCompatActivity
             // activity should be in two-pane mode.
             mTwoPane = true;
         }
+
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem item) {
+                int id = item.getItemId();
+                if (id == R.id.action_logout) {
+
+                    // do logout stuff
+                    new MaterialDialog.Builder(NoteListActivity.this)
+                            .title(R.string.dialog_logout_title)
+                            .positiveText(android.R.string.yes)
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
+                                    Settings.clearApp(NoteListActivity.this);
+                                    finish();
+                                    startActivity(new Intent(NoteListActivity.this, LoginActivity.class));
+                                }
+                            })
+                            .negativeText(android.R.string.no)
+                            .show();
+                }
+                return false;
+            }
+        });
+
+        MenuItem logoutItem = navigationView.getMenu().getItem(0);
+        if (logoutItem != null){
+            String username = PreferenceManager.getDefaultSharedPreferences(this).getString(Settings.PREF_ACCOUNT_NAME, "");
+            logoutItem.setTitle(username);
+        }
+
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.drawer_open, R.string.drawer_closed){
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                // Code here will be triggered once the drawer closes as we dont want anything to happen so we leave this blank
+                super.onDrawerClosed(drawerView);
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                // Code here will be triggered once the drawer open as we dont want anything to happen so we leave this blank
+
+                super.onDrawerOpened(drawerView);
+            }
+        };
+
+        //Setting the actionbarToggle to drawer layout
+        drawerLayout.setDrawerListener(actionBarDrawerToggle);
+
+        //calling sync state is necessay or else your hamburger icon wont show up
+        actionBarDrawerToggle.syncState();
     }
 
     @Override
@@ -177,36 +251,5 @@ public class NoteListActivity extends AppCompatActivity
                 })
                 .negativeText(android.R.string.no)
                 .show();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.note_list, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_logout) {
-            // do logout stuff
-
-            new MaterialDialog.Builder(this)
-                    .title(R.string.dialog_logout_title)
-                    .positiveText(android.R.string.yes)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-                            Settings.clearApp(NoteListActivity.this);
-                            finish();
-                            startActivity(new Intent(NoteListActivity.this, LoginActivity.class));
-                        }
-                    })
-                    .negativeText(android.R.string.no)
-                    .show();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }

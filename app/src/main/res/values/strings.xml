@@ -107,4 +107,7 @@
     <string name="dialog_permission_content">We need your permission to access your Owncloud account</string>
     <string name="dialog_permission_denied">You need to grant this permission to use this app</string>
 
+    <string name="drawer_open">Navigation opened</string>
+    <string name="drawer_closed">Navigation closed</string>
+
 </resources>
