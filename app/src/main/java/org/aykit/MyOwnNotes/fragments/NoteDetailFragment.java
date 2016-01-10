@@ -16,6 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+
 import org.aykit.MyOwnNotes.R;
 import org.aykit.MyOwnNotes.activities.NoteDetailActivity;
 import org.aykit.MyOwnNotes.activities.NoteListActivity;
@@ -84,7 +87,7 @@ public class NoteDetailFragment extends Fragment implements TextWatcher {
         ButterKnife.bind(this, view);
 
         titleView.setText(mNote.title);
-        if (mNote.title.equals(Note.NEW_TITLE)){
+        if (mNote.title.equals(Note.NEW_TITLE)) {
             titleView.setSelection(0, mNote.title.length());
         } else {
             titleView.setSelection(mNote.title.length());
@@ -110,15 +113,30 @@ public class NoteDetailFragment extends Fragment implements TextWatcher {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.delete_note) {
-            final Context appContext = getActivity().getApplicationContext();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    mNote.setDeleted();
-                    appContext.getContentResolver().update(NotesProvider.NOTES.withId(mNote.id), mNote.getContentValues(), null, null);
-                }
-            }).start();
-            getActivity().navigateUpTo(new Intent(getActivity(), NoteListActivity.class));
+            if (isAdded()) {
+                new MaterialDialog.Builder(getActivity())
+                        .title(R.string.dialog_delete_title)
+                        .content(mNote.title)
+                        .positiveText(android.R.string.yes)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mNote.setDeleted();
+                                        getActivity().getContentResolver().update(NotesProvider.NOTES.withId(mNote.id), mNote.getContentValues(), null, null);
+                                    }
+                                }).start();
+
+                                //  close detailview
+                                getActivity().navigateUpTo(new Intent(getActivity(), NoteListActivity.class));
+                            }
+                        })
+                        .negativeText(android.R.string.no)
+                        .show();
+            }
+
             return true;
         }
         return super.onOptionsItemSelected(item);
