@@ -83,10 +83,15 @@ public class NoteListActivity extends AppCompatActivity
                     public void run() {
                         Note newNote = new Note();
                         Uri uri = appContext.getContentResolver().insert(NotesProvider.NOTES.CONTENT_URI, newNote.getContentValues());
-                        Cursor result = appContext.getContentResolver().query(uri, null, null, null, null);
-                        result.moveToFirst();
-                        newNote = new Note(result);
-                        onNoteSelected(newNote);
+                        if (uri != null) {
+                            Cursor result = appContext.getContentResolver().query(uri, null, null, null, null);
+                            if (result != null) {
+                                result.moveToFirst();
+                                newNote = new Note(result);
+                                result.close();
+                                onNoteSelected(newNote);
+                            }
+                        }
                     }
                 }).start();
             }
