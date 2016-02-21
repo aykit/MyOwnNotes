@@ -30,7 +30,10 @@ import org.aykit.MyOwnNotes.database.NotesProvider;
 import org.aykit.MyOwnNotes.database.model.Note;
 import org.aykit.MyOwnNotes.fragments.NoteDetailFragment;
 import org.aykit.MyOwnNotes.fragments.NoteListFragment;
+import org.aykit.MyOwnNotes.helpers.LegacyImporter;
 import org.aykit.MyOwnNotes.helpers.Settings;
+
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -90,6 +93,8 @@ public class NoteListActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_app_bar);
         ButterKnife.bind(this);
+
+        checkForLegacyDatabase();
 
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
@@ -255,5 +260,22 @@ public class NoteListActivity extends AppCompatActivity
                 })
                 .negativeText(android.R.string.no)
                 .show();
+    }
+
+    private void checkForLegacyDatabase(){
+        LegacyImporter importer = new LegacyImporter(this);
+        if (importer.checkForMigration()){
+            final List<Note> extractedNotes = importer.extractNotes();
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    for (Note note : extractedNotes) {
+                        getContentResolver().insert(NotesProvider.NOTES.CONTENT_URI, note.getContentValues());
+                    }
+                    SyncNotesAsyncTask.start(NoteListActivity.this);
+                }
+            }).start();
+        }
     }
 }

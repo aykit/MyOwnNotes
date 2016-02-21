@@ -8,8 +8,8 @@ android {
         applicationId "org.aykit.MyOwnNotes"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 1
-        versionName '0.1'
+        versionCode 10
+        versionName '2.0b'
     }
     buildTypes {
         release {
@@ -23,7 +23,7 @@ android {
             resValue "string", "app_name", "MyOwnNotes[Local]"
         }
         store {
-            applicationId 'org.aykit.MyOwnNotes.store'
+            applicationId 'org.aykit.MyOwnNotes'
             resValue "string", "app_name", "MyOwnNotes"
         }
     }
