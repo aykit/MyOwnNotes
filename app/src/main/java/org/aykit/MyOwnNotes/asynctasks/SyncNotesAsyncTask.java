@@ -197,11 +197,11 @@ public class SyncNotesAsyncTask extends AsyncTask<Void, Integer, Boolean> {
             fileToUpload = createTempFileFromNote(note);
             String remotePath = getRemoteFilePath(note);
 
-            ExistenceCheckRemoteOperation checkRemoteOperation = new ExistenceCheckRemoteOperation(remotePath, true);
+            ExistenceCheckRemoteOperation checkRemoteOperation = new ExistenceCheckRemoteOperation(remotePath, false);
             RemoteOperationResult checkRemoteResult = checkRemoteOperation.execute(mClient);
 
             // file does exist (see true param for above ExistenceCheckRemoteOperation)
-            if (checkRemoteResult.isSuccess()) {
+            if (checkRemoteResult.getCode().equals(RemoteOperationResult.ResultCode.FILE_NOT_FOUND)) {
 
                 UploadRemoteFileOperation uploadRemoteFileOperation = new UploadRemoteFileOperation(fileToUpload.getAbsolutePath(), remotePath, "text/plain");
 
@@ -216,7 +216,7 @@ public class SyncNotesAsyncTask extends AsyncTask<Void, Integer, Boolean> {
                 } else {
                     handleError(result);
                 }
-            } else if (checkRemoteResult.getCode().equals(RemoteOperationResult.ResultCode.FILE_NOT_FOUND)) {
+            } else if (checkRemoteResult.getCode().equals(RemoteOperationResult.ResultCode.OK)) {
                 // if file already exists
                 note.filename = generateNewFileName(note.filename);
                 createNote(note);
