@@ -17,11 +17,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import org.aykit.MyOwnNotes.BuildConfig;
 import org.aykit.MyOwnNotes.R;
 import org.aykit.MyOwnNotes.asynctasks.SyncNotesAsyncTask;
 import org.aykit.MyOwnNotes.database.NotesProvider;
@@ -152,6 +154,11 @@ public class NoteListActivity extends AppCompatActivity
         if (logoutItem != null){
             String username = PreferenceManager.getDefaultSharedPreferences(this).getString(Settings.PREF_ACCOUNT_NAME, "");
             logoutItem.setTitle(username);
+        }
+
+        TextView appNameView = (TextView)navigationView.getHeaderView(0).findViewById(R.id.app_name);
+        if (appNameView != null){
+            appNameView.setText(appNameView.getText()+" "+ BuildConfig.VERSION_NAME);
         }
 
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.drawer_open, R.string.drawer_closed){
