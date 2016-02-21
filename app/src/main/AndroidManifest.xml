@@ -37,7 +37,7 @@
 
         <provider
             android:name=".database.generated.NotesProvider"
-            android:authorities="org.aykit.MyOwnNotes.NotesProvider"
+            android:authorities="${applicationId}.NotesProvider"
             android:exported="false" />
 
     </application>

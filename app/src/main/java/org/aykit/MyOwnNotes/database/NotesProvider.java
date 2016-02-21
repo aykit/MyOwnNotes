@@ -7,14 +7,15 @@ import net.simonvt.schematic.annotation.ContentUri;
 import net.simonvt.schematic.annotation.InexactContentUri;
 import net.simonvt.schematic.annotation.TableEndpoint;
 
+import org.aykit.MyOwnNotes.BuildConfig;
+
 /**
  * Created by mklepp on 22/11/15.
  */
 @ContentProvider(authority = NotesProvider.AUTHORITY, database = NotesDatabase.class)
 public final class NotesProvider {
 
-
-    public static final String AUTHORITY = "org.aykit.MyOwnNotes.NotesProvider";
+    public static final String AUTHORITY = BuildConfig.APPLICATION_ID+".NotesProvider";
     static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
 
 
