@@ -277,7 +277,7 @@ public class SyncNotesAsyncTask extends AsyncTask<Void, Integer, Boolean> {
             ExistenceCheckRemoteOperation checkRemoteOperation = new ExistenceCheckRemoteOperation(remotePath, true);
             RemoteOperationResult checkRemoteResult = checkRemoteOperation.execute(mClient);
 
-            // file does note exist (see true param for above ExistenceCheckRemoteOperation)
+            // file does exist (see true param for above ExistenceCheckRemoteOperation)
             if (!checkRemoteResult.isSuccess()) {
 
                 UploadRemoteFileOperation uploadRemoteFileOperation = new UploadRemoteFileOperation(fileToUpload.getAbsolutePath(), remotePath, "text/plain");
