@@ -281,10 +281,6 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
                 return null;
             }
 
-            if (!Settings.checkRemoteAccess(client)) {
-                return null;
-            }
-
             return selectedAccount;
         }
 
