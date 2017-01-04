@@ -8,8 +8,8 @@ android {
         applicationId "org.aykit.MyOwnNotes"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 10
-        versionName '2.0b'
+        versionCode 11
+        versionName '2.0'
     }
     buildTypes {
         release {
