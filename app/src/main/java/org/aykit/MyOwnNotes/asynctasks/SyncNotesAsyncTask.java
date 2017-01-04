@@ -130,8 +130,13 @@ public class SyncNotesAsyncTask extends AsyncTask<Void, Integer, Boolean> {
 
         publishProgress(100);
 
-        LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(SYNC_FINISHED));
         return true;
+    }
+
+    @Override
+    protected void onPostExecute(Boolean aBoolean) {
+        LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(SYNC_FINISHED));
+        super.onPostExecute(aBoolean);
     }
 
     private void publishCreateProgress(int current, int count) {
