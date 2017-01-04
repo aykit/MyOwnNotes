@@ -376,8 +376,8 @@ public class SyncNotesAsyncTask extends AsyncTask<Void, Integer, Boolean> {
 
                     Note note = null;
 
-                    Uri path = Uri.parse(remoteFile.getRemotePath());
-                    String filename = path.getLastPathSegment();
+                    File filePath = new File(remoteFile.getRemotePath());
+                    String filename = filePath.getName();
 
                     String select = NoteColumns.FILENAME + "=?";
                     String[] selectArgs = new String[]{filename};
