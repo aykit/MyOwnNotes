@@ -1,0 +1,21 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginRight="16dp" android:baselineAligned="false"
+    android:divider="?android:attr/dividerHorizontal" android:orientation="horizontal"
+    android:showDividers="middle" tools:context=".activities.NoteListActivity">
+
+    <!--
+    This layout is a two-pane layout for the Notes
+    master/detail flow.
+    
+    -->
+
+    <fragment android:id="@+id/note_list" android:name="org.aykit.MyOwnNotes.fragments.NoteListFragment"
+        android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+        tools:layout="@layout/fragment_note_list" />
+
+    <FrameLayout android:id="@+id/note_detail_container" android:layout_width="0dp"
+        android:layout_height="match_parent" android:layout_weight="3" />
+
+</LinearLayout>

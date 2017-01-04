@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="note_title">Note title</string>
+    <string name="note_content">Note content</string>
+    <string name="text_delete">delete</string>
+    <string name="notelist_empty_list">There are no saved notes. You either did not create any or have not yet synched with your ownCloud.</string>
+    <string name="toast_connection_error">There was a connection error.</string>
+    <string name="toast_check_username_password">Please check your username and password.</string>
+    <string name="settings_text_password">Password:</string>
+    <string name="settings_text_password_hint">password</string>
+
+    <!-- About strings -->
+    <string name="text_aykit_logo">The aykit logo</string>
+<string name="text_about_text">
+    This app is brought to you by aykit - an association supporting art, culture and science. \nMore information on our website: \n\nhttp://aykit.org
+</string>
+<string name="text_revenue">
+    All revenue will be spent to improve this app and do other great things to support internet freedom. If you have any suggestions or want to build this application yourself, visit us at https://github.com/aykit/myownnotes-android.
+</string>
+
+    <string name="action_logout">logout</string>
+    <string name="dialog_logout_title">Confirm logout</string>
+
+    <string name="dialog_delete_title">Confirm delete</string>
+
+    <string name="dialog_permission_title">List Owncloud accounts</string>
+    <string name="dialog_permission_content">We need your permission to access your Owncloud account</string>
+    <string name="dialog_permission_denied">You need to grant this permission to use this app</string>
+
+    <string name="dialog_add_account_title">Add Account</string>
+    <string name="dialog_add_account_message">We use the accounts of the Owncloud app. After adding the account to the Owncloud app you will see it in this app.</string>
+    <string name="dialog_add_account_positive">Open Owncloud</string>
+
+    <string name="drawer_open">Navigation opened</string>
+    <string name="drawer_closed">Navigation closed</string>
+
+    <string name="account_list_empty">No accounts found. Please add an account using the Owncloud App.</string>
+
+</resources>
