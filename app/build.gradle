@@ -1,0 +1,52 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+    defaultConfig {
+        applicationId "org.aykit.MyOwnNotes"
+        minSdkVersion 16
+        targetSdkVersion 23
+        versionCode 11
+        versionName '2.0'
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+        local {
+            applicationId 'org.aykit.MyOwnNotes.local'
+            resValue "string", "app_name", "MyOwnNotes[Local]"
+        }
+        store {
+            applicationId 'org.aykit.MyOwnNotes'
+            resValue "string", "app_name", "MyOwnNotes"
+        }
+    }
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:support-v4:23.1.1'
+    compile 'com.android.support:design:23.1.1'
+    compile 'com.android.support:recyclerview-v7:23.1.1'
+    apt 'net.simonvt.schematic:schematic-compiler:0.6.3'
+    compile 'net.simonvt.schematic:schematic:0.6.3'
+    compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'com.github.owncloud:android-library:oc-android-library-0.9.8'
+    compile 'commons-io:commons-io:2.4'
+
+    compile('com.afollestad.material-dialogs:core:0.8.1.0@aar') {
+        transitive = true
+    }
+}
