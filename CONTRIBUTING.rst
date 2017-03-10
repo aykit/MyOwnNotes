@@ -23,7 +23,6 @@ Bugs are nasty and we hate them as much as you do. Whenever you submit an issue,
 Provide all details concerning your software environment
 --------------------------------------------------------
 * ownCloud server version: https://yourcloud/index.php/settings/admin
-* ownCloud Notes server version
 * ownCloud encryption plugin installed and enabled and if so, the version
 * Android / CM / whateverdistroyouhave Version
 
