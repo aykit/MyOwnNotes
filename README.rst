@@ -1,6 +1,6 @@
-********************
-MyOwnNotes-android 2
-********************
+==============
+ MyOwnNotes 2
+==============
 
 This is Version 2, a complete rewrite of MyOwnNotes. This application does not depend on the server side owncloud notes app anymore. However, it does depend on the `ownCloud android application`_ for authentication.
 
