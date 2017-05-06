@@ -3,17 +3,20 @@ package org.aykit.MyOwnNotes.activities;
 import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
@@ -34,6 +37,7 @@ import org.aykit.MyOwnNotes.R;
 import org.aykit.MyOwnNotes.helpers.Settings;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.Bind;
@@ -42,6 +46,9 @@ import butterknife.ButterKnife;
 public class LoginActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private static final int PERMISSIONS_REQUEST_GET_ACCOUNTS = 1;
+
+    private static final String OWNCLOUD_PACKAGE_NAME = "com.owncloud.android";
+    private static final String NEXTCLOUD_PACKAGE_NAME = "com.nextcloud.client";
 
     @Bind(R.id.coordinatorlayout)
     CoordinatorLayout coordinatorLayout;
@@ -79,12 +86,18 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
                 new MaterialDialog.Builder(LoginActivity.this)
                         .title(R.string.dialog_add_account_title)
                         .content(R.string.dialog_add_account_message)
-                        .positiveText(R.string.dialog_add_account_positive)
-                        .negativeText(android.R.string.cancel)
+                        .positiveText(R.string.dialog_add_account_owncloud)
+                        .negativeText(R.string.dialog_add_account_nextcloud)
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-                                openOwncloud(null);
+                                openCloudApp(OWNCLOUD_PACKAGE_NAME);
+                            }
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                openCloudApp(NEXTCLOUD_PACKAGE_NAME);
                             }
                         })
                         .show();
@@ -128,13 +141,28 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
     }
 
     /*
-    *    starts owncloud app
+    *    starts owncloud or nextcloud app
     *    - if not found open in playstore
     *    - if playstore not found open in browser
     */
-    public void openOwncloud(View view) {
-        String packageName = "com.owncloud.android";
+    public void openCloud(View view) {
+        new AlertDialog.Builder(this).setTitle("Please choose a cloud!")
+                .setPositiveButton("Nextcloud", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        openCloudApp(NEXTCLOUD_PACKAGE_NAME);
+                    }
+                })
+                .setNegativeButton("ownCloud", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        openCloudApp(OWNCLOUD_PACKAGE_NAME);
+                    }
+                })
+                .create().show();
+    }
 
+    private void openCloudApp(String packageName) {
         PackageManager manager = getPackageManager();
         try {
             Intent i = manager.getLaunchIntentForPackage(packageName);
@@ -157,7 +185,7 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
 
         Account storedAccount = null;
         if (storedAccountName != null) {
-            for (Account account : AccountManager.get(this).getAccountsByType(getString(R.string.account_type))) {
+            for (Account account : getAccounts()) {
                 if (account.name.equals(storedAccountName)) {
                     storedAccount = account;
                     break;
@@ -219,17 +247,24 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
         }
     }
 
-    private void showAccounts() {
+    private ArrayList<Account> getAccounts() {
+        ArrayList<Account> accounts = new ArrayList<>();
+        accounts.addAll(Arrays.asList(AccountManager.get(this).getAccountsByType(getString(R.string.owncloud_account_type))));
+        accounts.addAll(Arrays.asList(AccountManager.get(this).getAccountsByType(getString(R.string.nextcloud_account_type))));
 
-        Account[] accounts = AccountManager.get(this).getAccountsByType(getString(R.string.account_type));
+        return accounts;
+    }
+
+    private void showAccounts() {
+        ArrayList<Account> accounts = getAccounts();
 
         List<String> accountNames = new ArrayList<>();
 
-        for (Account account: accounts){
+        for (Account account: accounts) {
             accountNames.add(account.name);
         }
 
-        if (accounts.length == 0) {
+        if (accounts.size() == 0) {
             emptyButton.animate().alpha(1);
             listView.animate().alpha(0);
         } else {
