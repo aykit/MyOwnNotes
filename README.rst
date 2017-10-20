@@ -67,14 +67,14 @@ Maintainer
 
 Developers
 ----------
-* Main Developer: `steppenhahn`_ 
+* Main Developer: `steppenhahn`_
 
 Translators
 -----------
-* French: `flo1`_ , `gityeti`_ 
-* Serbian: `pejakm`_ 
-* Spanish: `tmelikoff`_ 
-* Turkish: `wakeup`_ 
+* French: `flo1`_ , `gityeti`_
+* Serbian: `pejakm`_
+* Spanish: `tmelikoff`_
+* Turkish: `wakeup`_
 
 Testers
 -------
@@ -83,7 +83,7 @@ Unfortunately, we are not able to greet everyone in person. Without your feedbac
 
 License
 =======
-My Own Notes and all contributions are licensed as `GPL3`_ 
+My Own Notes and all contributions are licensed as `GPL3`_
 
 
 .. _CheapSSLsecurity: https://cheapsslsecurity.com
