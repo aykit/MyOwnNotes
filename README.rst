@@ -87,7 +87,7 @@ My Own Notes and all contributions are licensed as `GPL3`_
 
 
 .. _CheapSSLsecurity: https://cheapsslsecurity.com
-.. _carla's blog entry: http://carlaschroder.com/nextcloud-is-dirty-deal/
+.. _carla's blog entry: https://web.archive.org/web/20170404145931/http://carlaschroder.com/nextcloud-is-dirty-deal/
 .. _contact us: mailto:z-o48hohw4l9qla@ay.vc
 .. _Entwicklerbier.org: https://blog.entwicklerbier.org/2014/05/securing-the-internet-of-things-how-about-securing-the-internet-first/
 .. _google dev: https://code.google.com/p/android/issues/detail?id=11231#c107
