@@ -41,7 +41,7 @@ See the `ownCloud website`_ for more information.
 What do you think about nextcloud?
 ----------------------------------
 
-A good insight into the split is probably `carla's blog entry`_. ownCloud has been accepted at `google summer of code`_, nextCloud has not, decision was easy.
+We did not think much about it. That was easy, thanks to tobiasKaminsky_. For reference, a good insight into the split is probably `carla's blog entry`_.
 
 
 Contributors of Version 2.x
@@ -53,7 +53,9 @@ Maintainer
 
 Developers
 ----------
-* Main Developer: `kh0r`_
+* `kh0r`_: Main author of Revision 2.0
+* tobiasKaminsky_: NextCloud support
+* nobse_: Small changes
 
 
 Contributors of Version 1.x
@@ -110,3 +112,5 @@ My Own Notes and all contributions are licensed as `GPL3`_
 .. _tmelikoff: http://https://github.com/tmelikoff
 .. _wakeup: https://github.com/wakeup
 .. _kh0r: https://github.com/kh0r
+.. _tobiasKaminsky: https://github.com/tobiasKaminsky
+.. _nobse: https://github.com/nobse
