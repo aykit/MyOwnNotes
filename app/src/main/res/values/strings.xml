@@ -28,12 +28,13 @@
     <string name="dialog_permission_denied">You need to grant this permission to use this app</string>
 
     <string name="dialog_add_account_title">Add Account</string>
-    <string name="dialog_add_account_message">We use the accounts of the Owncloud app. After adding the account to the Owncloud app you will see it in this app.</string>
-    <string name="dialog_add_account_positive">Open Owncloud</string>
+    <string name="dialog_add_account_message">We use the accounts of the ownCloud or Nextcloud app. After adding the account there you will see it in this app.</string>
+    <string name="dialog_add_account_owncloud">Open ownCloud</string>
+    <string name="dialog_add_account_nextcloud">Open Nextcloud</string>
 
     <string name="drawer_open">Navigation opened</string>
     <string name="drawer_closed">Navigation closed</string>
 
-    <string name="account_list_empty">No accounts found. Please add an account using the Owncloud App.</string>
+    <string name="account_list_empty">No accounts found. Please add an account using a cloud app.</string>
 
 </resources>
