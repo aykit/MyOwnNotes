@@ -46,7 +46,7 @@ dependencies {
     compile 'com.github.owncloud:android-library:oc-android-library-0.9.8'
     compile 'commons-io:commons-io:2.4'
 
-    compile('com.afollestad.material-dialogs:core:0.8.1.0@aar') {
+    compile('com.github.afollestad.material-dialogs:core:0.8.1.0@aar') {
         transitive = true
     }
 }
