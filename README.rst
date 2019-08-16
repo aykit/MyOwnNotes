@@ -2,6 +2,15 @@
  MyOwnNotes 2
 ==============
 
+This project is no longer maintained
+====================================
+
+If you want to become maintainer, post here: https://github.com/aykit/MyOwnNotes/issues/163
+
+
+Information
+===========
+
 This is Version 2, a complete rewrite of MyOwnNotes. This application does not depend on the server side owncloud notes app anymore. However, it does depend on the `ownCloud android application`_ for authentication.
 
 MyOwnNotes 2 has not been released on the official android store yet. Release will follow in the next couple of weeks. Feel free to add issues after consulting the CONTRIBUTING.rst file.
