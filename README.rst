@@ -15,6 +15,11 @@ This is Version 2, a complete rewrite of MyOwnNotes. This application does not d
 
 MyOwnNotes 2 has not been released on the official android store yet. Release will follow in the next couple of weeks. Feel free to add issues after consulting the CONTRIBUTING.rst file.
 
+Downloads
+=========
+
+* `F-Droid <https://f-droid.org/repository/browse/?fdid=org.aykit.MyOwnNotes/>`_
+* `Google Play Store <https://play.google.com/store/apps/details?id=org.aykit.MyOwnNotes/>`_
 
 The right README
 ================
