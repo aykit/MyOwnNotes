@@ -15,6 +15,7 @@ import com.owncloud.android.lib.common.OwnCloudClient;
 import com.owncloud.android.lib.common.OwnCloudClientFactory;
 import com.owncloud.android.lib.common.OwnCloudCredentialsFactory;
 import com.owncloud.android.lib.common.operations.RemoteOperationResult;
+import com.owncloud.android.lib.resources.files.CreateRemoteFolderOperation;
 import com.owncloud.android.lib.resources.files.DownloadRemoteFileOperation;
 import com.owncloud.android.lib.resources.files.ExistenceCheckRemoteOperation;
 import com.owncloud.android.lib.resources.files.FileUtils;
@@ -218,6 +219,11 @@ public class SyncNotesAsyncTask extends AsyncTask<Void, Integer, Boolean> {
 // don't destroy anything, create a new entry and let the user resolve the conflict
                     note.filename = generateNewFileName(note.filename);
                     createNote(note);
+                } else if (result.getCode().equals(RemoteOperationResult.ResultCode.FILE_NOT_FOUND)) {
+                    // target folder not found... create and retry
+                    if (createFolder(remotePath.substring(0, remotePath.lastIndexOf("/")))) {
+                        createNote(note);
+                    }
                 } else {
                     handleError(result);
                 }
@@ -235,7 +241,17 @@ public class SyncNotesAsyncTask extends AsyncTask<Void, Integer, Boolean> {
             }
 
             mContext.getContentResolver().update(NotesProvider.NOTES.withId(note.id), note.getContentValues(), null, null);
+        }   
+    }
+
+    private boolean createFolder(String folder) {
+        CreateRemoteFolderOperation createRemoteFolderOperation = new CreateRemoteFolderOperation(folder, false);
+        RemoteOperationResult result = createRemoteFolderOperation.execute(mClient);
+        if (!result.isSuccess()) {
+            handleError(result);
+            return false;
         }
+        return true;
     }
 
     private String generateNewFileName(String name) {
